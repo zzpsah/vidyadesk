@@ -105,7 +105,7 @@ test("forwards a fixed server-side bearer and returns only a valid aggregate env
 });
 
 test("rejects wrong-school, extra-field and unscoped audit payloads", async () => {
-  const wrongSchool = validEnvelope();
+  const wrongSchool = validEnvelope() as unknown as Record<string, any>;
   wrongSchool.scope.schoolKey = "another-school";
   const resultA = await handleReportCentralRequest(
     request(), env, async () => Response.json(wrongSchool),
@@ -113,15 +113,15 @@ test("rejects wrong-school, extra-field and unscoped audit payloads", async () =
   assert.equal(resultA.status, 502);
   assert.equal((await resultA.json()).error, "provider_contract_mismatch");
 
-  const privateField = validEnvelope();
-  (privateField.data.overview as Record<string, unknown>).studentName = "must-not-leak";
+  const privateField = validEnvelope() as unknown as Record<string, any>;
+  privateField.data.overview.studentName = "must-not-leak";
   const resultB = await handleReportCentralRequest(
     request(), env, async () => Response.json(privateField),
   );
   assert.equal(resultB.status, 502);
 
-  const legacyAudit = validEnvelope();
-  (legacyAudit.data.importAudit as Record<string, unknown>).historyCoverage = "complete";
+  const legacyAudit = validEnvelope() as unknown as Record<string, any>;
+  legacyAudit.data.importAudit.historyCoverage = "complete";
   const resultC = await handleReportCentralRequest(
     request(), env, async () => Response.json(legacyAudit),
   );
