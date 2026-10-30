@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { ArrowUpRight, Building2, Check, ChevronRight, Layers3, Plus, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState, Kpi, PageHead, Panel, Pill } from '@/components/common';
-import { blueprintModules, liveModules, moduleById, moduleGroups, modules } from '@/core/modules';
+import { blueprintModules, integrationModules, liveModules, moduleById, moduleGroups, modules } from '@/core/modules';
 import { dateLabel, pct, rupees } from '@/core/format';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { metric } from '@/core/metrics';
@@ -46,7 +46,7 @@ export function OverviewView({ nav }: { nav: Nav }) {
           <h2>{group}<span>{items.filter(i => i.status === 'live').length} live</span></h2>
           <div className="tile-grid">
             {items.map(item => <button className={`tile${item.status === 'blueprint' ? ' is-plan' : ''}`} key={item.id} onClick={() => nav.go(item.id)}>
-              <span className="tile-top"><span className={`tile-icon${item.status === 'live' ? ' live' : ''}`}><item.icon aria-hidden="true" /></span><span className={`status-dot ${item.status}`}>{item.status === 'live' ? 'Live' : 'Blueprint'}</span></span>
+              <span className="tile-top"><span className={`tile-icon${item.status === 'live' ? ' live' : ''}`}><item.icon aria-hidden="true" /></span><span className={`status-dot ${item.status}`}>{item.status === 'live' ? 'Live' : item.status === 'integration' ? 'Not connected' : 'Blueprint'}</span></span>
               <strong>{item.name}</strong>
               <span className="tile-metric">{metric(school, item.id)}</span>
               <span className="tile-arrow"><ArrowUpRight size={15} aria-hidden="true" /></span>
