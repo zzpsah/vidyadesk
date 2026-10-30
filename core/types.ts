@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 
-export type ModuleStatus = 'live' | 'blueprint' | 'integration';
+export type ModuleStatus = 'retired' | 'blueprint' | 'integration';
 export type ModuleGroup = 'Students' | 'People & transfers' | 'Academics' | 'Communication' | 'Operations';
 
 export type ModuleDef = {
