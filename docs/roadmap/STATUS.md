@@ -175,3 +175,14 @@ Every implementation update must add:
 - GitHub Actions run #163 (`41098555719`): **success**. `npm ci` passed; contract suite **19 passed, 0 failed**; TypeScript check and Vite production build passed.
 - Vercel preview deployment `dpl_2XaerFDTnRp3MwecJP3Q5eVu8ZAi` reached **READY** for the same commit. Protected branch alias: https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app.
 - No visual/browser acceptance was performed in this session. No production deployment, provider calls or real-record operations occurred.
+
+
+## 2026-10-30 — Offline workforce directory
+
+- Added `core/workforce.ts` as a presentation-independent workforce derivation layer for staff search, combined role/subject/timetable filters, register rollups and per-person workload/leave summaries.
+- Updated `features/people.tsx` Staff view with combined filters, timetable coverage and weekly period KPIs, pending-leave visibility, approved-leave usage and a filtered CSV export.
+- Corrected the displayed remaining leave figure to subtract approved leave entries without mutating the underlying staff master.
+- Added `tests/workforce.test.ts` for search dimensions, combined filters, timetable assignment partitioning, rollup reconciliation and non-mutating leave calculations.
+- Added `docs/workforce/offline-workforce.md` describing the offline-only scope, calculation rules and data safeguards.
+- This feature uses only the current browser-local workspace. It does not require Oracle VPS or any external provider. Current fixture records remain fictional.
+- GitHub Actions CI was triggered for this branch update; results are pending. No phase is marked accepted until the tests/build pass and UI acceptance is performed.
