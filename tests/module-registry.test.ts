@@ -21,7 +21,6 @@ test('overview is the only route exposed until a project-backed module is accept
 test('legacy module registry is structurally valid and all old CRUD modules are retired', () => {
   assert.ok(modules.every(module => moduleGroups.includes(module.group)));
   assert.ok(modules.every(module => module.status === 'retired' || module.status === 'blueprint' || module.status === 'integration'));
-  assert.ok(modules.every(module => module.status !== 'live'));
   assert.deepEqual(validateModuleRegistry(), []);
 });
 test('every retained blueprint declares entities, workflow and acceptance checks', () => {
