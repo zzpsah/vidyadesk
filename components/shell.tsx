@@ -1,13 +1,10 @@
 import { Menu, Settings, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { modules, portalModuleGroups, portalModules } from '@/core/modules';
-import { useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
 
 export function Sidebar({ route, nav, onClose }: { route: string; nav: Nav; onClose: () => void }) {
-  const { school } = useWorkspace();
-
   const item = (moduleId: string, label: string) => (
     <button key={moduleId || 'overview'} className={`nav-item${route === moduleId ? ' active' : ''}`} onClick={() => nav.go(moduleId)}>
       <span className="nav-dot" aria-hidden="true" />
