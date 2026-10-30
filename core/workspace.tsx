@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from 'react';
-import { buildAssessments, buildTimetable, defaultSchools, emptyData, examSubjectsOf } from './seed';
+import { defaultSchools, emptyData } from './seed';
 import type { AttendanceStatus, Fee, LeaveRequest, Mark, Notice, School, SchoolMeta, Student, Ticket, TransferApplication, MdmEntry } from './types';
 
 export const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
@@ -80,7 +80,7 @@ export function reducer(state: State, action: Action): State {
 export function initialState(): State {
   const today = todayISO();
   const schools = defaultSchools(today);
-  return { schools, activeSchoolId: schools[0].id, focusModuleId: 'model-school' };
+  return { schools, activeSchoolId: schools[0].id, focusModuleId: null };
 }
 
 /**
@@ -88,15 +88,9 @@ export function initialState(): State {
  * The generators are deterministic, so a migrated school shows the same marks and
  * periods it showed before — they simply stop being invented at render time.
  */
+/** Fill absent collections only. Never derive synthetic marks or timetable rows from imported people. */
 function upgrade(school: School): School {
-  const out: School = { ...emptyData(), ...school };
-  if (!out.assessments.length && out.students.length) {
-    const built = buildAssessments(out.id, out.classes, out.students, examSubjectsOf(out.staff), todayISO());
-    out.assessments = built.assessments;
-    out.marks = built.marks;
-  }
-  if (!out.timetable.length) out.timetable = buildTimetable(out.id, out.classes, out.staff);
-  return out;
+  return { ...emptyData(), ...school };
 }
 
 function loadState(): State {
