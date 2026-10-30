@@ -168,7 +168,7 @@ export async function handleReportCentralRequest(
       return response(502, { ok: false, error: "provider_response_invalid" }, headers);
     }
 
-    if (!isReportCentralEnvelope(payload, isReportCentralAggregate)
+    if (!isReportCentralEnvelope(payload)
       || payload.scope.schoolKey !== REPORT_CENTRAL_SCOPE.schoolKey
       || payload.scope.academicSession !== REPORT_CENTRAL_SCOPE.academicSession) {
       return response(502, { ok: false, error: "provider_contract_mismatch" }, headers);
