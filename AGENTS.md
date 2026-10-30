@@ -17,8 +17,9 @@
 ## Security
 - Never commit credentials, tokens, cookies, OTPs, CAPTCHA values, student names, PENs, Aadhaar values, phone numbers, guardian data or private source records.
 - Never place provider secrets in Vite variables, browser bundles, localStorage, URLs, screenshots, logs or test fixtures.
-- VidyaDesk remains public with no user login during this development phase. The optional Report Central proxy is server-side, fixed-scope and disabled by default.
-- If enabled later, only the four approved aggregate sections become public; never expose student-level rows, raw source values or credentials.
+- The demo may remain browsable without application login only while it contains fictional browser-local records. Do not expose real school/student/staff records until Phase 2 authentication and Phase 3 school-scoped gateway gates pass.
+- The requested bootstrap PIN is an exchange credential only; it must create a server-issued session and must never be used as a bearer token. Use durable rate limiting, expiry/revocation and role checks.
+- The existing Report Central aggregate proxy remains a separate, explicitly approved public-data decision. It must not be repurposed for student-level access; the existing aggregate token must never be widened.
 - Default to aggregate read-only contracts. Reject unknown fields and wrong school/session scope.
 - No provider writes, database mutations, portal submissions, VPS changes or migrations without explicit approval.
 
