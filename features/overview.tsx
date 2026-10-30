@@ -1,68 +1,60 @@
-import { ArrowUpRight, Building2, Check, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { EmptyState, Kpi, PageHead, Panel } from '@/components/common';
-import { portalModules, portalModuleGroups } from '@/core/modules';
-import { dateLabel, pct, rupees } from '@/core/format';
-import { todayISO, useWorkspace } from '@/core/workspace';
-import { metric } from '@/core/metrics';
-import type { Nav } from '@/core/nav';
+import { ArrowUpRight, Boxes, ExternalLink, FileText, GitBranch, Network, ShieldCheck } from 'lucide-react';
+import { PageHead, Panel, Pill } from '@/components/common';
+import { SCHOOL_PROFILE } from '@/core/school-profile';
+import { projects } from '@/core/projects';
 
-export function OverviewView({ nav }: { nav: Nav }) {
-  const { school } = useWorkspace();
-  const today = todayISO();
-  const book = school.attendance[today] ?? {};
-  const present = Object.values(book).filter(s => s === 'Present').length;
-  const outstanding = school.fees.filter(f => !f.paid).reduce((sum, f) => sum + f.amount, 0);
+const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch } as const;
 
+export function OverviewView() {
   return <>
-    <PageHead module={{ id: 'overview', name: `${school.name}`, nav: 'Overview', blurb: `${school.category} · ${school.block}, ${school.district} · ${school.medium} medium · session ${school.session}`, group: 'Students', status: 'live', icon: Building2 }} crumb="UMV Tethali · School workspace">
-      <Button variant="outline" onClick={() => nav.open({ kind: 'settings' })}>School profile</Button>
+    <PageHead module={{ id: 'overview', name: 'VidyaDesk', nav: 'Overview', blurb: 'One control centre for the school’s existing systems.', group: 'Operations', status: 'integration', icon: Boxes }} crumb={SCHOOL_PROFILE.shortName}>
+      <Pill tone="warn">Integrations pending</Pill>
     </PageHead>
 
-    <div className="kpi-row">
-      <Kpi label="Students on roll" value={String(school.students.length)} note={`${school.classes.length} sections`} onClick={() => nav.go('students')} />
-      <Kpi label="Attendance today" value={school.students.length ? `${pct(present, school.students.length)}%` : '—'} note={school.students.length ? `${present} of ${school.students.length} marked present` : 'No register yet'} tone="ok" onClick={() => nav.go('attendance')} />
-      <Kpi label="Fees outstanding" value={rupees(outstanding)} note={`${school.fees.filter(f => !f.paid).length} students to follow up`} tone="warn" onClick={() => nav.go('fees')} />
-      <Kpi label="Teaching staff" value={String(school.staff.length)} note={`${school.leaveRequests.filter(r => r.status === 'Pending review').length} leave pending`} onClick={() => nav.go('staff')} />
-      <Kpi label="Open tickets" value={String(school.tickets.filter(t => t.status !== 'Resolved').length)} note="Support queue" onClick={() => nav.go('tickets')} />
-    </div>
-
-    <div className="overview-grid">
-      <div className="module-board">
-        {portalModuleGroups.map(group => <section className="board-group" key={group} aria-label={group}>
-          <h2>{group}<span>{portalModules.filter(item => item.group === group).length} active</span></h2>
-          <div className="tile-grid">
-            {portalModules.filter(item => item.group === group).map(item => <button className="tile" key={item.id} onClick={() => nav.go(item.id)}>
-              <span className="tile-top"><span className={`tile-icon${item.status === 'live' ? ' live' : ''}`}><item.icon aria-hidden="true" /></span><span className="status-dot live">Active</span></span>
-              <strong>{item.name}</strong>
-              <span className="tile-metric">{metric(school, item.id)}</span>
-              <span className="tile-arrow"><ArrowUpRight size={15} aria-hidden="true" /></span>
-            </button>)}
-          </div>
-        </section>)}
+    <section className="blueprint-hero" aria-labelledby="workspace-intro">
+      <span className="tile-icon"><ShieldCheck aria-hidden="true" /></span>
+      <div>
+        <h2 id="workspace-intro">{SCHOOL_PROFILE.fullName}</h2>
+        <p>{SCHOOL_PROFILE.location} · Academic session {SCHOOL_PROFILE.session}. VidyaDesk is the unified launch and integration layer; each connected system remains the source of truth for its own records.</p>
       </div>
+    </section>
 
-      <aside className="side-col">
-        <Panel title="Latest notices" meta={`${school.notices.length} on the board`} actions={<Button size="sm" variant="ghost" onClick={() => nav.go('notices')}>All</Button>}>
-          {!school.notices.length ? <p className="side-empty">Nothing posted for this school yet.</p> : school.notices.slice(0, 3).map(notice => <button className="side-row" key={notice.id} onClick={() => nav.go('notices')}><span className="dot" /><div><strong>{notice.title}</strong><span>{dateLabel(notice.date)} · {notice.audience}</span></div></button>)}
-        </Panel>
-        <Panel title="Today at a glance" meta={dateLabel(today)}>
-          <ul className="side-list">
-            <li><span>Register marked</span><strong>{Object.keys(book).length} / {school.students.length}</strong></li>
-            <li><span>Absent, needs a call</span><strong>{Object.values(book).filter(s => s === 'Absent').length}</strong></li>
-            <li><span>Meals logged</span><strong>{school.mdmEntries.filter(e => e.date === today).length ? 'Yes' : 'Not yet'}</strong></li>
-            <li><span>Leave awaiting decision</span><strong>{school.leaveRequests.filter(r => r.status === 'Pending review').length}</strong></li>
-            <li><span>Transfer drafts ready</span><strong>{school.transferApplications.filter(a => a.status === 'Ready to file').length}</strong></li>
-          </ul>
-        </Panel>
-        <div className="panel trust-card">
-          <ShieldCheck size={18} aria-hidden="true" />
-          <h2>Built to be extended</h2>
-          <p>Every record below is fictional and stays in this browser. The data layer is scoped by school id, so a real backend only has to add authentication, row-level permissions and an audit trail.</p>
-          <ul>{['One school workspace', 'Shared records across active modules', 'No live portal sync is enabled'].map(line => <li key={line}><Check size={13} aria-hidden="true" />{line}</li>)}</ul>
-        </div>
-      </aside>
+    <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+      <div><h2 className="text-lg font-semibold">Existing school projects</h2><p className="text-sm text-muted-foreground">Only verified project repositories and known application entry points are listed.</p></div>
+      <Pill tone="mute">{projects.length} registered projects</Pill>
     </div>
-    {!school.students.length && !school.staff.length && <EmptyState title={`${school.name} is empty`} text="Add students and staff to begin using the offline school registers." action={<Button variant="outline" onClick={() => nav.open({ kind: 'student' })}>Enroll a student</Button>} />}
+
+    <div className="blueprint-grid">
+      {projects.map(project => {
+        const Icon = icons[project.icon];
+        return <Panel key={project.id} title={project.name} meta={project.owner}>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <Pill tone="warn">Not connected to VidyaDesk</Pill>
+            <Pill tone="mute">{project.kind}</Pill>
+          </div>
+          <p>{project.purpose}</p>
+          <p className="foot-line"><strong>Owns:</strong> {project.ownership}</p>
+          <p className="scope-note">{project.boundary}</p>
+          <div className="flex flex-wrap gap-3 mt-3">
+            {project.applicationUrl && <a className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href={project.applicationUrl} target="_blank" rel="noreferrer">Open application <ExternalLink size={14} /></a>}
+            <a className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href={project.repositoryUrl} target="_blank" rel="noreferrer">Repository <ArrowUpRight size={14} /></a>
+          </div>
+        </Panel>;
+      })}
+    </div>
+
+    <div className="blueprint-grid mt-4">
+      <Panel title="Data integrity" meta="Current operating rule">
+        <ul className="check-list">
+          <li><ShieldCheck size={14} /> No generated student, staff, attendance, fee or examination records</li>
+          <li><ShieldCheck size={14} /> No source-system credentials or writes in the browser</li>
+          <li><ShieldCheck size={14} /> Source projects remain authoritative until an approved integration is verified</li>
+        </ul>
+      </Panel>
+      <Panel title="Connection readiness" meta="Honest status">
+        <p>Project links are registered, but a repository or application URL does not prove that its API is connected. Connection status will change only after a real health check and a source-backed read test succeed.</p>
+        <p className="scope-note">Private student and staff records remain unavailable here until the school-scoped authentication and read-only data gateway pass their security checks.</p>
+      </Panel>
+    </div>
   </>;
 }
