@@ -4,7 +4,6 @@
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Active PR:** https://github.com/zzpsah/vidyadesk/pull/5 (draft; not merged)  
 **Branch:** feat/internal-access-student-records  
-**Latest branch commit:** 8382be745fcc1d405f95433cb73ca26e051b654f  
 **Protected Vercel preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app  
 **Latest verified code deployment:** READY, commit b3143092681cb3599526776b379551c050168bd3 (deployment dpl_3NcWbXFqDFEFaWG6iotojK46fNZG)
 
@@ -71,7 +70,7 @@ Oracle Server and PostgreSQL Services are shown separately as infrastructure dep
 
 - Vercel protected preview reached **READY** for code commit b3143092681cb3599526776b379551c050168bd3. Its branch alias is the protected preview URL above.
 - The Vercel build executes TypeScript checking and production bundle generation.
-- GitHub Actions contract-test runs for the latest branch commits are **QUEUED**; no passing contract-test result is claimed for the latest head.
+- GitHub Actions CI run #258 **PASSED** for code state 8382be745fcc1d405f95433cb73ca26e051b654f (contract tests and production build). The later branch commits changed documentation only; a follow-up CI run for the latest docs head is queued.
 - The latest deployment has not had authenticated browser/UI acceptance or a live provider read test.
 - The public GitHub Pages site and production configuration have not been changed.
 
