@@ -31,7 +31,7 @@ Oracle Server and PostgreSQL Services are shown separately as infrastructure dep
 | Phase | Status | Acceptance evidence still required |
 |---|---|---|
 | 0. Baseline audit | In progress | Reconcile live database ownership and school mapping when Oracle runtime is reachable |
-| 1. Platform foundation | In progress | Latest branch CI contract tests, browser acceptance, accessibility and release review |
+| 1. Platform foundation | In progress | Browser acceptance, accessibility, release review and follow-up CI on the documentation-only head |
 | 2. Internal access and security | Not started | PIN exchange, server-issued sessions, durable rate limits, role checks and security tests |
 | 3. Data gateway and school scope | Blocked | Reachable canonical data source, verified UMV school mapping and least-privilege API contract |
 | 4. Student information system | Blocked | Source-backed student list and complete available profiles |
@@ -76,7 +76,7 @@ Oracle Server and PostgreSQL Services are shown separately as infrastructure dep
 
 ## Next work
 
-1. Complete final code/test review and obtain a passing GitHub Actions contract-test run.
+1. Allow the documentation-only follow-up CI run to complete; the full contract suite and build already passed for the current code state.
 2. Perform browser acceptance on the protected preview once available through the owner's SSO session.
 3. When Oracle runtime access returns, inspect only service health and documented API health first; do not mutate data or restart services.
 4. Reconcile the School Data Records source database with PostgreSQL Services and document the authoritative primary store.
