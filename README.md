@@ -7,7 +7,7 @@ VidyaDesk is customized as the primary UMV Tetahali school-management workspace.
 It is a front end built to be extended, not a finished product. There is no user login or application database; local records live in `localStorage` in your own browser. The optional Report Central aggregate connection is server-side, read-only and disabled by default. It is not affiliated with, and is not an interface to, any government portal.
 
 ```
-16 of 25 modules work against local browser data · 8 publish build blueprints · 1 integration dashboard is unconnected
+15 of 25 modules are available offline · 8 are planned blueprints · 2 integrations are disconnected and hidden
 ```
 
 ## What it does today
@@ -25,7 +25,7 @@ It is a front end built to be extended, not a finished product. There is no user
 
 ### Integration registry
 
-The **Operations → Integrations** page is the integration registry; **Operations → Report Central** is the first aggregate dashboard seam. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
+The integration registry and Report Central dashboard are retained in the codebase for future integration work, but are hidden from the school-facing portal until their connections are implemented and verified. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
 
 - `report-central` — planned read-only summaries and reconciliation views.
 - `digital-letter-registry` — planned read-only letter references and workflow history.
@@ -79,7 +79,7 @@ Four rules keep it coherent:
 1. **A school owns its records.** `School` holds `students`, `staff`, `classes`, `notices`, `fees`, `attendance`, `leaveRequests`, `transferApplications`, `tickets`, `mdmEntries`, `assessments`, `marks` and `timetable`. The reducer's `onSchool()` helper only ever touches `state.activeSchoolId`, so no action can write into another school's data.
 2. **Relationships are stored, not inferred from names.** A mark points at an `assessmentId` + `studentId`, a period at a `classId` + `staffId`, a ticket or notice at a `classId`, a transfer at a `staffId`. Renaming a teacher never silently re-parents their records.
 3. **Derived numbers live in one file.** `core/graph.ts` is the only place two collections are combined — attendance percentages, per-student progress, staff workload, the meal-vs-register reconciliation. The module screens and the Reports screens call the same functions, so they cannot disagree.
-4. **The registry drives the chrome, and views hold no copies.** Navigation, the overview board and the blueprint pages are generated from `modules.ts`; switching schools re-renders the whole workspace consistently (`<main>` is keyed on `route + school.id`).
+4. **The registry drives the chrome, and views hold no copies.** Navigation and the overview board show only `live` modules from `modules.ts`; planned blueprints and disconnected integrations remain internal and are not routable from the portal; switching schools re-renders the whole workspace consistently (`<main>` is keyed on `route + school.id`).
 
 State persists under `vidyadesk.workspace.v1`. Removing that key, or *Settings → Reset workspace*, restores the three demo schools. Workspaces saved before assessments and timetable periods became stored records are upgraded on load — the migration derives the same figures the old generated screens showed.
 
@@ -106,7 +106,7 @@ The four transfer workflows are the reference example: one `TransfersView` compo
 * Student, teacher and register fixtures are fictional and generated from generic name pools. The default workspace is labelled for UMV Tetahali using public school context only; no real student, teacher or source record appears in this repository.
 * Records never leave the browser. There is no backend, no analytics and no request to any third party.
 * CSV export escapes cells that begin with `=`, `+`, `-` or `@` so a spreadsheet cannot execute them.
-* The `functions/` and `dev/` folders come from the Qoder Sites starter and are unused by this app; they are kept so the project can be published there without rework.
+* The `functions/` and `dev/` folders are starter-template leftovers and are not part of the current application runtime. They are excluded from the TypeScript build; removal is deferred until repository history and deployment dependencies are checked.
 
 ## Develop
 
@@ -146,3 +146,8 @@ See [AGENTS.md](AGENTS.md) for product, security, DevOps and vibecoding guardrai
 ## License
 
 MIT — see [LICENSE](LICENSE). Template and vendored-CSS attribution: [PROVENANCE.md](PROVENANCE.md).
+
+
+## Portal visibility policy
+
+The school-facing portal currently exposes only the 15 implemented offline modules. Planned blueprint modules and disconnected integration placeholders (including Report Central and Integrations) are retained in the internal registry and source code, but hidden from navigation, overview tiles and route resolution. The school-facing shell is simplified to one school context; multi-school data structures remain internal and are not presented as an active feature. “Available offline” does not mean connected to UDISE, eShikshaKosh, Report Central or another live government portal.
