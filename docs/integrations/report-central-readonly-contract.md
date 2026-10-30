@@ -38,7 +38,7 @@ Each response includes:
 - `sourceSystem = report-central`
 - exact school and academic-session scope
 - `retrievedAt`
-- snapshot identifier, positive version and creation timestamp
+- aggregate read-model identifier, positive read-model version and creation timestamp (not a portal import version)
 - typed aggregate `data` containing exactly overview, source comparison, conflict summary and import audit
 
 The validators in `core/report-central-contract.ts` reject wrong source/school/session, unsupported contract versions, unknown fields, invalid timestamps, invalid snapshot metadata and inconsistent aggregate totals. Both envelope and aggregate validators must pass before rendering.
