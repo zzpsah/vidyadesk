@@ -55,7 +55,7 @@ Browser → same-origin /api/report-central (Vercel Edge Function)
 
 - The Vercel proxy is implemented in `api/report-central.ts`.
 - It accepts only GET (plus CORS preflight), does not accept caller-selected school/session filters, and validates the entire response before forwarding it.
-- The dedicated machine token is held only in server environment variables on Vercel and Report Central. It is not a browser session or user login.
+- The dedicated machine token is held only in server environment variables on Vercel and Report Central. The current provider URL is `https://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/aggregate`. It is not a browser session or user login.
 - Report Central accepts that token only on the exact aggregate GET route. It cannot access students, files, exports, conflict details, imports, snapshots or any other route.
 - The public feature flag `VIDYADESK_REPORT_CENTRAL_ENABLED` must be exactly `true`; absent/false means no upstream request is made.
 - Once enabled, the four aggregate sections are public to everyone who can access VidyaDesk. CORS is not authentication.
