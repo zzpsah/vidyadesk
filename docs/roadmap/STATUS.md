@@ -5,18 +5,18 @@
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
 **Active branch:** feat/internal-access-student-records  
 **Vercel project:** vidyadesk (team SSO protection enabled)  
-**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest verified commit 9fb0da6)
+**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest verified commit 1e534c8)
 
 ## Current lifecycle position
 
 **Phase 0 — Baseline audit in progress; Phase 1 foundation work started**
 
-**Overall:** 0 of 12 phases accepted; Phase 1 implementation is underway. Phase 0 audit is partially evidenced; implementation work has not yet passed a phase gate.
+**Overall:** 0 of 12 phases accepted; Phase 1 implementation is underway; first CI regression was fixed and the latest quality gate passed. Phase 0 audit is partially evidenced; implementation work has not yet passed a phase gate.
 
 | Phase | Status | Evidence / exit condition |
 |---|---|---|
 | 0. Baseline audit | In progress | App and package inspected. Current app is a Vite/React SPA; it identifies records as fictional and browser-local. GitHub Pages is static. Provider currently has an aggregate-only VidyaDesk contract. Complete inventory and baseline CI evidence still required. |
-| 1. Platform foundation | In progress | Shared route registry, module metadata validation, safe route fallback and module error isolation implemented; CI gate pending |
+| 1. Platform foundation | In progress | Shared route registry, module metadata validation, safe route fallback and module error isolation implemented; 18/18 contract tests and TypeScript/Vite build pass; UI browser acceptance remains |
 | 2. Internal access and security | Not started | Server-side session, PIN exchange, rate limiting, authorization and security tests |
 | 3. Data gateway and school scope | Not started | Verified provider contract and canonical school mapping |
 | 4. Student information system | Not started | Source-backed student list and complete available profiles |
@@ -44,7 +44,7 @@
 2. No complete authenticated VidyaDesk-to-provider student-record contract has been implemented and tested.
 3. The 2244 bootstrap PIN/session exchange is specified but not implemented.
 4. Source field availability, school identity mapping and full-record provenance must be verified against actual provider data before exposing records.
-5. The branch preview is READY at https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (deployment dpl_4V6Biiro2X9ocVVg4RvJaZR7bQcM; commit 678e658; SSO protection enabled).
+5. The branch preview is READY at https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (deployment dpl_EL9efP2Gz7XY9VUDrLhEZfsCVx55; commit 1e534c8; SSO protection enabled).
 
 ## Next actions — Phase 0 exit
 
@@ -106,3 +106,23 @@ Every implementation update must add:
 - Result: Vercel READY; build completed; project SSO protection enabled.
 - GitHub Actions: VidyaDesk CI run 41092365955 completed successfully (contract tests and build).
 - The first incorrectly targeted deployment was canceled before completion; no production release or production domain change was made.
+
+
+## Latest Phase 1 validation — 2026-10-30
+
+- Branch head tested: 1e534c8d787984738c496750033d086bced821f7.
+- GitHub Actions run #122 (41095715249): **success**.
+- `npm ci`: passed.
+- `npm run test:contract`: **18 tests passed, 0 failed**.
+- `npm run build`: passed, including `tsc --noEmit` and Vite production bundle.
+- Initial test run #117 exposed Node ESM resolution failure for an extensionless TypeScript import in the new route registry. Fixed by using an explicit `.ts` import; the subsequent run passed.
+- Vercel deployment dpl_EL9efP2Gz7XY9VUDrLhEZfsCVx55 reached **READY** for the same commit; protected branch alias remains active.
+- Dependency audit during `npm ci` reported **3 high-severity advisories**. No automatic dependency upgrade was applied; dependency impact and safe remediation need a separate reviewed task.
+
+## Phase 1 remaining acceptance work
+
+- [ ] Browser-check all module navigation and responsive layouts against the new route registry.
+- [ ] Add a consistent shared loading/empty/unavailable state contract for async modules.
+- [ ] Complete keyboard/focus checks for navigation and error recovery.
+- [ ] Review and triage the 3 high-severity dependency advisories.
+- [ ] Confirm no existing module behavior or local multi-school isolation regressed.
