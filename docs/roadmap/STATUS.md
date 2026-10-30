@@ -156,3 +156,13 @@ Every implementation update must add:
 - No session endpoint was enabled, no private student/staff records were exposed, and no provider database was read or modified.
 - Phase 2 implementation remains blocked until durable database connectivity, the verified provider school mapping and the fixed-school read-only provider contract are available.
 - Next: restore the authorized Oracle connection, verify the school mapping with a read-only query, inspect the exact npm advisory paths and then implement the session persistence/API layer with automated security tests.
+
+
+## 2026-10-30 — School portal cleanup (offline-safe)
+
+- School-facing navigation and overview now show only modules classified as implemented locally. Planned blueprints and disconnected integrations remain in the internal module registry but are hidden from the portal.
+- Route resolution now fails closed for hidden blueprint/integration routes, so they cannot be opened by passing a module id to the navigation API.
+- Removed the school picker and Add school controls from the sidebar and overview to present the requested single-school UMV Tethali workspace. The underlying multi-school data model is retained internally; no records were deleted.
+- Reclassified the Integrations registry as disconnected/integration status. Report Central remains disconnected. Neither appears as a school-facing module.
+- No Oracle VPS, provider database, private records or external government portal is required for this cleanup. No live data was read or changed.
+- Validation for this change is pending GitHub Actions. The portal still uses fictional browser-local data; offline module availability must not be described as live government-portal integration.
