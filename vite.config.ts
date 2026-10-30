@@ -6,6 +6,7 @@ const proxy = { "/functions/v1/app": "http://127.0.0.1:8000" };
 
 export default defineConfig({
   plugins: [react()],
+  base: process.env.GITHUB_ACTIONS ? "/vidyadesk/" : "/",
   resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
   server: { host: "127.0.0.1", proxy },
   preview: { host: "127.0.0.1", proxy },
