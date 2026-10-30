@@ -72,7 +72,7 @@ No snapshot trigger, fetch, import, conflict resolution, data-quality refresh, s
 
 ## Acceptance gates for a future live adapter
 
-1. Confirm the actual Report Central school registry key and active session for Tetahali.
+1. Confirm the canonical Report Central school_id, both source-school mappings and active session for Tetahali.
 2. Agree the exact provider endpoints and a server-side least-privilege role.
 3. Verify which provider read endpoints return aggregates without personal data.
 4. Implement and test proxy-side redaction, authorization, timeout and error handling.
