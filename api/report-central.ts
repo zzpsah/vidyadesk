@@ -5,6 +5,7 @@ import {
 } from "../core/report-central-contract.ts";
 
 const AGGREGATE_PATH = "/v1/integrations/vidyadesk/aggregate";
+const ALLOWED_AGGREGATE_PATHS = new Set([AGGREGATE_PATH, `/rc${AGGREGATE_PATH}`]);
 const DEFAULT_ALLOWED_ORIGIN = "https://zzpsah.github.io";
 const UPSTREAM_TIMEOUT_MS = 8_000;
 
@@ -78,7 +79,7 @@ export async function handleReportCentralRequest(
     return response(503, { ok: false, error: "integration_not_configured" }, headers);
   }
   if (upstreamUrl.protocol !== "https:" || upstreamUrl.username || upstreamUrl.password
-    || upstreamUrl.search || upstreamUrl.hash || upstreamUrl.pathname !== AGGREGATE_PATH) {
+    || upstreamUrl.search || upstreamUrl.hash || !ALLOWED_AGGREGATE_PATHS.has(upstreamUrl.pathname)) {
     return response(503, { ok: false, error: "integration_not_configured" }, headers);
   }
 
