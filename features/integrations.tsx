@@ -21,6 +21,7 @@ export function IntegrationsView(_props: { nav: Nav }) {
       {integrations.map(integration => <Panel key={integration.id} title={integration.name} meta={integration.status === 'external-system' ? 'External system' : 'Read-only planned'}>
         <p>{integration.purpose}</p>
         <p className="foot-line"><strong>Owner:</strong> {integration.owner}</p>
+        <p className="foot-line"><strong>Data domains:</strong> {integration.dataDomains.join(' · ')}</p>
         <p className="scope-note">{integration.boundary}</p>
       </Panel>)}
     </div>
