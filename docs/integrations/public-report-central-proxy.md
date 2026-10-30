@@ -38,7 +38,7 @@ Configure these only in the Vercel project environment; never in `VITE_*` variab
 | Variable | Purpose |
 |---|---|
 | `VIDYADESK_REPORT_CENTRAL_ENABLED` | Exact string `true` enables public reads. Keep `false` until all activation gates pass. |
-| `REPORT_CENTRAL_AGGREGATE_URL` | Full HTTPS URL ending exactly in `/v1/integrations/vidyadesk/aggregate`. |
+| `REPORT_CENTRAL_AGGREGATE_URL` | Full HTTPS URL ending exactly in `/rc/v1/integrations/vidyadesk/aggregate` on the current Report Central Funnel host. The current documented URL is `https://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/aggregate`. |
 | `REPORT_CENTRAL_VIDYADESK_READ_TOKEN` | Dedicated machine token; same secret is configured on the Report Central API host. |
 | `VIDYADESK_ALLOWED_ORIGIN` | Exact public frontend origin, currently `https://zzpsah.github.io`. |
 
