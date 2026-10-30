@@ -16,7 +16,7 @@ This document defines what belongs in VidyaDesk and what must remain in the exis
 | Digital Letter Registry | [digital-letter-registry](https://github.com/zzpsah/digital-letter-registry) | [eLetters application](https://eletters.vercel.app/app) | Immutable official letter originals, derived OCR/metadata, search, archive membership and delivery workflow | Separate live application; VidyaDesk adapter not implemented |
 | UDISE+ Automation | [udise-automation-suite](https://github.com/zzpsah/udise-automation-suite) | [UDISE Automation](https://udise-auto.vercel.app) | UDISE portal session, roster, GP/EP/FP workflow, bounded writes, read-back verification and job results | Separate live application and Oracle control API; no VidyaDesk job/status adapter |
 | eShikshaKosh Automation | [eshikshakosh-automation](https://github.com/zzpsah/eshikshakosh-automation) | [eShikshaKosh workbench](https://eshikshakosh-coral.vercel.app) | Student OTR and teacher reports, protected runners, job status and private workbook delivery | Separate live application and Oracle gateway/job service; no VidyaDesk job/status adapter |
-| n8n Operations | [n8n-operations](https://github.com/zzpsah/n8n-operations) | Private Oracle-hosted n8n; no public editor link | Workflow definitions, execution, event dispatch, health monitoring and notification delivery | Private infrastructure; no VidyaDesk read-only operations adapter |
+| Vetan-Vipatra | [Vetan-Vipatra](https://github.com/zzpsah/Vetan-Vipatra) | [Vetan-Vipatra salary app](https://vetan-vipatra.vercel.app) | Teacher roster import, absence statement, salary components, fitment preview, monthly statement and print/PDF/CSV output | Existing standalone app; VidyaDesk launch link only; no payroll data sync |\n| n8n Operations | [n8n-operations](https://github.com/zzpsah/n8n-operations) | Private Oracle-hosted n8n; no public editor link | Workflow definitions, execution, event dispatch, health monitoring and notification delivery | Private infrastructure; no VidyaDesk read-only operations adapter |
 
 ## Infrastructure dependencies and current blockers
 
@@ -31,7 +31,7 @@ This document defines what belongs in VidyaDesk and what must remain in the exis
 - UDISE+ and eShikshaKosh are independent government systems and must never be merged into one source label.
 - OFSS is an admissions/stream evidence source, not an independent VidyaDesk application or the canonical current student master.
 - Oracle VPS is infrastructure hosting several project services, not a school-management module.
-- Teacher reports belong to eShikshaKosh Automation. They do not justify a separate fictional HR/leave-management module.
+- Teacher reports belong to eShikshaKosh Automation. Teacher absence and monthly salary statements already have a dedicated owning application, Vetan-Vipatra; do not recreate it as a second payroll module in VidyaDesk.
 - Report Central owns reconciliation and conflict decisions. VidyaDesk must not implement a competing student identity merge engine.
 - DLR owns official letter originals and their processing lifecycle. VidyaDesk should link or display approved summaries, not duplicate Drive storage or delivery workers.
 - n8n owns automation execution. VidyaDesk should request/observe only explicitly allow-listed jobs and status summaries.
@@ -69,9 +69,9 @@ n8n editor is private on port 5678. The private DLR job bridge and alert dispatc
 3. **Report Central aggregate:** retain the existing separate aggregate contract. Enable only after school mapping, publication approval and end-to-end contract verification.
 4. **Source data read gateway:** agree a dedicated least-privilege identity with School Data Records / Report Central; verify school mapping, session, fields, provenance and audit before returning any student/staff data.
 5. **UDISE and eShiksha job status:** implement separate adapters and allowlists, preserving each owning project's login, job, approval and read-back rules.
-6. **DLR letter references:** integrate a read-only search/reference view after archive membership and user identity mapping are designed. Keep originals and writes in DLR.
-7. **n8n operations:** add only safe operational summaries with no ability to trigger arbitrary workflows.
-8. **Project-backed school modules:** build one user journey at a time after its source contract and acceptance tests exist. Do not revive generic sample-data CRUD modules.
+6. **Vetan-Vipatra:** keep the existing salary/absence workflow in its own application and expose a verified launch link. Any future data integration requires a separate permissioned API and privacy review; do not read or mirror the private teacher roster from the browser.\n7. **DLR letter references:** integrate a read-only search/reference view after archive membership and user identity mapping are designed. Keep originals and writes in DLR.
+8. **n8n operations:** add only safe operational summaries with no ability to trigger arbitrary workflows.
+9. **Project-backed school modules:** build one user journey at a time after its source contract and acceptance tests exist. Do not revive generic sample-data CRUD modules.
 
 ## Global acceptance gates
 
