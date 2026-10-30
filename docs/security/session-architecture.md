@@ -6,7 +6,7 @@
 
 ## Security objectives
 
-- Keep the fictional/local demo shell separate from every private-data route.
+- Keep the public project-hub shell separate from every private-data route.
 - Treat the configured bootstrap PIN as an exchange secret only. It must never be accepted as a session or API bearer token.
 - Issue an opaque, cryptographically random server-side session identifier after a successful PIN exchange.
 - Store only a one-way hash of the session identifier in durable storage. The browser receives it only in a Secure, HttpOnly, SameSite cookie.
