@@ -35,6 +35,12 @@ export type ReportCentralImportAudit = {
   ignoredDuplicates: number; latestAttemptAt: string | null;
   historyCoverage: 'school_scoped_records_only';
 };
+export type ReportCentralAggregate = {
+  overview: ReportCentralOverview;
+  sourceComparison: ReportCentralSourceComparison;
+  conflictSummary: ReportCentralConflictSummary;
+  importAudit: ReportCentralImportAudit;
+};
 export type ReportCentralConnectionState =
   | { status: 'unconfigured'; reason: string }
   | { status: 'configured'; reason: string }
@@ -121,4 +127,13 @@ export function isReportCentralImportAudit(value: unknown): value is ReportCentr
     && isCount(value.ignoredDuplicates) && value.succeeded + value.failed <= value.attempts
     && isNullableTimestamp(value.latestAttemptAt)
     && value.historyCoverage === 'school_scoped_records_only';
+}
+export function isReportCentralAggregate(value: unknown): value is ReportCentralAggregate {
+  if (!isRecord(value) || !hasOnlyKeys(value, [
+    'overview', 'sourceComparison', 'conflictSummary', 'importAudit',
+  ])) return false;
+  return isReportCentralOverview(value.overview)
+    && isReportCentralSourceComparison(value.sourceComparison)
+    && isReportCentralConflictSummary(value.conflictSummary)
+    && isReportCentralImportAudit(value.importAudit);
 }
