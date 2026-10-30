@@ -64,7 +64,7 @@ export const modules: ModuleDef[] = [
     entities: ['Parent account', 'Student link', 'Attendance view', 'Fee view', 'Notice'],
     workflow: ['Verify parent identity', 'Link to students', 'Expose read-only views', 'Send reviewable notices'],
     checks: ['OTP-based verification', 'Data scoping rules', 'Language coverage', 'Privacy review sign-off'] },
-  { id: 'report-central', name: 'Report Central', nav: 'Report Central', blurb: 'Aggregate-only source comparison, conflict totals and import audit.', group: 'Operations', status: 'live', icon: FileBarChart },
+  { id: 'report-central', name: 'Report Central', nav: 'Report Central', blurb: 'Aggregate-only source comparison, conflict totals and import audit.', group: 'Operations', status: 'integration', icon: FileBarChart },
   { id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: 'Read-only registry of the systems that may connect to this workspace.', group: 'Operations', status: 'live', icon: ExternalLink },
 ];
 
@@ -72,3 +72,4 @@ export const moduleGroups: ModuleGroup[] = ['Students', 'People & transfers', 'A
 export const moduleById = new Map(modules.map(m => [m.id, m]));
 export const liveModules = modules.filter(m => m.status === 'live');
 export const blueprintModules = modules.filter(m => m.status === 'blueprint');
+export const integrationModules = modules.filter(m => m.status === 'integration');
