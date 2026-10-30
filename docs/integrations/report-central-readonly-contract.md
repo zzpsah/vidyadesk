@@ -41,7 +41,7 @@ Each response must include:
 - snapshot identifier, positive version and creation timestamp
 - typed aggregate `data`
 
-The metadata guard in `core/report-central-contract.ts` rejects a wrong source, wrong school/session, unsupported contract version, invalid timestamps or invalid snapshot metadata. Each data type must also be validated before rendering; the overview validator is the initial reference.
+The envelope guard in `core/report-central-contract.ts` rejects a wrong source, wrong school/session, unsupported contract version, unknown fields, invalid timestamps or invalid snapshot metadata. Dedicated payload validators cover overview, the two separate source records, conflict severity totals and import-audit arithmetic. A consumer must run both envelope and payload validation before rendering.
 
 ## Authentication and transport boundary
 
