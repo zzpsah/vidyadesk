@@ -48,9 +48,8 @@ UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admission
 ## Architecture
 
 - `core/projects.ts` — verified project inventory and ownership boundaries.
-- `core/seed.ts` — empty school context; metadata creation only.
-- `core/workspace.tsx` — reducer and browser workspace shell. It is not a production database.
-- `core/modules.ts` / `core/route-registry.ts` — legacy module definitions retained internally; unbacked CRUD routes are not exposed.
+- `core/seed.ts` / `core/workspace.tsx` — legacy state-model code retained for review; neither is imported by the active project-hub app.
+- `core/modules.ts` / `core/route-registry.ts` — legacy module metadata retained internally; the active app exposes no school CRUD routes.
 - `features/overview.tsx` — unified project hub.
 - `api/` — server-side integration endpoints; disabled until their source, scope and security gates are met.
 - `docs/roadmap/` — phase gates and verified delivery status.
