@@ -9,6 +9,7 @@ import { ReportsView } from '@/features/reports';
 import { BlueprintView } from '@/features/blueprint';
 import { OverviewView } from '@/features/overview';
 import { IntegrationsView } from '@/features/integrations';
+import { ReportCentralView } from '@/features/report-central';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
@@ -34,6 +35,7 @@ function renderView(route: string, nav: Nav) {
   if (route === 'mdm') return <MdmView nav={nav} />;
   if (route === 'reports') return <ReportsView nav={nav} />;
   if (route === 'integrations') return <IntegrationsView nav={nav} />;
+  if (route === 'report-central') return <ReportCentralView nav={nav} />;
   return <BlueprintView moduleId={route} nav={nav} />;
 }
 
