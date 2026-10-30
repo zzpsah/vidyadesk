@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { defaultSchools, createSchool, SCHOOL_CATEGORIES, MEDIUMS } from '../core/seed.ts';
-import { projects } from '../core/projects.ts';
+import { infrastructureProjects, projects } from '../core/projects.ts';
 
 test('default school workspace contains one fixed school and no generated records', () => {
   const schools = defaultSchools('2026-10-30');
@@ -41,4 +41,9 @@ test('project hub contains only the six known, repository-backed school projects
     assert.ok(project.boundary.length > 20);
   }
   assert.equal(projects.filter(project => project.applicationUrl).length, 4);
+});
+
+test('platform dependencies are registered separately from school applications', () => {
+  assert.deepEqual(infrastructureProjects.map(item => item.id), ['oracle-server', 'postgresql-services']);
+  assert.ok(infrastructureProjects.every(item => item.repositoryUrl.startsWith('https://github.com/zzpsah/')));
 });
