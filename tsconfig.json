@@ -34,7 +34,8 @@
     "hooks",
     "lib",
     "vite.config.ts",
-    "tests"
+    "tests",
+    "api"
   ],
   "exclude": [
     "node_modules",
