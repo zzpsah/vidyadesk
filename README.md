@@ -26,7 +26,14 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 | eShikshaKosh Automation | eShikshaKosh student/teacher automation and reports | Not connected |
 | n8n Operations | Automation workflows, monitoring and delivery events | Not connected |
 
-UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admissions data/evidence source, not as a separate application. Oracle VPS is infrastructure, not a school module.
+UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admissions data/evidence source, not as a separate application. Oracle VPS and PostgreSQL Services are infrastructure dependencies, not school modules. They are listed separately in the project hub.
+
+## Infrastructure dependencies
+
+- [Oracle Server](https://github.com/zzpsah/oracle-server) owns VPS host operations, private networking and runtime services.
+- [PostgreSQL Services](https://github.com/zzpsah/postgresql-services) owns database operations, security and backup/restore standards. Its documented registry currently covers the DLR database; a School Data Records database has not been onboarded there.
+- The connected Supabase account currently reports both `umv-db` and `official-letter-intelligence-archive` as **INACTIVE**. Do not treat their historical schemas/counts as a reachable live source.
+- The registered Oracle VPS Desktop Commander device is **OFFLINE** (last seen 410 hours before this audit). Service health and live PostgreSQL state therefore remain unverified from this development session.
 
 ## Data and security rules
 
