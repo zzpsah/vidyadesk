@@ -166,3 +166,12 @@ Every implementation update must add:
 - Reclassified the Integrations registry as disconnected/integration status. Report Central remains disconnected. Neither appears as a school-facing module.
 - No Oracle VPS, provider database, private records or external government portal is required for this cleanup. No live data was read or changed.
 - Validation for this change is pending GitHub Actions. The portal still uses fictional browser-local data; offline module availability must not be described as live government-portal integration.
+
+
+## Portal cleanup validation — 2026-10-30
+
+- Branch commit: `63cea4cae46b82606315bc2197bd44559c6f06e5` on `feat/internal-access-student-records`; PR #5 remains draft.
+- Changed files: `core/modules.ts`, `core/route-registry.ts`, `components/shell.tsx`, `src/App.tsx`, `features/overview.tsx`, `tests/module-registry.test.ts`, and this tracker/README.
+- GitHub Actions run #163 (`41098555719`): **success**. `npm ci` passed; contract suite **19 passed, 0 failed**; TypeScript check and Vite production build passed.
+- Vercel preview deployment `dpl_2XaerFDTnRp3MwecJP3Q5eVu8ZAi` reached **READY** for the same commit. Protected branch alias: https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app.
+- No visual/browser acceptance was performed in this session. No production deployment, provider calls or real-record operations occurred.
