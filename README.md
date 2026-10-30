@@ -12,8 +12,8 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 
 - The default school context is a single fixed UMV Tethali identity.
 - The workspace starts empty. No sample students, staff, classes, attendance, fees, notices, marks or timetable entries are generated.
-- The project overview lists only six existing repositories verified in the owner's GitHub account: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and n8n Operations.
-- Four documented application entry points are provided for Report Central, Digital Letter Registry, UDISE+ Automation and eShikshaKosh Automation. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
+- The project overview lists seven existing repositories verified in the owner's GitHub account: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation, Vetan-Vipatra and n8n Operations.
+- Five documented application entry points are provided for Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and the existing Vetan-Vipatra salary/absence statement app. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
 - Operational school CRUD routes remain hidden until their source-backed data contract, authentication, school scope, tests and audit requirements are accepted.
 - No login is enabled yet, per the current development decision. This does not authorize private student/staff data exposure; the portal remains a project hub until the security phase is complete.
 
@@ -26,9 +26,9 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 | Digital Letter Registry | Official letters, archive and delivery workflow | Not connected |
 | UDISE+ Automation | UDISE+ automation and portal workflow | Not connected |
 | eShikshaKosh Automation | eShikshaKosh student/teacher automation and reports | Not connected |
-| n8n Operations | Automation workflows, monitoring and delivery events | Not connected |
+| Vetan-Vipatra | Teacher absence statement, salary calculations, fitment preview and print/PDF output | Existing standalone application; VidyaDesk launcher only |\n| n8n Operations | Automation workflows, monitoring and delivery events | Not connected |
 
-UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admissions data/evidence source, not as a separate application. Oracle VPS and PostgreSQL Services are infrastructure dependencies, not school modules. They are listed separately in the project hub.
+UDISE+ and eShikshaKosh remain separate systems. Vetan-Vipatra remains a separate payroll application; VidyaDesk does not copy its teacher roster or payroll data. OFSS is treated as an admissions data/evidence source, not as a separate application. Oracle VPS and PostgreSQL Services are infrastructure dependencies, not school modules. They are listed separately in the project hub.
 
 ## Infrastructure dependencies
 
