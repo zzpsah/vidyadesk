@@ -7,7 +7,7 @@ VidyaDesk is customized as the primary UMV Tetahali school-management workspace.
 It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
 
 ```
-16 of 24 modules work against real (local) data · 8 publish a build blueprint
+17 of 25 modules have an implemented workspace view · 8 publish a build blueprint
 ```
 
 ## What it does today
@@ -25,7 +25,7 @@ It is a front end built to be extended, not a finished product. There is no logi
 
 ### Integration registry
 
-The **Operations → Integrations** page is the first consolidation seam. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
+The **Operations → Integrations** page is the integration registry; **Operations → Report Central** is the first aggregate dashboard seam. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
 
 - `report-central` — planned read-only summaries and reconciliation views.
 - `digital-letter-registry` — planned read-only letter references and workflow history.
@@ -33,7 +33,7 @@ The **Operations → Integrations** page is the first consolidation seam. It rec
 - `udise-automation-suite` and `eshikshakosh-automation` — separate government-portal workflows; credentials, CAPTCHA, OTP and writes remain outside VidyaDesk.
 - `n8n-operations` — planned authenticated automation boundary; no webhook trigger is enabled yet.
 
-This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
+This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. The Report Central dashboard is now implemented as a presentation shell with explicit unavailable states; it sends no requests and shows no invented figures. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
 
 
 ### Report Central read-only contract
@@ -45,7 +45,7 @@ VidyaDesk now defines a versioned, aggregate-only contract for a future Report C
 - Every future response must carry source identity, school/session scope, retrieval timestamp and snapshot id/version.
 - Envelope and payload validators reject wrong-school/session data, unknown fields, invalid counts and inconsistent source/conflict/audit totals.
 - The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
-- The Integrations screen reports this contract as **unconfigured**. This is not a live connection, API health check or verification of current Report Central data.
+- The Integrations screen and Report Central dashboard report this contract as **unconfigured**; the dashboard presents the four aggregate areas without fabricated values. This is not a live connection, API health check or verification of current Report Central data.
 - A future implementation needs an approved authenticated server-side proxy, role/scope enforcement, CORS-independent server communication, and provider-side verification. GitHub Pages remains a public static frontend and must never contain provider secrets.
 
 See [the integration contract notes](docs/integrations/report-central-readonly-contract.md) for the field-level boundary and rollout gates.
