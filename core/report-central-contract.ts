@@ -33,6 +33,7 @@ export type ReportCentralConflictSummary = {
 export type ReportCentralImportAudit = {
   attempts: number; succeeded: number; failed: number;
   ignoredDuplicates: number; latestAttemptAt: string | null;
+  historyCoverage: 'school_scoped_records_only';
 };
 export type ReportCentralConnectionState =
   | { status: 'unconfigured'; reason: string }
@@ -114,9 +115,10 @@ export function isReportCentralConflictSummary(value: unknown): value is ReportC
 }
 export function isReportCentralImportAudit(value: unknown): value is ReportCentralImportAudit {
   if (!isRecord(value) || !hasOnlyKeys(value, [
-    'attempts', 'succeeded', 'failed', 'ignoredDuplicates', 'latestAttemptAt',
+    'attempts', 'succeeded', 'failed', 'ignoredDuplicates', 'latestAttemptAt', 'historyCoverage',
   ])) return false;
   return isCount(value.attempts) && isCount(value.succeeded) && isCount(value.failed)
     && isCount(value.ignoredDuplicates) && value.succeeded + value.failed <= value.attempts
-    && isNullableTimestamp(value.latestAttemptAt);
+    && isNullableTimestamp(value.latestAttemptAt)
+    && value.historyCoverage === 'school_scoped_records_only';
 }
