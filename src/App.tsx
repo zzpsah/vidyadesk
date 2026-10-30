@@ -12,7 +12,6 @@ import { IntegrationsView } from '@/features/integrations';
 import { ReportCentralView } from '@/features/report-central';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
-import { SCHOOL_PROFILE } from '@/core/school-profile';
 import { resolveWorkspaceRoute } from '@/core/route-registry';
 import { ModuleErrorBoundary } from '@/components/module-error-boundary';
 
@@ -20,7 +19,7 @@ const ACADEMIC = ['students', 'attendance', 'classes', 'timetable', 'exams', 'fe
 const TRANSFER = ['transfer-special', 'transfer-district', 'transfer-teacher', 'transfer-mutual'];
 
 function renderView(route: string, nav: Nav) {
-  if (route === 'overview') return <OverviewView nav={nav} />;
+  if (route === 'overview') return <OverviewView />;
   if (ACADEMIC.includes(route)) {
     if (route === 'students') return <StudentsView nav={nav} />;
     if (route === 'attendance') return <AttendanceView nav={nav} />;
@@ -63,7 +62,7 @@ function Workspace() {
 
     <div className="main-col">
       <Topbar route={route} nav={nav} onOpenMenu={() => setMenuOpen(true)} />
-      <p className="data-note">{SCHOOL_PROFILE.shortName} · {SCHOOL_PROFILE.location} · {SCHOOL_PROFILE.session} · fictional records saved only in this browser. Nothing here logs in, syncs or files anything with a department.</p>
+      <p className="data-note">{SCHOOL_PROFILE.shortName} · {SCHOOL_PROFILE.location} · {SCHOOL_PROFILE.session} · Project links are registered; source-data integrations are not yet connected.</p>
       <main id="main" className="workspace" key={`${route}-${school.id}`}>
         <ModuleErrorBoundary key={`${route}-${school.id}`} moduleName={route === 'overview' ? 'Overview' : route}>
           {renderView(resolveWorkspaceRoute(route), nav)}
