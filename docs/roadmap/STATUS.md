@@ -9,14 +9,14 @@
 
 ## Current lifecycle position
 
-**Phase 0 — Baseline audit in progress**
+**Phase 0 — Baseline audit in progress; Phase 1 foundation work started**
 
-**Overall:** 0 of 12 phases accepted. Phase 0 audit is partially evidenced; implementation work has not yet passed a phase gate.
+**Overall:** 0 of 12 phases accepted; Phase 1 implementation is underway. Phase 0 audit is partially evidenced; implementation work has not yet passed a phase gate.
 
 | Phase | Status | Evidence / exit condition |
 |---|---|---|
 | 0. Baseline audit | In progress | App and package inspected. Current app is a Vite/React SPA; it identifies records as fictional and browser-local. GitHub Pages is static. Provider currently has an aggregate-only VidyaDesk contract. Complete inventory and baseline CI evidence still required. |
-| 1. Platform foundation | Not started | Shared module and route contracts; build/test gate |
+| 1. Platform foundation | In progress | Shared route registry, module metadata validation, safe route fallback and module error isolation implemented; CI gate pending |
 | 2. Internal access and security | Not started | Server-side session, PIN exchange, rate limiting, authorization and security tests |
 | 3. Data gateway and school scope | Not started | Verified provider contract and canonical school mapping |
 | 4. Student information system | Not started | Source-backed student list and complete available profiles |
@@ -77,6 +77,14 @@ Every implementation update must add:
 - Follow-up self-contained validation fix in 43e8798 exposed and fixed a TypeScript call-site mismatch in 678e658. CI and Vercel build then passed.
 - Latest branch commit 9fb0da6 reached Vercel READY at deployment dpl_2eCKWUk94GXSX9PFYWUxDZtnawJQ; the protected branch alias is active.
 
+
+## Phase 1 — Platform foundation activity
+
+- Added a route catalogue derived from the central module registry; navigation and route validity now share one source of truth.
+- Added fail-closed route resolution: unknown route ids return to Overview rather than rendering an arbitrary blueprint page.
+- Added module registry validation for duplicate ids, missing display metadata, unknown groups and incomplete blueprint specifications.
+- Added a module-level React error boundary so one module rendering failure does not take down the entire workspace. Error details are not logged or shown because they may contain school data.
+- Added contract tests for route coverage, invalid-route fallback, module group membership and blueprint completeness.
 
 ## Verified provider integration findings
 
