@@ -73,3 +73,7 @@ export const moduleById = new Map(modules.map(m => [m.id, m]));
 export const liveModules = modules.filter(m => m.status === 'live');
 export const blueprintModules = modules.filter(m => m.status === 'blueprint');
 export const integrationModules = modules.filter(m => m.status === 'integration');
+
+/** Modules shown in the school-facing portal. Planned and disconnected entries stay in the internal registry only. */
+export const portalModules = modules.filter(module => module.status === 'live');
+export const portalModuleGroups = moduleGroups.filter(group => portalModules.some(module => module.group === group));
