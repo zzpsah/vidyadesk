@@ -24,6 +24,7 @@ export function metric(school: School, moduleId: string): string {
     case 'notices': return `${school.notices.length} posted`;
     case 'tickets': return `${school.tickets.filter(t => t.status !== 'Resolved').length} open`;
     case 'reports': return count(school.assessments.length, 'assessment');
+    case 'report-central': return 'Not connected';
     default: return 'Spec ready';
   }
 }

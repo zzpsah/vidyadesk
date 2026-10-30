@@ -1,11 +1,13 @@
 import { ExternalLink, LockKeyhole } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PageHead, Panel, Pill } from '@/components/common';
 import { dataSources, integrations } from '@/core/integrations';
+import { REPORT_CENTRAL_CONTRACT_VERSION, REPORT_CENTRAL_SCOPE } from '@/core/report-central-contract';
 import type { Nav } from '@/core/nav';
 
-export function IntegrationsView(_props: { nav: Nav }) {
+export function IntegrationsView({ nav }: { nav: Nav }) {
   return <>
-    <PageHead module={{ id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: '', group: 'Operations', status: 'live', icon: ExternalLink }} crumb="Operations · read-only registry">
+    <PageHead module={{ id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: '', group: 'Operations', status: 'integration', icon: ExternalLink }} crumb="Operations · read-only registry">
       <Pill tone="mute">No live connections</Pill>
     </PageHead>
 
@@ -25,6 +27,18 @@ export function IntegrationsView(_props: { nav: Nav }) {
         <p className="scope-note">{integration.boundary}</p>
       </Panel>)}
     </div>
+
+    <Panel title="Report Central · integration contract" meta={`Contract v${REPORT_CENTRAL_CONTRACT_VERSION}`}>
+      <div className="flex flex-wrap items-center gap-2">
+        <Pill tone="warn">Unconfigured · no requests sent</Pill>
+        <Pill tone="mute">Aggregate read models only</Pill>
+      </div>
+      <p className="foot-line">School scope: <strong>{REPORT_CENTRAL_SCOPE.schoolName}</strong></p>
+      <p className="foot-line">Academic session: <strong>2026–27</strong></p>
+      <p className="foot-line">Planned views: overview counts, UDISE/e-ShikshaKosh source comparison, conflict totals and import-audit totals.</p>
+      <p className="scope-note">The contract is defined in code, but no adapter or authenticated server proxy is configured. No student-level rows, names, PENs, Aadhaar values, source values or credentials are accepted by this UI contract.</p>
+      <Button variant="outline" onClick={() => nav.go('report-central')}>Open Report Central dashboard <ExternalLink size={14} /></Button>
+    </Panel>
 
     <Panel title="UMV data source map" meta="Checkpoint-aware">
       <div className="table-scroll"><table className="data-table"><thead><tr><th>Source</th><th>Role</th><th>Domains</th><th>Freshness</th><th>Handling</th></tr></thead><tbody>

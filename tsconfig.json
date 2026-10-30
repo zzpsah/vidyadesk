@@ -23,7 +23,8 @@
     "types": [
       "node",
       "vite/client"
-    ]
+    ],
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src",
@@ -32,7 +33,9 @@
     "features",
     "hooks",
     "lib",
-    "vite.config.ts"
+    "vite.config.ts",
+    "tests",
+    "api"
   ],
   "exclude": [
     "node_modules",

@@ -1,125 +1,83 @@
 # VidyaDesk
 
-**Live demo:** <https://zzpsah.github.io/vidyadesk/> — the current `main` branch, built and served by GitHub Pages. Fictional data, no account, nothing you enter leaves the browser.
+**Monitoring address:** <https://shikshakosh.vercel.app> (attached and Vercel-verified; production deployment pending)  
+**Development preview:** <https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app> (Vercel team SSO protected)  
+**Public static site:** <https://zzpsah.github.io/vidyadesk/> (GitHub Pages; not suitable for private school data)  
+**Repository:** <https://github.com/zzpsah/vidyadesk>
 
-A school-agnostic workspace for running a school's day-to-day records. Nothing in the interface, the data model or the module registry names a particular school: you add a school, and every registered module becomes available to it with its own isolated records.
+VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**. It brings the school's existing software projects into one consistent workspace without copying their data ownership or pretending that an unconnected screen is operational.
 
-It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
+## Current product behavior
 
-```
-16 of 24 modules work against real (local) data · 8 publish a build blueprint
-```
+- The default school context is a single fixed UMV Tethali identity.
+- The workspace starts empty. No sample students, staff, classes, attendance, fees, notices, marks or timetable entries are generated.
+- The project overview lists only six existing repositories verified in the owner's GitHub account: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and n8n Operations.
+- Four documented application entry points are provided for Report Central, Digital Letter Registry, UDISE+ Automation and eShikshaKosh Automation. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
+- Operational school CRUD routes remain hidden until their source-backed data contract, authentication, school scope, tests and audit requirements are accepted.
+- No login is enabled yet, per the current development decision. This does not authorize private student/staff data exposure; the portal remains a project hub until the security phase is complete.
 
-## What it does today
+## Project ownership map
 
-| Area | Modules | Status |
+| Project | Owns | VidyaDesk integration |
 |---|---|---|
-| Students | Enrollment, Attendance, Exams & results, Fees & payments | IMPLEMENTED · OFFLINE_TESTED |
-| People & transfers | Teachers & staff, Staff leave, and four transfer workflows | IMPLEMENTED · OFFLINE_TESTED |
-| Academics | Classes & sections, Timetable, Reports | IMPLEMENTED · OFFLINE_TESTED |
-| Communication | Notification board, Support tickets | IMPLEMENTED · OFFLINE_TESTED |
-| Operations | PM Poshan mid-day meal register | IMPLEMENTED · OFFLINE_TESTED |
-| Registered, not built | Sports assessment, Model school, Safe Saturday, Committee (MoM), Library, Transport, Inventory, Parent portal | SPEC PUBLISHED (blueprint page) |
+| School Data Records | Canonical school/source records | Not connected |
+| Report Central | Snapshots, reconciliation, conflicts and import audit | Not connected; existing aggregate token remains restricted |
+| Digital Letter Registry | Official letters, archive and delivery workflow | Not connected |
+| UDISE+ Automation | UDISE+ automation and portal workflow | Not connected |
+| eShikshaKosh Automation | eShikshaKosh student/teacher automation and reports | Not connected |
+| n8n Operations | Automation workflows, monitoring and delivery events | Not connected |
 
-`OFFLINE_TESTED` here means: exercised end to end in an isolated Chromium session against the local build — forms, validation, per-school isolation, reload persistence, CSV export, and 320/390/768/1280 px layouts, with zero page errors. Nothing reads from or writes to a live portal, so `LIVE_READ` and `LIVE_SAVE` deliberately do not apply yet.
+UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admissions data/evidence source, not as a separate application. Oracle VPS and PostgreSQL Services are infrastructure dependencies, not school modules. They are listed separately in the project hub.
 
-### Integration registry
+## Infrastructure dependencies
 
-The **Operations → Integrations** page is the first consolidation seam. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
+- [Oracle Server](https://github.com/zzpsah/oracle-server) owns VPS host operations, private networking and runtime services.
+- [PostgreSQL Services](https://github.com/zzpsah/postgresql-services) owns database operations, security and backup/restore standards. Its documented registry currently covers the DLR database; a School Data Records database has not been onboarded there.
+- The connected Supabase account currently reports both `umv-db` and `official-letter-intelligence-archive` as **INACTIVE**. Do not treat their historical schemas/counts as a reachable live source.
+- The registered Oracle VPS Desktop Commander device is **OFFLINE** (last seen 410 hours before this audit). Service health and live PostgreSQL state therefore remain unverified from this development session.
 
-- `report-central` — planned read-only summaries and reconciliation views.
-- `digital-letter-registry` — planned read-only letter references and workflow history.
-- `school-data-records` — restricted source-of-truth data; student-level records are not copied into the browser workspace.
-- `udise-automation-suite` and `eshikshakosh-automation` — separate government-portal workflows; credentials, CAPTCHA, OTP and writes remain outside VidyaDesk.
-- `n8n-operations` — planned authenticated automation boundary; no webhook trigger is enabled yet.
+## Data and security rules
 
-This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
+1. Source systems remain authoritative. VidyaDesk does not manufacture fallback records.
+2. No browser-side credentials, portal cookies, OTP/CAPTCHA handling or direct government-portal writes.
+3. Private student/staff records require authenticated, fixed-school, server-side read access and an audit trail before any UI is enabled.
+4. The existing Report Central machine token is aggregate-only and must not be widened to protected record routes.
+5. The canonical numeric provider school ID must be verified from the live source; it is never guessed.
+6. Connection badges change only after a real health check and a validated source-backed read succeed.
+7. Legacy demo storage is not loaded. The new workspace uses `vidyadesk.workspace.v2`; the old v1 browser key is left untouched and is not migrated into the school workspace.
 
 ## Architecture
 
-```
-core/          domain + state, no JSX except workspace.tsx
-  types.ts       School = SchoolMeta & SchoolData; every record type lives here
-  modules.ts     the registry: id, name, group, status, icon, blueprint spec
-  seed.ts        deterministic fictional fixtures for a new school
-  graph.ts       cross-module derivation — the only place two modules are combined
-  workspace.tsx  reducer + Context + localStorage persistence
-  metrics.ts     one-line live context per module (sidebar + tiles)
-  format.ts      currency, dates, CSV cell escaping and download
-  nav.ts         the { go, open } contract passed to every view
-components/
-  shell.tsx      sidebar (school picker, grouped nav) + topbar (crumbs)
-  common.tsx     Panel, DataTable, Kpi, Pill, PageHead, filters, empty states
-  dialogs.tsx    one DialogHost driven by a DialogState union
-  ui/            bundled Shadcn catalog (the app uses a subset)
-features/        one file per module group; views are pure consumers of the store
-src/             App.tsx (route switch), main.tsx, globals.css (design tokens)
-```
+- `core/projects.ts` — verified project inventory and ownership boundaries.
+- `core/seed.ts` / `core/workspace.tsx` — legacy state-model code retained for review; neither is imported by the active project-hub app.
+- `core/modules.ts` / `core/route-registry.ts` — legacy module metadata retained internally; the active app exposes no school CRUD routes.
+- `features/overview.tsx` — unified project hub.
+- `api/` — server-side integration endpoints; disabled until their source, scope and security gates are met.
+- `docs/roadmap/` — phase gates and verified delivery status.
+- `docs/security/` — session, access and data-boundary decisions.
+- `docs/DEVOPS.md` and `AGENTS.md` — engineering and release rules.
 
-Four rules keep it coherent:
-
-1. **A school owns its records.** `School` holds `students`, `staff`, `classes`, `notices`, `fees`, `attendance`, `leaveRequests`, `transferApplications`, `tickets`, `mdmEntries`, `assessments`, `marks` and `timetable`. The reducer's `onSchool()` helper only ever touches `state.activeSchoolId`, so no action can write into another school's data.
-2. **Relationships are stored, not inferred from names.** A mark points at an `assessmentId` + `studentId`, a period at a `classId` + `staffId`, a ticket or notice at a `classId`, a transfer at a `staffId`. Renaming a teacher never silently re-parents their records.
-3. **Derived numbers live in one file.** `core/graph.ts` is the only place two collections are combined — attendance percentages, per-student progress, staff workload, the meal-vs-register reconciliation. The module screens and the Reports screens call the same functions, so they cannot disagree.
-4. **The registry drives the chrome, and views hold no copies.** Navigation, the overview board and the blueprint pages are generated from `modules.ts`; switching schools re-renders the whole workspace consistently (`<main>` is keyed on `route + school.id`).
-
-State persists under `vidyadesk.workspace.v1`. Removing that key, or *Settings → Reset workspace*, restores the three demo schools. Workspaces saved before assessments and timetable periods became stored records are upgraded on load — the migration derives the same figures the old generated screens showed.
-
-### Reports
-
-`features/reports.tsx` holds eight report definitions, each declaring the module ids it joins and a `build(school, schools)` that returns headings, rows and a one-line note:
-
-`Attendance by class` · `Fee dues` · `Student progress cards` · `Staff workload` · `Meal register vs attendance` · `Transfer pipeline` · `Facility backlog` · `All schools compared`
-
-Nothing is stored twice — a report is recomputed from the registers each time it renders, and *Export CSV* writes exactly the rows on screen. The last one only exists because the workspace holds several schools.
-
-### Adding a module
-
-1. Add an entry to `core/modules.ts` (`id`, `name`, `nav`, `blurb`, `group`, `status`, `icon`). A `blueprint` entry needs `entities`, `workflow` and `checks` and renders automatically.
-2. Add the entity type to `core/types.ts` and to `emptyData()` in `core/seed.ts` so a new school starts with an empty collection.
-3. Add an action to the reducer in `core/workspace.tsx` and route it through `onSchool`. If older saved workspaces lack the collection, upgrade them in `upgrade()` there rather than in a view.
-4. If the module's numbers combine two collections, add the derivation to `core/graph.ts` and read it from both the screen and the report.
-5. Write the view in `features/`, register it in `renderView()` in `src/App.tsx`, and give it a line in `core/metrics.ts`.
-
-The four transfer workflows are the reference example: one `TransfersView` component serves all four module ids, and each school keeps its own drafts.
-
-## Data, privacy and honesty
-
-* Student, teacher and register fixtures are fictional and generated from generic name pools. The default workspace is labelled for UMV Tetahali using public school context only; no real student, teacher or source record appears in this repository.
-* Records never leave the browser. There is no backend, no analytics and no request to any third party.
-* CSV export escapes cells that begin with `=`, `+`, `-` or `@` so a spreadsheet cannot execute them.
-* The `functions/` and `dev/` folders come from the Qoder Sites starter and are unused by this app; they are kept so the project can be published there without rework.
-
-## Develop
+## Development
 
 Node `^22.13.0 || >=24.0.0`.
 
 ```sh
-npm install
-npm run dev        # Vite on the printed loopback URL
-npm run build      # tsc --noEmit, then a static bundle in dist/
-npm run preview    # serve dist/
+npm ci
+npm run test:contract
+npm run build
+npm run dev
 ```
 
-The `@/*` path alias resolves to the **project root**, so imports read `@/core/types`, `@/components/ui/button` and `@/features/academics`. Root directories covered by TypeScript are listed in `tsconfig.json`.
+A branch push triggers GitHub Actions and a protected Vercel preview. Only the approved production branch/deployment workflow may change the public site. Do not merge or promote a preview until the phase gates and release checklist pass.
 
-### Publishing
+## Delivery roadmap
 
-A push to `main` runs `.github/workflows/deploy.yml`: it installs on Node 24, builds with `PAGES_BASE=/vidyadesk/` so the bundle's asset URLs carry the Pages project subpath, and publishes `dist/` through `actions/deploy-pages`. `base` defaults to `/` locally, so `npm run dev` and `npm run preview` are unaffected — pass `PAGES_BASE` to preview the exact artifact Pages serves.
+1. Complete baseline audit and remove misleading demo functionality.
+2. Finish shared platform foundation and project hub acceptance.
+3. Implement internal access, PIN exchange and durable server-side sessions.
+4. Verify the UMV Tethali source mapping and implement the fixed-school read-only gateway.
+5. Add real student/staff read models from approved sources.
+6. Add further project-backed modules one by one, preserving source ownership.
+7. Complete end-to-end security, operational recovery, UAT and production handover.
 
-The site is a static bundle: Pages serves it, and no server-side code runs. Records live in the visitor's own `localStorage`, keyed to the origin, so the demo and a local checkout never share data.
-
-## Roadmap
-
-The next build is pinned from any blueprint page (*Pin as next build*) and appears on the overview. In order of dependency:
-
-1. **Persistence that is not a browser** — a Postgres schema keyed by `school_id`, mirroring `core/types.ts`, and a token-scoped API behind the same reducer actions.
-2. **Accounts and roles** — head teacher, clerk, district viewer; the school picker becomes a list of schools a user may see.
-3. **The remaining eight modules**, each already specified: entities, order of work and the checks that must pass before it can be called live.
-4. **Import and export** — bulk student import, and report output that matches the formats the state portals expect.
-
-Connecting any of this to a real portal is a separate, explicit decision: it needs authenticated APIs, and an HTTP 200 is not proof that a record was saved.
-
-## License
-
-MIT — see [LICENSE](LICENSE). Template and vendored-CSS attribution: [PROVENANCE.md](PROVENANCE.md).
+A phase is complete only with implementation, tests, deployment evidence and documentation. See [the implementation plan](docs/roadmap/IMPLEMENTATION-PLAN.md) and [the live status tracker](docs/roadmap/STATUS.md).

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Inbox, Search, X } from 'lucide-react';
+import { AlertCircle, Inbox, LoaderCircle, Search, X } from 'lucide-react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import type { ModuleDef } from '@/core/types';
@@ -23,6 +23,23 @@ export function DataTable({ headings, rows, empty }: { headings: string[]; rows:
 
 export function EmptyState({ title, text, action }: { title: string; text: string; action?: ReactNode }) {
   return <div className="empty-state"><Inbox aria-hidden="true" /><h3>{title}</h3><p>{text}</p>{action}</div>;
+}
+
+
+export function LoadingState({ text = 'Loading data…' }: { text?: string }) {
+  return <div className="empty-state" role="status" aria-live="polite">
+    <LoaderCircle className="animate-spin" aria-hidden="true" />
+    <p>{text}</p>
+  </div>;
+}
+
+export function UnavailableState({ title = 'Data unavailable', text, onRetry }: { title?: string; text: string; onRetry?: () => void }) {
+  return <div className="empty-state" role="alert" aria-live="assertive">
+    <AlertCircle aria-hidden="true" />
+    <h3>{title}</h3>
+    <p>{text}</p>
+    {onRetry && <Button variant="outline" size="sm" onClick={onRetry}>Try again</Button>}
+  </div>;
 }
 
 export function NoResults({ text }: { text: string }) {
