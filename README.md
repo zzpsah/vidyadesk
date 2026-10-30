@@ -33,7 +33,7 @@ The **Operations → Integrations** page is the integration registry; **Operatio
 - `udise-automation-suite` and `eshikshakosh-automation` — separate government-portal workflows; credentials, CAPTCHA, OTP and writes remain outside VidyaDesk.
 - `n8n-operations` — planned authenticated automation boundary; no webhook trigger is enabled yet.
 
-This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. The Report Central dashboard is now implemented as a presentation shell with explicit unavailable states; it sends no requests and shows no invented figures. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
+This registry remains descriptive. The Report Central dashboard now checks the same-origin `/api/report-central` proxy only when hosted on a server-capable deployment. GitHub Pages skips the request because it is static; the Vercel proxy returns a disabled state without contacting the provider until its server-side feature flag is explicitly enabled. The dashboard never substitutes invented figures.
 
 
 ### Report Central read-only contract
@@ -45,7 +45,7 @@ VidyaDesk now defines a versioned, aggregate-only contract for a future Report C
 - Every future response must carry source identity, school/session scope, retrieval timestamp and snapshot id/version.
 - Envelope and payload validators reject wrong-school/session data, unknown fields, invalid counts and inconsistent source/conflict/audit totals.
 - The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
-- The Integrations screen and Report Central dashboard report this contract as **unconfigured**; the dashboard presents the four aggregate areas without fabricated values. This is not a live connection, API health check or verification of current Report Central data.
+- The dashboard displays a clear unavailable/disabled state until a complete provider envelope passes validation. A verified response can populate the four aggregate panels; an HTTP 200 alone is not sufficient.
 - A no-login Vercel Edge proxy now exists in `api/report-central.ts`; it holds the provider token server-side, validates the exact envelope, and is disabled unless `VIDYADESK_REPORT_CENTRAL_ENABLED=true`. It never accepts caller-selected school/session filters.
 - GitHub Pages remains a public static frontend and cannot execute this API function. A separate Vercel project is required; it has not yet been created or deployed. See [the public proxy runbook](docs/integrations/public-report-central-proxy.md).
 - Once enabled, the four aggregate sections are public. Do not enable them until the live school mapping is verified and the school approves publication.
