@@ -16,14 +16,14 @@
 
 VidyaDesk is the unified project hub for UMV Tethali. It connects the school's existing systems through a single user-facing workspace without replacing source ownership or creating an unverified copy of school data.
 
-The six school projects registered are:
+The seven school projects registered are:
 
 1. School Data Records
 2. Report Central
 3. Digital Letter Registry / eLetters
 4. UDISE+ Automation
 5. eShikshaKosh Automation
-6. n8n Operations
+6. Vetan-Vipatra (teacher absence and monthly salary statement)\n7. n8n Operations
 
 Oracle Server and PostgreSQL Services are infrastructure dependencies, not school modules. UDISE+ and eShikshaKosh remain separate. OFSS is an admissions/stream evidence source, not a standalone application.
 
@@ -52,7 +52,7 @@ Oracle Server and PostgreSQL Services are infrastructure dependencies, not schoo
 
 - Replaced the generic offline school dashboard with a project hub for six real, repository-backed school projects.
 - Added documented application shortcuts for Report Central, eLetters, UDISE Automation and eShikshaKosh workbench.
-- Added separate infrastructure links for Oracle Server and PostgreSQL Services.
+- Added separate infrastructure links for Oracle Server and PostgreSQL Services.\n- Registered the existing Vetan-Vipatra application (`https://vetan-vipatra.vercel.app`, private repository `zzpsah/Vetan-Vipatra`) as a separate payroll project with a launch link; no duplicate payroll module or teacher-data copy was created.
 - Removed default sample records and fixture generators; the active app does not load fictional student, staff, attendance, fee, class, mark or timetable data.
 - Removed old CRUD navigation and retired the unsupported module catalogue from the school-facing app.
 - Removed the unbacked offline workforce/HR prototype. Teacher report ownership remains with eShikshaKosh Automation.
