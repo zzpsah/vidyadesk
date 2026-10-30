@@ -18,6 +18,14 @@ This document defines what belongs in VidyaDesk and what must remain in the exis
 | eShikshaKosh Automation | [eshikshakosh-automation](https://github.com/zzpsah/eshikshakosh-automation) | [eShikshaKosh workbench](https://eshikshakosh-coral.vercel.app) | Student OTR and teacher reports, protected runners, job status and private workbook delivery | Separate live application and Oracle gateway/job service; no VidyaDesk job/status adapter |
 | n8n Operations | [n8n-operations](https://github.com/zzpsah/n8n-operations) | Private Oracle-hosted n8n; no public editor link | Workflow definitions, execution, event dispatch, health monitoring and notification delivery | Private infrastructure; no VidyaDesk read-only operations adapter |
 
+## Infrastructure dependencies and current blockers
+
+- [Oracle Server](https://github.com/zzpsah/oracle-server) owns VPS host operations and private runtime access; it is not a school module.
+- [PostgreSQL Services](https://github.com/zzpsah/postgresql-services) owns shared database operations. Its current documented database registry contains the DLR primary database; the README says future workloads such as School Data Records require separate onboarding and provisioning.
+- The connected Supabase account reports the historical projects `umv-db` and `official-letter-intelligence-archive` as **INACTIVE**. Historical README schemas and counts are not evidence of a currently reachable database.
+- The registered Oracle VPS Desktop Commander device is **OFFLINE**, last seen 410 hours before this audit. Live PostgreSQL, service health and API behavior could not be checked from this development session.
+- Consequently, a student-data source database and the Oracle-hosted APIs are not currently verified as reachable dependencies for VidyaDesk. No private-data adapter can be implemented safely until the runtime is reachable and the owner confirms the actual primary store.
+
 ## Important classification decisions
 
 - UDISE+ and eShikshaKosh are independent government systems and must never be merged into one source label.
