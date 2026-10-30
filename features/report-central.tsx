@@ -1,4 +1,4 @@
-import { ArrowRight, Clock3, Database, FileBarChart, FileCheck2, GitCompareArrows, ShieldAlert } from 'lucide-react';
+import { ArrowRight, Clock3, Database, ExternalLink, FileBarChart, FileCheck2, GitCompareArrows, ShieldAlert } from 'lucide-react';
 import { PageHead, Panel, Pill } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { REPORT_CENTRAL_CONTRACT_VERSION, REPORT_CENTRAL_SCOPE } from '@/core/report-central-contract';
@@ -24,6 +24,7 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
     <PageHead module={module} crumb="Operations · aggregate read-only workspace">
       <Pill tone="warn">Not connected</Pill>
       <Button variant="outline" onClick={() => nav.go('integrations')}>Connection details <ArrowRight size={14} /></Button>
+      <Button onClick={() => window.open('https://reportcentral.vercel.app', '_blank', 'noopener,noreferrer')}>Open secure portal <ExternalLink size={14} /></Button>
     </PageHead>
 
     <section className="blueprint-hero" aria-labelledby="rc-status-title">
