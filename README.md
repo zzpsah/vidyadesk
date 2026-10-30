@@ -4,7 +4,7 @@
 
 VidyaDesk is customized as the primary UMV Tetahali school-management workspace. The underlying offline workspace retains an isolated multi-school data model for its existing demo and future expansion; the deployed school identity and first integration scope remain UMV Tetahali. Every school’s local records stay isolated.
 
-It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
+It is a front end built to be extended, not a finished product. There is no user login or application database; local records live in `localStorage` in your own browser. The optional Report Central aggregate connection is server-side, read-only and disabled by default. It is not affiliated with, and is not an interface to, any government portal.
 
 ```
 16 of 25 modules work against local browser data · 8 publish build blueprints · 1 integration dashboard is unconnected
@@ -46,7 +46,9 @@ VidyaDesk now defines a versioned, aggregate-only contract for a future Report C
 - Envelope and payload validators reject wrong-school/session data, unknown fields, invalid counts and inconsistent source/conflict/audit totals.
 - The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
 - The Integrations screen and Report Central dashboard report this contract as **unconfigured**; the dashboard presents the four aggregate areas without fabricated values. This is not a live connection, API health check or verification of current Report Central data.
-- A future implementation needs an approved authenticated server-side proxy, role/scope enforcement, CORS-independent server communication, and provider-side verification. GitHub Pages remains a public static frontend and must never contain provider secrets.
+- A no-login Vercel Edge proxy now exists in `api/report-central.ts`; it holds the provider token server-side, validates the exact envelope, and is disabled unless `VIDYADESK_REPORT_CENTRAL_ENABLED=true`. It never accepts caller-selected school/session filters.
+- GitHub Pages remains a public static frontend and cannot execute this API function. A separate Vercel project is required; it has not yet been created or deployed. See [the public proxy runbook](docs/integrations/public-report-central-proxy.md).
+- Once enabled, the four aggregate sections are public. Do not enable them until the live school mapping is verified and the school approves publication.
 
 See [the integration contract notes](docs/integrations/report-central-readonly-contract.md) for the field-level boundary and rollout gates.
 
