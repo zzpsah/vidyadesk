@@ -8,14 +8,14 @@ import { metric } from '@/core/metrics';
 import type { Nav } from '@/core/nav';
 
 export function OverviewView({ nav }: { nav: Nav }) {
-  const { school, state, dispatch } = useWorkspace();
+  const { school } = useWorkspace();
   const today = todayISO();
   const book = school.attendance[today] ?? {};
   const present = Object.values(book).filter(s => s === 'Present').length;
   const outstanding = school.fees.filter(f => !f.paid).reduce((sum, f) => sum + f.amount, 0);
 
   return <>
-    <PageHead module={{ id: 'overview', name: `${school.name}`, nav: 'Overview', blurb: `${school.category} · ${school.block}, ${school.district} · ${school.medium} medium · session ${school.session}`, group: 'Students', status: 'live', icon: Building2 }} crumb={`School workspace · ${state.schools.length} schools`}>
+    <PageHead module={{ id: 'overview', name: `${school.name}`, nav: 'Overview', blurb: `${school.category} · ${school.block}, ${school.district} · ${school.medium} medium · session ${school.session}`, group: 'Students', status: 'live', icon: Building2 }} crumb="UMV Tethali · School workspace">
       <Button variant="outline" onClick={() => nav.open({ kind: 'settings' })}>School profile</Button>
     </PageHead>
 
@@ -59,10 +59,10 @@ export function OverviewView({ nav }: { nav: Nav }) {
           <ShieldCheck size={18} aria-hidden="true" />
           <h2>Built to be extended</h2>
           <p>Every record below is fictional and stays in this browser. The data layer is scoped by school id, so a real backend only has to add authentication, row-level permissions and an audit trail.</p>
-          <ul>{['One workspace, many schools', 'Module registry drives navigation', 'No school name in the source'].map(line => <li key={line}><Check size={13} aria-hidden="true" />{line}</li>)}</ul>
+          <ul>{['One school workspace', 'Shared records across active modules', 'No live portal sync is enabled'].map(line => <li key={line}><Check size={13} aria-hidden="true" />{line}</li>)}</ul>
         </div>
       </aside>
     </div>
-    {!school.students.length && !school.staff.length && <EmptyState title={`${school.name} is empty`} text="Add students and staff, or switch to a school that already has records. Every module adapts to the active school." action={<Button variant="outline" onClick={() => nav.open({ kind: 'student' })}>Enroll a student</Button>} />}
+    {!school.students.length && !school.staff.length && <EmptyState title={`${school.name} is empty`} text="Add students and staff to begin using the offline school registers." action={<Button variant="outline" onClick={() => nav.open({ kind: 'student' })}>Enroll a student</Button>} />}
   </>;
 }
