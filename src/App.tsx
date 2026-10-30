@@ -13,6 +13,8 @@ import { ReportCentralView } from '@/features/report-central';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
+import { resolveWorkspaceRoute } from '@/core/route-registry';
+import { ModuleErrorBoundary } from '@/components/module-error-boundary';
 
 const ACADEMIC = ['students', 'attendance', 'classes', 'timetable', 'exams', 'fees'];
 const TRANSFER = ['transfer-special', 'transfer-district', 'transfer-teacher', 'transfer-mutual'];
@@ -46,7 +48,7 @@ function Workspace() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const go = useCallback((moduleId: string) => {
-    setRoute(moduleId);
+    setRoute(resolveWorkspaceRoute(moduleId));
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
@@ -62,7 +64,11 @@ function Workspace() {
     <div className="main-col">
       <Topbar route={route} nav={nav} onOpenMenu={() => setMenuOpen(true)} />
       <p className="data-note">{SCHOOL_PROFILE.shortName} · {SCHOOL_PROFILE.location} · {SCHOOL_PROFILE.session} · fictional records saved only in this browser. Nothing here logs in, syncs or files anything with a department.</p>
-      <main id="main" className="workspace" key={`${route}-${school.id}`}>{renderView(route, nav)}</main>
+      <main id="main" className="workspace" key={`${route}-${school.id}`}>
+        <ModuleErrorBoundary key={`${route}-${school.id}`} moduleName={route === 'overview' ? 'Overview' : route}>
+          {renderView(resolveWorkspaceRoute(route), nav)}
+        </ModuleErrorBoundary>
+      </main>
       <footer className="app-foot">
         <span>VidyaDesk · {SCHOOL_PROFILE.fullName}</span>
         <span>Not affiliated with, or an interface to, any government portal.</span>
