@@ -5,7 +5,7 @@
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
 **Active branch:** feat/internal-access-student-records  
 **Vercel project:** vidyadesk (team SSO protection enabled)  
-**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest verified commit 7b951ce)
+**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest previously verified deployment commit 8b43f34)
 
 ## Current lifecycle position
 
@@ -145,3 +145,14 @@ Every implementation update must add:
 - Vercel deployment dpl_4VSbPTA2gD5akHqEUCabVAP5qTjq reached **READY** for commit 7b951ce.
 - Preview alias https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app now points to the latest successful branch deployment.
 - Phase 1 remains in progress pending visual/browser acceptance and dependency advisory triage. The current ChatGPT browser context is not available for an authenticated visual pass; the preview remains available to the user under Vercel team SSO.
+
+
+## 2026-10-30 — Phase 2 security preparation
+
+- Added docs/security/session-architecture.md defining the required PIN-exchange/session lifecycle, durable session and rate-limit persistence, cookie controls, CSRF/origin checks, server-side authorization, audit requirements and acceptance tests.
+- The design explicitly rejects browser storage, process-memory-only rate limits, stateless-only sessions, browser-supplied school ids and reuse/widening of the aggregate Report Central token.
+- Corrected the package-lock root project metadata from the old starter-template name to vidyadesk. Dependency versions were not changed; this is not a remediation of the previously reported 3 high-severity npm advisories.
+- Provider numeric school_id remains unverified. The Oracle Desktop Commander device is currently offline (last seen approximately 409 hours ago), so no authorized live read-only database check could be performed in this session.
+- No session endpoint was enabled, no private student/staff records were exposed, and no provider database was read or modified.
+- Phase 2 implementation remains blocked until durable database connectivity, the verified provider school mapping and the fixed-school read-only provider contract are available.
+- Next: restore the authorized Oracle connection, verify the school mapping with a read-only query, inspect the exact npm advisory paths and then implement the session persistence/API layer with automated security tests.
