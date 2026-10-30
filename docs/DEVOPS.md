@@ -39,7 +39,7 @@ Never promote state based on a URL, HTTP 200 alone, mock data, old logs or histo
 
 ## Security boundary
 - GitHub Pages is public. Never put provider credentials in frontend environment variables or bundles.
-- The public VidyaDesk Vercel proxy uses a dedicated server-side machine token, exact school/session scope, strict response validation, an 8-second timeout and short CDN caching. It is disabled by default; GitHub Pages cannot execute the function.
+- The public VidyaDesk Vercel proxy uses a dedicated server-side machine token, exact school/session scope, strict response validation, an 8-second timeout and short CDN caching. It is disabled by default; GitHub Pages cannot execute the function. Its default exact CORS origin is `https://shikshakosh.vercel.app`; production environments may override it with `VIDYADESK_ALLOWED_ORIGIN`.
 - The current preview is a project directory only and contains no school records. Phase 2 must implement the approved PIN-to-server-session exchange before any private records are exposed. When the separate aggregate proxy is enabled, its four approved aggregate sections are public; CORS is not authentication. Do not activate it until the live school mapping and public-data approval are recorded.
 - Vercel preview deployments are protected by team SSO. Keep previews synthetic-only until application authorization and school scope have both been verified.
 - The Vercel preview project is linked to the VidyaDesk repository. The protected branch preview is a development surface, not a production deployment. The current project hub links to the six existing owner repositories and their documented app entry points; none is represented as integrated until a verified adapter exists.
