@@ -17,7 +17,8 @@
 ## Security
 - Never commit credentials, tokens, cookies, OTPs, CAPTCHA values, student names, PENs, Aadhaar values, phone numbers, guardian data or private source records.
 - Never place provider secrets in Vite variables, browser bundles, localStorage, URLs, screenshots, logs or test fixtures.
-- GitHub Pages is public/static. Authenticated provider access requires an approved server-side proxy with least privilege, school/session enforcement, redaction and audit.
+- VidyaDesk remains public with no user login during this development phase. The optional Report Central proxy is server-side, fixed-scope and disabled by default.
+- If enabled later, only the four approved aggregate sections become public; never expose student-level rows, raw source values or credentials.
 - Default to aggregate read-only contracts. Reject unknown fields and wrong school/session scope.
 - No provider writes, database mutations, portal submissions, VPS changes or migrations without explicit approval.
 
