@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable, EmptyState, FilterField, Kpi, NoResults, PageHead, Panel, Pill, SearchField, Toolbar } from '@/components/common';
 import { moduleById, modules } from '@/core/modules';
-import { staffSummary } from '@/core/graph';
+import { staffWorkload, workforceSummary, filterStaff } from '@/core/workforce';
 import { dateLabel, downloadCsv, initialsOf, shortDate } from '@/core/format';
 import { useWorkspace } from '@/core/workspace';
 import type { LeaveRequest, TransferApplication } from '@/core/types';
@@ -15,42 +15,59 @@ const def = (id: string) => modules.find(m => m.id === id)!;
 export function StaffView({ nav }: { nav: Nav }) {
   const { school } = useWorkspace();
   const [query, setQuery] = useState('');
-  const rows = school.staff.filter(s => `${s.name} ${s.subject} ${s.assignedClass} ${s.role}`.toLowerCase().includes(query.toLowerCase()));
+  const [role, setRole] = useState('All roles');
+  const [subject, setSubject] = useState('All subjects');
+  const [timetable, setTimetable] = useState('all');
+  const summary = workforceSummary(school);
+  const rows = filterStaff(school, { query, role, subject, timetable: timetable as 'all' | 'assigned' | 'unassigned' });
+  const roles = ['All roles', ...new Set(school.staff.map(member => member.role).filter(Boolean).sort())];
+  const subjects = ['All subjects', ...new Set(school.staff.map(member => member.subject).filter(Boolean).sort())];
+
   return <>
     <PageHead module={def('staff')} crumb="People & transfers">
-      <Button variant="outline" disabled={!rows.length} onClick={() => downloadCsv(`${school.name.toLowerCase().replace(/\W+/g, '-')}-staff.csv`, [['Name', 'Subject', 'Role', 'Class teacher of', 'Periods per week', 'Sections taught', 'Hours', 'Leave balance'], ...rows.map(s => { const r = staffSummary(school, s.id); return [s.name, s.subject, s.role, r?.classTeacherOf.join(', ') || '—', r?.periodsPerWeek ?? 0, r?.taughtClasses.length ?? 0, s.schedule, s.leaveBalance]; })])}><Download size={15} /> Export</Button>
+      <Button variant="outline" disabled={!rows.length} onClick={() => downloadCsv(`${school.name.toLowerCase().replace(/\\W+/g, '-')}-staff.csv`, [
+        ['Name', 'Role', 'Subject', 'Assigned class', 'Class teacher of', 'Periods per week', 'Sections taught', 'Approved leave days', 'Leave balance'],
+        ...rows.map(member => {
+          const record = staffWorkload(school, member);
+          return [member.name, member.role, member.subject, member.assignedClass, record.classTeacherOf.join(', ') || '—', record.periodsPerWeek, record.taughtClasses.length, record.approvedLeaveDays, record.leaveBalance];
+        }),
+      ])}><Download size={15} /> Export filtered</Button>
       <Button onClick={() => nav.open({ kind: 'leave' })}><Plus size={15} /> Record leave</Button>
     </PageHead>
-    {!school.staff.length
-      ? <EmptyState title="No teaching staff yet" text={`${school.name} has no staff records. The payroll and HR module needs a staff master before leave or transfers can work.`} action={<Button variant="outline" onClick={() => nav.go('transfer-teacher')}>Open transfer drafts</Button>} />
-      : <>
-        <div className="kpi-row">
-          <Kpi label="On the rolls" value={String(school.staff.length)} note="Sample staff master" />
-          <Kpi label="Class teachers" value={String(school.staff.filter(s => s.role !== 'Head teacher').length)} note={`${school.classes.length} sections to cover`} />
-          <Kpi label="Leave pending" value={String(school.leaveRequests.filter(r => r.status === 'Pending review').length)} note="Awaiting a decision" tone="warn" />
-        </div>
-        <Toolbar>
-          <SearchField label="Search staff" value={query} onChange={setQuery} placeholder="Name, subject or section…" />
-          <span className="toolbar-count">{rows.length} of {school.staff.length}</span>
-        </Toolbar>
-        {!rows.length ? <NoResults text="Try another name, subject or section." /> : <div className="card-grid">
-          {rows.map(member => {
-            const record = staffSummary(school, member.id);
-            const transfers = record?.transfers.length ?? 0;
-            return <article className="panel compact-card" key={member.id}>
-              <header><span className="person"><span className="avatar">{initialsOf(member.name)}</span><div><strong>{member.name}</strong><span className="muted small">{member.subject}</span></div></span><Pill tone={member.leaveBalance > 10 ? 'ok' : 'warn'}>{member.leaveBalance} days left</Pill></header>
-              <div className="card-rows">
-                <div><span>Role</span><strong>{member.role}</strong></div>
-                <div><span>Class teacher of</span><strong>{record?.classTeacherOf.join(', ') || '—'}</strong></div>
-                <div><span>Periods this week</span><strong>{record?.periodsPerWeek ?? 0} across {record?.taughtClasses.length ?? 0} sections</strong></div>
-                <div><span>Students taught</span><strong>{school.students.filter(s => record?.taughtClasses.includes(s.className)).length}</strong></div>
-                {transfers > 0 && <div><span>Transfer drafts</span><strong>{transfers} open in {moduleById.get(school.transferApplications.find(a => a.staffId === member.id)?.kind ?? '')?.nav ?? 'transfers'}</strong></div>}
-              </div>
-              <div className="card-actions"><Button variant="outline" size="sm" onClick={() => nav.open({ kind: 'leave' })}>Record leave</Button><Button variant="outline" size="sm" onClick={() => nav.go('timetable')}>Timetable</Button>{member.assignedClass !== '—' && <Button variant="ghost" size="sm" onClick={() => nav.go('classes')}>View section</Button>}</div>
-            </article>;
-          })}
-        </div>}
-      </>}
+    <div className="kpi-row">
+      <Kpi label="Staff on register" value={String(summary.total)} note="Local staff directory" />
+      <Kpi label="Timetable assigned" value={String(summary.withTimetable)} note={`${summary.totalPeriods} periods across the week`} />
+      <Kpi label="No periods assigned" value={String(summary.withoutTimetable)} note="Review timetable allocation" tone={summary.withoutTimetable ? 'warn' : 'ok'} />
+      <Kpi label="Leave pending" value={String(summary.pendingLeave)} note="Awaiting a decision" tone={summary.pendingLeave ? 'warn' : 'ok'} />
+    </div>
+    {!school.staff.length ? <EmptyState title="No staff records" text={`${school.name} has no staff records in this browser. Add a verified staff master only after the authenticated school-data gateway is ready.`} /> : <>
+      <Toolbar>
+        <SearchField label="Search staff" value={query} onChange={setQuery} placeholder="Name, role, subject or section…" />
+        <FilterField label="Role" value={role} options={roles} onChange={setRole} />
+        <FilterField label="Subject" value={subject} options={subjects} onChange={setSubject} />
+        <FilterField label="Timetable" value={timetable} options={['all', 'assigned', 'unassigned']} onChange={setTimetable} />
+        <span className="toolbar-count">{rows.length} of {school.staff.length}</span>
+      </Toolbar>
+      {!rows.length ? <NoResults text="No staff match these filters. Clear the search or choose All roles, All subjects and all timetable states." /> : <div className="card-grid">
+        {rows.map(member => {
+          const record = staffWorkload(school, member);
+          const transfers = school.transferApplications.filter(application => application.staffId === member.id).length;
+          return <article className="panel compact-card" key={member.id}>
+            <header><span className="person"><span className="avatar">{initialsOf(member.name)}</span><div><strong>{member.name}</strong><span className="muted small">{member.subject}</span></div></span><Pill tone={record.leaveBalance > 10 ? 'ok' : 'warn'}>{record.leaveBalance} days left</Pill></header>
+            <div className="card-rows">
+              <div><span>Role</span><strong>{member.role}</strong></div>
+              <div><span>Assigned class</span><strong>{member.assignedClass || '—'}</strong></div>
+              <div><span>Class teacher of</span><strong>{record.classTeacherOf.join(', ') || '—'}</strong></div>
+              <div><span>Periods this week</span><strong>{record.periodsPerWeek} across {record.taughtClasses.length} sections</strong></div>
+              <div><span>Approved leave used</span><strong>{record.approvedLeaveDays} days</strong></div>
+              {record.pendingLeave > 0 && <div><span>Leave awaiting review</span><strong>{record.pendingLeave}</strong></div>}
+              {transfers > 0 && <div><span>Transfer records</span><strong>{transfers}</strong></div>}
+            </div>
+            <div className="card-actions"><Button variant="outline" size="sm" onClick={() => nav.open({ kind: 'leave' })}>Record leave</Button><Button variant="outline" size="sm" onClick={() => nav.go('timetable')}>Timetable</Button>{member.assignedClass !== '—' && <Button variant="ghost" size="sm" onClick={() => nav.go('classes')}>View section</Button>}</div>
+          </article>;
+        })}
+      </div>}
+    </>}
   </>;
 }
 
