@@ -85,6 +85,7 @@ Every implementation update must add:
 - Added module registry validation for duplicate ids, missing display metadata, unknown groups and incomplete blueprint specifications.
 - Added a module-level React error boundary so one module rendering failure does not take down the entire workspace. Error details are not logged or shown because they may contain school data.
 - Added contract tests for route coverage, invalid-route fallback, module group membership and blueprint completeness.
+- Added reusable accessible LoadingState and UnavailableState components for future server-backed modules; both expose clear assistive-technology status and optional retry.
 
 ## Verified provider integration findings
 
@@ -122,7 +123,15 @@ Every implementation update must add:
 ## Phase 1 remaining acceptance work
 
 - [ ] Browser-check all module navigation and responsive layouts against the new route registry.
-- [ ] Add a consistent shared loading/empty/unavailable state contract for async modules.
+- [x] Add reusable loading and unavailable state components; existing EmptyState remains the standard no-records view.
 - [ ] Complete keyboard/focus checks for navigation and error recovery.
 - [ ] Review and triage the 3 high-severity dependency advisories.
 - [ ] Confirm no existing module behavior or local multi-school isolation regressed.
+
+
+## Phase 1 follow-up — shared async states
+
+- Added `LoadingState` with an accessible status announcement and loading indicator.
+- Added `UnavailableState` with an alert announcement and optional retry action.
+- Existing `EmptyState` remains distinct: it represents a successful request with no records, not a failed request.
+- Change committed in 3cd00a6; CI and preview checks are pending.
