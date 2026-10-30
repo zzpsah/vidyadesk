@@ -7,7 +7,7 @@ VidyaDesk is customized as the primary UMV Tetahali school-management workspace.
 It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
 
 ```
-17 of 25 modules have an implemented workspace view · 8 publish a build blueprint
+16 of 25 modules work against local browser data · 8 publish build blueprints · 1 integration dashboard is unconnected
 ```
 
 ## What it does today
