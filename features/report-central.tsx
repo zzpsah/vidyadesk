@@ -207,8 +207,8 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
       </Panel>
       <Panel title="Snapshot and freshness" meta="Provider timestamps only">
         <div className="card-rows">
-          <div><span><Database size={14} className="inline mr-2" />Snapshot id</span><strong>{envelope?.snapshot.id ?? '—'}</strong></div>
-          <div><span>Snapshot version</span><strong>{envelope?.snapshot.version ?? '—'}</strong></div>
+          <div><span><Database size={14} className="inline mr-2" />Read-model id</span><strong>{envelope?.snapshot.id ?? '—'}</strong></div>
+          <div><span>Read-model version</span><strong>{envelope?.snapshot.version ?? '—'}</strong></div>
           <div><span><Clock3 size={14} className="inline mr-2" />Retrieved at</span><strong>{timestamp(envelope?.retrievedAt)}</strong></div>
           <div><span>Last successful snapshot</span><strong>{timestamp(aggregate?.overview.lastSuccessfulSnapshotAt)}</strong></div>
         </div>
