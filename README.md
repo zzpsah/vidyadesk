@@ -11,7 +11,7 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 - The default school context is a single fixed UMV Tethali identity.
 - The workspace starts empty. No sample students, staff, classes, attendance, fees, notices, marks or timetable entries are generated.
 - The project overview lists only six existing repositories verified in the owner's GitHub account: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and n8n Operations.
-- Known application entry points are provided for Report Central and Digital Letter Registry. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
+- Four documented application entry points are provided for Report Central, Digital Letter Registry, UDISE+ Automation and eShikshaKosh Automation. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
 - Operational school CRUD routes remain hidden until their source-backed data contract, authentication, school scope, tests and audit requirements are accepted.
 - No login is enabled yet, per the current development decision. This does not authorize private student/staff data exposure; the portal remains a project hub until the security phase is complete.
 
