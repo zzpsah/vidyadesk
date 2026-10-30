@@ -70,14 +70,13 @@ Oracle Server and PostgreSQL Services are shown separately as infrastructure dep
 
 - Vercel protected preview reached **READY** for code commit b3143092681cb3599526776b379551c050168bd3. Its branch alias is the protected preview URL above.
 - The Vercel build executes TypeScript checking and production bundle generation.
-- GitHub Actions CI run #258 **PASSED** for code state 8382be745fcc1d405f95433cb73ca26e051b654f (contract tests and production build). The later branch commits changed documentation only; a follow-up CI run for the latest docs head is queued.
+- GitHub Actions CI run #268 **PASSED** for latest branch head 078eb2e773898db68a76d7119bad252c7a20b53c, including npm ci, npm run test:contract and npm run build.
 - The latest deployment has not had authenticated browser/UI acceptance or a live provider read test.
 - The public GitHub Pages site and production configuration have not been changed.
 
 ## Next work
 
-1. Allow the documentation-only follow-up CI run to complete; the full contract suite and build already passed for the current code state.
-2. Perform browser acceptance on the protected preview once available through the owner's SSO session.
+1. Perform browser acceptance on the protected preview once available through the owner's SSO session.
 3. When Oracle runtime access returns, inspect only service health and documented API health first; do not mutate data or restart services.
 4. Reconcile the School Data Records source database with PostgreSQL Services and document the authoritative primary store.
 5. Design and implement a dedicated read-only, fixed-school source contract before adding student/staff UI.
