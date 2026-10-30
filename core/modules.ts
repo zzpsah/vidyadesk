@@ -65,7 +65,7 @@ export const modules: ModuleDef[] = [
     workflow: ['Verify parent identity', 'Link to students', 'Expose read-only views', 'Send reviewable notices'],
     checks: ['OTP-based verification', 'Data scoping rules', 'Language coverage', 'Privacy review sign-off'] },
   { id: 'report-central', name: 'Report Central', nav: 'Report Central', blurb: 'Aggregate-only source comparison, conflict totals and import audit.', group: 'Operations', status: 'integration', icon: FileBarChart },
-  { id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: 'Read-only registry of the systems that may connect to this workspace.', group: 'Operations', status: 'live', icon: ExternalLink },
+  { id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: 'Read-only registry of the systems that may connect to this workspace.', group: 'Operations', status: 'integration', icon: ExternalLink },
 ];
 
 export const moduleGroups: ModuleGroup[] = ['Students', 'People & transfers', 'Academics', 'Communication', 'Operations'];
