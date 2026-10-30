@@ -12,6 +12,7 @@ import { IntegrationsView } from '@/features/integrations';
 import { ReportCentralView } from '@/features/report-central';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
+import { SCHOOL_PROFILE } from '@/core/school-profile';
 import { resolveWorkspaceRoute } from '@/core/route-registry';
 import { ModuleErrorBoundary } from '@/components/module-error-boundary';
 
