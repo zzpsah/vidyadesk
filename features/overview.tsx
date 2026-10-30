@@ -1,9 +1,9 @@
-import { ArrowUpRight, Boxes, ExternalLink, FileText, GitBranch, Network, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Boxes, ExternalLink, FileSpreadsheet, FileText, GitBranch, Network, ShieldCheck } from 'lucide-react';
 import { PageHead, Panel, Pill } from '@/components/common';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
 import { infrastructureProjects, projects } from '@/core/projects';
 
-const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch } as const;
+const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch, payroll: FileSpreadsheet } as const;
 
 export function OverviewView() {
   return <>
