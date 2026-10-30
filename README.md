@@ -23,6 +23,18 @@ It is a front end built to be extended, not a finished product. There is no logi
 
 `OFFLINE_TESTED` here means: exercised end to end in an isolated Chromium session against the local build — forms, validation, per-school isolation, reload persistence, CSV export, and 320/390/768/1280 px layouts, with zero page errors. Nothing reads from or writes to a live portal, so `LIVE_READ` and `LIVE_SAVE` deliberately do not apply yet.
 
+### Integration registry
+
+The **Operations → Integrations** page is the first consolidation seam. It records the external systems that may contribute to the unified workspace while keeping their ownership and safety boundaries explicit:
+
+- `report-central` — planned read-only summaries and reconciliation views.
+- `digital-letter-registry` — planned read-only letter references and workflow history.
+- `school-data-records` — restricted source-of-truth data; student-level records are not copied into the browser workspace.
+- `udise-automation-suite` and `eshikshakosh-automation` — separate government-portal workflows; credentials, CAPTCHA, OTP and writes remain outside VidyaDesk.
+- `n8n-operations` — planned authenticated automation boundary; no webhook trigger is enabled yet.
+
+This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
+
 ## Architecture
 
 ```
@@ -73,7 +85,7 @@ The four transfer workflows are the reference example: one `TransfersView` compo
 
 ## Data, privacy and honesty
 
-* Every fixture is fictional and generated from generic name pools. Demo schools are literally named `Demo …`; no real school, student, teacher, block or district appears in source.
+* Student, teacher and register fixtures are fictional and generated from generic name pools. The default workspace is labelled for UMV Tetahali using public school context only; no real student, teacher or source record appears in this repository.
 * Records never leave the browser. There is no backend, no analytics and no request to any third party.
 * CSV export escapes cells that begin with `=`, `+`, `-` or `@` so a spreadsheet cannot execute them.
 * The `functions/` and `dev/` folders come from the Qoder Sites starter and are unused by this app; they are kept so the project can be published there without rework.

@@ -8,8 +8,10 @@ import { MdmView, NoticesView, TicketsView } from '@/features/services';
 import { ReportsView } from '@/features/reports';
 import { BlueprintView } from '@/features/blueprint';
 import { OverviewView } from '@/features/overview';
+import { IntegrationsView } from '@/features/integrations';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
+import { SCHOOL_PROFILE } from '@/core/school-profile';
 
 const ACADEMIC = ['students', 'attendance', 'classes', 'timetable', 'exams', 'fees'];
 const TRANSFER = ['transfer-special', 'transfer-district', 'transfer-teacher', 'transfer-mutual'];
@@ -31,6 +33,7 @@ function renderView(route: string, nav: Nav) {
   if (route === 'tickets') return <TicketsView nav={nav} />;
   if (route === 'mdm') return <MdmView nav={nav} />;
   if (route === 'reports') return <ReportsView nav={nav} />;
+  if (route === 'integrations') return <IntegrationsView nav={nav} />;
   return <BlueprintView moduleId={route} nav={nav} />;
 }
 
@@ -56,10 +59,10 @@ function Workspace() {
 
     <div className="main-col">
       <Topbar route={route} nav={nav} onOpenMenu={() => setMenuOpen(true)} />
-      <p className="data-note">Design workspace · fictional records · saved only in this browser. Nothing here logs in, syncs or files anything with a department.</p>
+      <p className="data-note">{SCHOOL_PROFILE.shortName} · {SCHOOL_PROFILE.location} · {SCHOOL_PROFILE.session} · fictional records saved only in this browser. Nothing here logs in, syncs or files anything with a department.</p>
       <main id="main" className="workspace" key={`${route}-${school.id}`}>{renderView(route, nav)}</main>
       <footer className="app-foot">
-        <span>VidyaDesk · school-agnostic workspace</span>
+        <span>VidyaDesk · {SCHOOL_PROFILE.fullName}</span>
         <span>Not affiliated with, or an interface to, any government portal.</span>
       </footer>
     </div>

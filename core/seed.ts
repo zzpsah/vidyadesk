@@ -101,7 +101,7 @@ export function createSchool(input: NewSchoolInput, today: string): School {
 }
 
 export const defaultSchools = (today: string): School[] => [
-  createSchool({ name: 'Demo North Secondary School', category: SCHOOL_CATEGORIES[2], block: 'Demo Block North', district: 'Demo District', medium: MEDIUMS[0], session: '2026–27', seedRecords: true }, today),
+  createSchool({ name: 'UMV Tetahali · UCHCH MADHYAMIK VIDYALAY', category: SCHOOL_CATEGORIES[3], block: 'Tetahali', district: 'Siwan', medium: MEDIUMS[0], session: '2026–27', seedRecords: true }, today),
   createSchool({ name: 'Demo Village Upper Primary School', category: SCHOOL_CATEGORIES[1], block: 'Demo Block East', district: 'Demo District', medium: MEDIUMS[2], session: '2026–27', seedRecords: true }, today),
   createSchool({ name: 'Demo Blank Primary School', category: SCHOOL_CATEGORIES[0], block: 'Demo Block West', district: 'Demo District', medium: MEDIUMS[1], session: '2026–27', seedRecords: false }, today),
 ];

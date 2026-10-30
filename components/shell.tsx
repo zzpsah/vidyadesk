@@ -5,6 +5,7 @@ import { metric } from '@/core/metrics';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { dateLabel } from '@/core/format';
 import type { Nav } from '@/core/nav';
+import { SCHOOL_PROFILE } from '@/core/school-profile';
 
 export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; nav: Nav; onAddSchool: () => void; onClose: () => void }) {
   const { school, state, dispatch } = useWorkspace();
@@ -19,8 +20,8 @@ export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; n
 
   return <div className="sidebar">
     <header className="side-brand">
-      <span className="brand-mark" aria-hidden="true">V</span>
-      <div><strong>VidyaDesk</strong><span>Multi-school workspace</span></div>
+      <span className="brand-mark" aria-hidden="true">{SCHOOL_PROFILE.initials}</span>
+      <div><strong>{SCHOOL_PROFILE.shortName}</strong><span>VidyaDesk school desk</span></div>
       <Button variant="ghost" size="icon" className="side-close" aria-label="Close navigation" onClick={onClose}><X size={18} /></Button>
     </header>
 
@@ -41,7 +42,7 @@ export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; n
       </div>)}
     </nav>
 
-    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Fictional records, stored in this browser only. {state.schools.length} schools · {modules.length} modules registered.</p></footer>
+    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Fictional sample records, stored in this browser only. {state.schools.length} schools · {modules.length} modules registered.</p></footer>
   </div>;
 }
 
@@ -57,7 +58,7 @@ export function Topbar({ route, nav, onOpenMenu }: { route: string; nav: Nav; on
       <span className="date-chip">{dateLabel(todayISO())}</span>
       <span className="school-chip" title="Active school">{school.name}</span>
       <Button variant="ghost" size="icon" aria-label="School profile" onClick={() => nav.open({ kind: 'settings' })}><Settings size={18} /></Button>
-      <span className="avatar" aria-label="Demo administrator">HO</span>
+      <span className="avatar" aria-label="School administrator">UM</span>
     </div>
   </header>;
 }
