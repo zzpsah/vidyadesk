@@ -5,7 +5,7 @@
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
 **Active branch:** feat/internal-access-student-records  
 **Vercel project:** vidyadesk (team SSO protection enabled)  
-**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; tested commit 678e658)
+**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest verified commit 9fb0da6)
 
 ## Current lifecycle position
 
@@ -74,7 +74,8 @@ Every implementation update must add:
 - Preview project linked to the GitHub repository under the user's Vercel team; deployment protection reports SSO enabled for all non-custom domains.
 - First deployment attempt targeting production was immediately canceled before completion; no production release was made.
 - Preview deployment of commit b862da7 failed because the Edge function imported the contract from outside its function bundle. The handler's validation was made self-contained in commit 43e8798.
-- Replacement preview for commit 43e8798 is queued. It must reach READY and be checked behind SSO before being called a usable progress URL.
+- Follow-up self-contained validation fix in 43e8798 exposed and fixed a TypeScript call-site mismatch in 678e658. CI and Vercel build then passed.
+- Latest branch commit 9fb0da6 reached Vercel READY at deployment dpl_2eCKWUk94GXSX9PFYWUxDZtnawJQ; the protected branch alias is active.
 
 
 ## Verified provider integration findings
