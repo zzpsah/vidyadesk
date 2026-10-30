@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { modules, moduleGroups } from '../core/modules.ts';
+import { modules, moduleGroups, portalModules, portalModuleGroups } from '../core/modules.ts';
 import { isWorkspaceRoute, resolveWorkspaceRoute, validateModuleRegistry, workspaceRoutes } from '../core/route-registry.ts';
 
 test('every registered module has exactly one workspace route', () => {
@@ -31,4 +31,13 @@ test('every blueprint declares entities, workflow and acceptance checks', () => 
     assert.ok(module.workflow?.length, module.id);
     assert.ok(module.checks?.length, module.id);
   }
+});
+
+test('school portal exposes only implemented modules and omits empty groups', () => {
+  assert.ok(portalModules.length > 0);
+  assert.ok(portalModules.every(module => module.status === 'live'));
+  assert.ok(modules.some(module => module.status === 'blueprint'));
+  assert.ok(modules.some(module => module.status === 'integration'));
+  assert.ok(portalModuleGroups.every(group => portalModules.some(module => module.group === group)));
+  assert.ok(!portalModules.some(module => module.id === 'report-central' || module.id === 'integrations'));
 });
