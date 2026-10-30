@@ -66,7 +66,7 @@ function isReportCentralEnvelope(value: unknown): value is Record<string, unknow
 
 const AGGREGATE_PATH = "/v1/integrations/vidyadesk/aggregate";
 const ALLOWED_AGGREGATE_PATHS = new Set([AGGREGATE_PATH, `/rc${AGGREGATE_PATH}`]);
-const DEFAULT_ALLOWED_ORIGIN = "https://zzpsah.github.io";
+const DEFAULT_ALLOWED_ORIGIN = "https://shikshakosh.vercel.app";
 const UPSTREAM_TIMEOUT_MS = 8_000;
 
 type ProxyEnv = Record<string, string | undefined>;
