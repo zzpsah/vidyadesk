@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Award, BarChart3, Bell, BookOpen, Building2, CalendarDays, CalendarX2, ClipboardCheck, ExternalLink, GraduationCap, Handshake, HeartHandshake, IndianRupee, Landmark, LifeBuoy, MapPinned, MonitorSmartphone, Package, Repeat, School as SchoolIcon, ShieldCheck, Truck, Users, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeftRight, Award, BarChart3, Bell, BookOpen, Building2, CalendarDays, CalendarX2, ClipboardCheck, ExternalLink, FileBarChart, GraduationCap, Handshake, HeartHandshake, IndianRupee, Landmark, LifeBuoy, MapPinned, MonitorSmartphone, Package, Repeat, School as SchoolIcon, ShieldCheck, Truck, Users, UtensilsCrossed } from 'lucide-react';
 import type { ModuleDef, ModuleGroup } from './types';
 
 /**
@@ -64,6 +64,7 @@ export const modules: ModuleDef[] = [
     entities: ['Parent account', 'Student link', 'Attendance view', 'Fee view', 'Notice'],
     workflow: ['Verify parent identity', 'Link to students', 'Expose read-only views', 'Send reviewable notices'],
     checks: ['OTP-based verification', 'Data scoping rules', 'Language coverage', 'Privacy review sign-off'] },
+  { id: 'report-central', name: 'Report Central', nav: 'Report Central', blurb: 'Aggregate-only source comparison, conflict totals and import audit.', group: 'Operations', status: 'live', icon: FileBarChart },
   { id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: 'Read-only registry of the systems that may connect to this workspace.', group: 'Operations', status: 'live', icon: ExternalLink },
 ];
 
