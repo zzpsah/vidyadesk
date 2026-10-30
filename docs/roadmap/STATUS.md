@@ -4,10 +4,13 @@
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Production branch:** `main`  
 **Release commit:** `3ebe3caf2b6da159a037740b580396009584ebec`  
+**Current main head:** `75acf50cc4d56571478c8a74192a0a42872ae496`  
 **Production URL:** https://shikshakosh.vercel.app — Vercel deployment READY; live page returned HTTP 200  
 **Alternate production alias:** https://sikshakosh.vercel.app  
 **Production deployment:** `dpl_7NknGzCuyaCVuRznqGzHFS1nmeH3`  
-**Merged change:** PR #5, https://github.com/zzpsah/vidyadesk/pull/5
+**Merged change:** PR #5, https://github.com/zzpsah/vidyadesk/pull/5  
+**Superseded PR:** #4 closed; its older direction is replaced by the current project-hub architecture.  
+**Integration blocker tracker:** https://github.com/zzpsah/vidyadesk/issues/6
 
 ## Product definition
 
@@ -56,7 +59,7 @@ Oracle Server and PostgreSQL Services are infrastructure dependencies, not schoo
 - Added explicit project ownership, integration boundaries, route contracts, loading/error states and aggregate-only Report Central proxy validation.
 - Merged PR #5 into `main` using squash merge. The release commit is `3ebe3caf2b6da159a037740b580396009584ebec`.
 - Published the production Vercel deployment and attached both verified ShikshaKosh aliases.
-- Corrected the project metadata and deployment documentation after the production release.
+- Corrected the project metadata and deployment documentation in `main` after the production release. These follow-up source changes are awaiting a new Vercel production build because the Vercel team reached its daily deployment API limit (retry after 24 hours); the currently deployed release remains READY and serves HTTP 200.
 
 ## Verified blockers
 
@@ -72,13 +75,13 @@ Oracle Server and PostgreSQL Services are infrastructure dependencies, not schoo
 - Vercel production deployment `dpl_7NknGzCuyaCVuRznqGzHFS1nmeH3` reached **READY** for commit `3ebe3caf2b6da159a037740b580396009584ebec`.
 - The production deployment build completed TypeScript checking and Vite production bundle generation.
 - A live scrape of https://shikshakosh.vercel.app returned **HTTP 200** and rendered the expected VidyaDesk project hub.
-- GitHub Actions contract CI passed for the pre-merge head `7bc8a5a0f16a5204f7a2cd80a8c2b7889289aee7`. The post-merge main workflow is still being monitored; its final result must be recorded when complete.
+- GitHub Actions contract CI passed for the pre-merge head `7bc8a5a0f16a5204f7a2cd80a8c2b7889289aee7`. Post-merge main workflow run #8 also completed successfully: https://github.com/zzpsah/vidyadesk/actions/runs/41115514707.
 - No authenticated private-data journey or live provider read has been accepted because the source APIs and school-scoped security gateway are not ready.
 
 ## Next work
 
-1. Finish the post-merge GitHub Actions run and address any failure.
-2. Complete visual, responsive, accessibility and route-level acceptance of the deployed dashboard.
+1. Complete visual, responsive, accessibility and route-level acceptance of the deployed dashboard.
+2. After the Vercel daily deployment limit resets, publish the latest `main` metadata/documentation updates and verify the resulting production deployment.
 3. When Oracle runtime access returns, inspect documented health endpoints and service state first; do not mutate data or restart services.
 4. Reconcile School Data Records with PostgreSQL Services and document the authoritative primary store and verified school mapping.
 5. Implement dedicated read-only source adapters only after owner contracts, authentication and fixed-school scope are verified.
