@@ -8,7 +8,6 @@ export default defineConfig({
   // GitHub Pages serves a project site under /<repo>/; the deploy workflow sets this.
   base: process.env.PAGES_BASE || '/',
   plugins: [react()],
-  base: process.env.GITHUB_ACTIONS ? "/vidyadesk/" : "/",
   resolve: { alias: { "@": fileURLToPath(new URL(".", import.meta.url)) } },
   server: { host: "127.0.0.1", proxy },
   preview: { host: "127.0.0.1", proxy },
