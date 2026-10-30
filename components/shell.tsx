@@ -1,20 +1,20 @@
-import { Menu, Plus, Settings, ShieldCheck, X } from 'lucide-react';
+import { Menu, Settings, ShieldCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { portalModuleGroups, portalModules } from '@/core/modules';
+import { modules, portalModuleGroups, portalModules } from '@/core/modules';
 import { metric } from '@/core/metrics';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { dateLabel } from '@/core/format';
 import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
 
-export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; nav: Nav; onAddSchool: () => void; onClose: () => void }) {
-  const { school, state, dispatch } = useWorkspace();
+export function Sidebar({ route, nav, onClose }: { route: string; nav: Nav; onClose: () => void }) {
+  const { school } = useWorkspace();
 
   const item = (moduleId: string, label: string, live: boolean) => (
     <button key={moduleId || 'overview'} className={`nav-item${route === moduleId ? ' active' : ''}`} onClick={() => nav.go(moduleId)}>
-      <span className={`nav-dot${live ? ' live' : ''}`} aria-hidden="true" />
+      <span className="nav-dot" aria-hidden="true" />
       <span className="nav-label">{label}</span>
-      {live && moduleId !== 'overview' && <span className="nav-metric">{metric(school, moduleId)}</span>}
+      {moduleId !== 'overview' && <span className="nav-metric">{metric(school, moduleId)}</span>}
     </button>
   );
 
@@ -25,24 +25,15 @@ export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; n
       <Button variant="ghost" size="icon" className="side-close" aria-label="Close navigation" onClick={onClose}><X size={18} /></Button>
     </header>
 
-    <div className="school-picker">
-      <label htmlFor="school-switch">Active school</label>
-      <select id="school-switch" value={school.id} onChange={e => dispatch({ type: 'switch-school', id: e.target.value })}>
-        {state.schools.map(entry => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
-      </select>
-      <p className="school-sub">{school.category} · {school.block}</p>
-      <Button variant="outline" size="sm" className="add-school" onClick={onAddSchool}><Plus size={14} /> Add school</Button>
-    </div>
-
     <nav className="side-nav" aria-label="Modules">
       {item('overview', 'Overview', true)}
       {portalModuleGroups.map(group => <div className="nav-group" key={group}>
         <p>{group}</p>
-        {portalModules.filter(m => m.group === group).map(m => item(m.id, m.nav, true))}
+        {portalModules.filter(m => m.group === group).map(m => item(m.id, m.nav, false))}
       </div>)}
     </nav>
 
-    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Fictional sample records, stored in this browser only. {portalModules.length} active modules available.</p></footer>
+    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Offline workspace · fictional sample records only · {portalModules.length} modules available.</p></footer>
   </div>;
 }
 
