@@ -112,7 +112,7 @@ Node `^22.13.0 || >=24.0.0`.
 ```sh
 npm install
 npm run dev        # Vite on the printed loopback URL
-npm run build      # tsc --noEmit, then a static bundle in dist/
+npm run test:contract # aggregate integration contract tests\nnpm run build      # tsc --noEmit, then a static bundle in dist/
 npm run preview    # serve dist/
 ```
 
@@ -134,6 +134,10 @@ The next build is pinned from any blueprint page (*Pin as next build*) and appea
 4. **Import and export** — bulk student import, and report output that matches the formats the state portals expect.
 
 Connecting any of this to a real portal is a separate, explicit decision: it needs authenticated APIs, and an HTTP 200 is not proof that a record was saved.
+
+### Engineering and operations rules
+
+See [AGENTS.md](AGENTS.md) for product, security, DevOps and vibecoding guardrails. The [DevOps runbook](docs/DEVOPS.md) defines pull-request checks, release boundaries, integration states and rollback expectations. Pull requests run contract tests and the production build; only `main` is eligible for GitHub Pages deployment.
 
 ## License
 
