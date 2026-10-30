@@ -47,7 +47,7 @@ The envelope guard in `core/report-central-contract.ts` rejects a wrong source, 
 
 `features/report-central.tsx` presents four aggregate areas without inventing data: overview counts, separate UDISE/e-ShikshaKosh comparison, conflict severity totals, and import-audit totals. Until a verified adapter exists, every value is rendered as unavailable and the page states that no provider request has been made. The module is reachable from Operations navigation and from the Integrations registry.
 
-The dashboard does not call the adapter interface, browser storage, a provider URL or a backend endpoint. Its expected school key and session are shown as pending provider verification, not as proof of the provider's current configuration.
+The dashboard does not call the adapter interface, browser storage, a provider API URL or a backend endpoint. It offers an outbound link to the existing authenticated Report Central portal; sign-in and data access remain on that portal's own origin. The Report Central web app uses an HttpOnly session cookie behind its own Next.js proxy. VidyaDesk is currently a GitHub Pages static app on a different origin, so it cannot reuse that cookie or safely forward credentials. A scoped embed token is a separate capability and must be explicitly created, restricted to the confirmed UMV school scope, and approved before it is added. The expected school key and session are shown as pending provider verification, not as proof of the provider's current configuration.
 
 ## Authentication and transport boundary
 
