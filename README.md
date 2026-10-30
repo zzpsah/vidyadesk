@@ -35,6 +35,21 @@ The **Operations → Integrations** page is the first consolidation seam. It rec
 
 This registry is descriptive only. It contains no URLs, credentials, live requests or production mutations. A future adapter must be separately verified at the read-only boundary before it can be treated as connected.
 
+
+### Report Central read-only contract
+
+VidyaDesk now defines a versioned, aggregate-only contract for a future Report Central adapter in `core/report-central-contract.ts`.
+
+- Scope is fixed to the UMV Tetahali school identity and academic session `2026-2027`; the session must be verified against the provider before data is accepted.
+- Read models are limited to overview counts, separate UDISE/e-ShikshaKosh source summary, conflict totals and import-audit totals.
+- Every future response must carry source identity, school/session scope, retrieval timestamp and snapshot id/version.
+- Envelope metadata validation is provided; payload-specific validators must be added before each read model is consumed.
+- The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
+- The Integrations screen reports this contract as **unconfigured**. This is not a live connection, API health check or verification of current Report Central data.
+- A future implementation needs an approved authenticated server-side proxy, role/scope enforcement, CORS-independent server communication, and provider-side verification. GitHub Pages remains a public static frontend and must never contain provider secrets.
+
+See [the integration contract notes](docs/integrations/report-central-readonly-contract.md) for the field-level boundary and rollout gates.
+
 ## Architecture
 
 ```
