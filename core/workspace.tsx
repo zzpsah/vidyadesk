@@ -28,7 +28,8 @@ export type Action =
   | { type: 'set-focus'; moduleId: string | null }
   | { type: 'reset' };
 
-// v2 intentionally starts from a clean, empty school context. Legacy demo data is left untouched in v1 and is never loaded into the school portal.\nconst STORAGE_KEY = 'vidyadesk.workspace.v2';
+// v2 intentionally starts from a clean, empty school context. Legacy demo data is left untouched in v1 and is never loaded into the school portal.
+const STORAGE_KEY = 'vidyadesk.workspace.v2';
 
 function onSchool(state: State, fn: (school: School) => School): State {
   return { ...state, schools: state.schools.map(s => (s.id === state.activeSchoolId ? fn(s) : s)) };
