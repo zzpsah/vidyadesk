@@ -75,5 +75,6 @@ export const blueprintModules = modules.filter(m => m.status === 'blueprint');
 export const integrationModules = modules.filter(m => m.status === 'integration');
 
 /** Modules shown in the school-facing portal. Planned and disconnected entries stay in the internal registry only. */
-export const portalModules = modules.filter(module => module.status === 'live');
-export const portalModuleGroups = moduleGroups.filter(group => portalModules.some(module => module.group === group));
+/** Operational school CRUD screens are intentionally not exposed until they are backed by a verified source. */
+export const portalModules: ModuleDef[] = [];
+export const portalModuleGroups: ModuleGroup[] = [];
