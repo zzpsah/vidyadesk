@@ -7,7 +7,7 @@ import type { Nav } from '@/core/nav';
 
 export function IntegrationsView({ nav }: { nav: Nav }) {
   return <>
-    <PageHead module={{ id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: '', group: 'Operations', status: 'live', icon: ExternalLink }} crumb="Operations · read-only registry">
+    <PageHead module={{ id: 'integrations', name: 'Integrations', nav: 'Integrations', blurb: '', group: 'Operations', status: 'integration', icon: ExternalLink }} crumb="Operations · read-only registry">
       <Pill tone="mute">No live connections</Pill>
     </PageHead>
 
