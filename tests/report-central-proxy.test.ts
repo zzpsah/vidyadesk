@@ -43,7 +43,7 @@ const validEnvelope = () => ({
 });
 const env = {
   VIDYADESK_REPORT_CENTRAL_ENABLED: "true",
-  REPORT_CENTRAL_AGGREGATE_URL: "https://reports.example.test/v1/integrations/vidyadesk/aggregate",
+  REPORT_CENTRAL_AGGREGATE_URL: "https://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/aggregate",
   REPORT_CENTRAL_VIDYADESK_READ_TOKEN: "server-only-test-token",
   VIDYADESK_ALLOWED_ORIGIN: "https://zzpsah.github.io",
 };
@@ -151,5 +151,12 @@ test("requires HTTPS and a server-only token before making upstream calls", asyn
     async () => { calls += 1; return Response.json(validEnvelope()); },
   );
   assert.equal(noToken.status, 503);
+
+  const wrongPath = await handleReportCentralRequest(
+    request(),
+    { ...env, REPORT_CENTRAL_AGGREGATE_URL: "https://reports.example.test/other/v1/integrations/vidyadesk/aggregate" },
+    async () => { calls += 1; return Response.json(validEnvelope()); },
+  );
+  assert.equal(wrongPath.status, 503);
   assert.equal(calls, 0);
 });
