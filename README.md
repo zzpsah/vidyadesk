@@ -1,5 +1,7 @@
 # VidyaDesk
 
+**Live demo:** <https://zzpsah.github.io/vidyadesk/> — the current `main` branch, built and served by GitHub Pages. Fictional data, no account, nothing you enter leaves the browser.
+
 A school-agnostic workspace for running a school's day-to-day records. Nothing in the interface, the data model or the module registry names a particular school: you add a school, and every registered module becomes available to it with its own isolated records.
 
 It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
@@ -88,6 +90,12 @@ npm run preview    # serve dist/
 ```
 
 The `@/*` path alias resolves to the **project root**, so imports read `@/core/types`, `@/components/ui/button` and `@/features/academics`. Root directories covered by TypeScript are listed in `tsconfig.json`.
+
+### Publishing
+
+A push to `main` runs `.github/workflows/deploy.yml`: it installs on Node 24, builds with `PAGES_BASE=/vidyadesk/` so the bundle's asset URLs carry the Pages project subpath, and publishes `dist/` through `actions/deploy-pages`. `base` defaults to `/` locally, so `npm run dev` and `npm run preview` are unaffected — pass `PAGES_BASE` to preview the exact artifact Pages serves.
+
+The site is a static bundle: Pages serves it, and no server-side code runs. Records live in the visitor's own `localStorage`, keyed to the origin, so the demo and a local checkout never share data.
 
 ## Roadmap
 
