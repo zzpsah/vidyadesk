@@ -1,6 +1,6 @@
 import { Menu, Plus, Settings, ShieldCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { moduleGroups, modules } from '@/core/modules';
+import { portalModuleGroups, portalModules } from '@/core/modules';
 import { metric } from '@/core/metrics';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { dateLabel } from '@/core/format';
@@ -36,13 +36,13 @@ export function Sidebar({ route, nav, onAddSchool, onClose }: { route: string; n
 
     <nav className="side-nav" aria-label="Modules">
       {item('overview', 'Overview', true)}
-      {moduleGroups.map(group => <div className="nav-group" key={group}>
+      {portalModuleGroups.map(group => <div className="nav-group" key={group}>
         <p>{group}</p>
-        {modules.filter(m => m.group === group).map(m => item(m.id, m.nav, m.status === 'live'))}
+        {portalModules.filter(m => m.group === group).map(m => item(m.id, m.nav, true))}
       </div>)}
     </nav>
 
-    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Fictional sample records, stored in this browser only. {state.schools.length} schools · {modules.length} modules registered.</p></footer>
+    <footer className="side-foot"><ShieldCheck size={15} aria-hidden="true" /><p>Fictional sample records, stored in this browser only. {portalModules.length} active modules available.</p></footer>
   </div>;
 }
 
