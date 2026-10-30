@@ -47,7 +47,7 @@ VidyaDesk now defines a versioned, aggregate-only contract for a future Report C
 - The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
 - The dashboard displays a clear unavailable/disabled state until a complete provider envelope passes validation. A verified response can populate the four aggregate panels; an HTTP 200 alone is not sufficient.
 - A no-login Vercel Edge proxy now exists in `api/report-central.ts`; it holds the provider token server-side, validates the exact envelope, and is disabled unless `VIDYADESK_REPORT_CENTRAL_ENABLED=true`. It never accepts caller-selected school/session filters.
-- GitHub Pages remains a public static frontend and cannot execute this API function. A separate Vercel project is required; it has not yet been created or deployed. See [the public proxy runbook](docs/integrations/public-report-central-proxy.md).
+- GitHub Pages remains a public static frontend and cannot execute this API function. A Vercel project is linked to this repository for protected preview builds; the current preview does not expose private student records. See [the public proxy runbook](docs/integrations/public-report-central-proxy.md).
 - Once enabled, the four aggregate sections are public. Do not enable them until the live school mapping is verified and the school approves publication.
 
 See [the integration contract notes](docs/integrations/report-central-readonly-contract.md) for the field-level boundary and rollout gates.
@@ -56,6 +56,7 @@ See [the integration contract notes](docs/integrations/report-central-readonly-c
 
 ```
 core/          domain + state, no JSX except workspace.tsx
+  route-registry.ts one route catalogue derived from modules.ts; unknown routes fail back to overview
   types.ts       School = SchoolMeta & SchoolData; every record type lives here
   modules.ts     the registry: id, name, group, status, icon, blueprint spec
   seed.ts        deterministic fictional fixtures for a new school
@@ -92,11 +93,11 @@ Nothing is stored twice — a report is recomputed from the registers each time 
 
 ### Adding a module
 
-1. Add an entry to `core/modules.ts` (`id`, `name`, `nav`, `blurb`, `group`, `status`, `icon`). A `blueprint` entry needs `entities`, `workflow` and `checks` and renders automatically.
+1. Add an entry to `core/modules.ts` (`id`, `name`, `nav`, `blurb`, `group`, `status`, `icon`). `core/route-registry.ts` derives its route catalogue from this registry. A `blueprint` entry needs `entities`, `workflow` and `checks` and renders automatically.
 2. Add the entity type to `core/types.ts` and to `emptyData()` in `core/seed.ts` so a new school starts with an empty collection.
 3. Add an action to the reducer in `core/workspace.tsx` and route it through `onSchool`. If older saved workspaces lack the collection, upgrade them in `upgrade()` there rather than in a view.
 4. If the module's numbers combine two collections, add the derivation to `core/graph.ts` and read it from both the screen and the report.
-5. Write the view in `features/`, register it in `renderView()` in `src/App.tsx`, and give it a line in `core/metrics.ts`.
+5. Write the view in `features/`, connect it in `renderView()` in `src/App.tsx`, and give it a line in `core/metrics.ts`. The route itself is already validated from the central module registry.
 
 The four transfer workflows are the reference example: one `TransfersView` component serves all four module ids, and each school keeps its own drafts.
 
