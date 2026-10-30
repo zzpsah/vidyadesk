@@ -53,6 +53,21 @@ const request = (method = "GET", origin = "https://zzpsah.github.io") =>
     headers: origin ? { Origin: origin } : {},
   });
 
+test("uses the ShikshaKosh monitoring domain as the default CORS origin", async () => {
+  const result = await handleReportCentralRequest(
+    request("OPTIONS", "https://shikshakosh.vercel.app"),
+    { ...env, VIDYADESK_ALLOWED_ORIGIN: undefined },
+  );
+  assert.equal(result.status, 204);
+  assert.equal(result.headers.get("Access-Control-Allow-Origin"), "https://shikshakosh.vercel.app");
+
+  const rejected = await handleReportCentralRequest(
+    request("GET", "https://zzpsah.github.io"),
+    { ...env, VIDYADESK_ALLOWED_ORIGIN: undefined, VIDYADESK_REPORT_CENTRAL_ENABLED: "false" },
+  );
+  assert.equal(rejected.status, 403);
+});
+
 test("does not call Report Central while the public integration flag is off", async () => {
   let calls = 0;
   const result = await handleReportCentralRequest(
