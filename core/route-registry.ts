@@ -1,4 +1,4 @@
-import { moduleById, modules, moduleGroups } from './modules';
+import { moduleById, modules, moduleGroups } from './modules.ts';
 
 export type WorkspaceRoute = 'overview' | string;
 export type RouteDefinition = { id: WorkspaceRoute; label: string; group: string; kind: 'overview' | 'module' };
