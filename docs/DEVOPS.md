@@ -20,6 +20,12 @@ npm run preview
 ```
 For a Pages-path build: `PAGES_BASE=/vidyadesk/ npm run build`.
 
+## Custom monitoring domain
+- `shikshakosh.vercel.app` is attached to the VidyaDesk Vercel project and Vercel reports it as verified.
+- The project currently has no production deployment (`live: false`; latest READY deployment has `target: null`). Domain verification therefore must not be described as a live application release.
+- Vercel project SSO protection is configured for all deployments **except custom domains**. Do not point this custom domain at a preview branch or use it to bypass preview SSO. Keep it unassigned to a preview deployment until a reviewed production release is approved.
+- Before the first production alias, finish the public/private route review. The current shell contains project links only; private student/staff routes remain blocked until server-side sessions and fixed-school authorization are accepted.
+
 ## Integration states
 | State | Meaning |
 |---|---|
