@@ -1,6 +1,6 @@
 # Report Central read-only integration contract
 
-**Status:** Contract defined; adapter unconfigured; no provider request has been made from VidyaDesk.
+**Status:** Contract and dashboard shell implemented; adapter unconfigured; no provider request has been made from VidyaDesk.
 
 ## Purpose
 
@@ -42,6 +42,12 @@ Each response must include:
 - typed aggregate `data`
 
 The envelope guard in `core/report-central-contract.ts` rejects a wrong source, wrong school/session, unsupported contract version, unknown fields, invalid timestamps or invalid snapshot metadata. Dedicated payload validators cover overview, the two separate source records, conflict severity totals and import-audit arithmetic. A consumer must run both envelope and payload validation before rendering.
+
+## Dashboard implementation
+
+`features/report-central.tsx` presents four aggregate areas without inventing data: overview counts, separate UDISE/e-ShikshaKosh comparison, conflict severity totals, and import-audit totals. Until a verified adapter exists, every value is rendered as unavailable and the page states that no provider request has been made. The module is reachable from Operations navigation and from the Integrations registry.
+
+The dashboard does not call the adapter interface, browser storage, a provider URL or a backend endpoint. Its expected school key and session are shown as pending provider verification, not as proof of the provider's current configuration.
 
 ## Authentication and transport boundary
 
