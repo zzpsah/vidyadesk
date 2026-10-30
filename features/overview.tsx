@@ -1,8 +1,7 @@
-import { useMemo } from 'react';
-import { ArrowUpRight, Building2, Check, ChevronRight, Layers3, Plus, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Building2, Check, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { EmptyState, Kpi, PageHead, Panel, Pill } from '@/components/common';
-import { blueprintModules, integrationModules, liveModules, moduleById, moduleGroups, modules } from '@/core/modules';
+import { EmptyState, Kpi, PageHead, Panel } from '@/components/common';
+import { portalModules, portalModuleGroups } from '@/core/modules';
 import { dateLabel, pct, rupees } from '@/core/format';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { metric } from '@/core/metrics';
@@ -14,13 +13,10 @@ export function OverviewView({ nav }: { nav: Nav }) {
   const book = school.attendance[today] ?? {};
   const present = Object.values(book).filter(s => s === 'Present').length;
   const outstanding = school.fees.filter(f => !f.paid).reduce((sum, f) => sum + f.amount, 0);
-  const focus = state.focusModuleId ? moduleById.get(state.focusModuleId) : undefined;
-  const byGroup = useMemo(() => moduleGroups.map(group => ({ group, items: modules.filter(m => m.group === group) })), []);
 
   return <>
     <PageHead module={{ id: 'overview', name: `${school.name}`, nav: 'Overview', blurb: `${school.category} · ${school.block}, ${school.district} · ${school.medium} medium · session ${school.session}`, group: 'Students', status: 'live', icon: Building2 }} crumb={`School workspace · ${state.schools.length} schools`}>
       <Button variant="outline" onClick={() => nav.open({ kind: 'settings' })}>School profile</Button>
-      <Button onClick={() => nav.open({ kind: 'add-school' })}><Plus size={15} /> Add school</Button>
     </PageHead>
 
     <div className="kpi-row">
@@ -31,22 +27,13 @@ export function OverviewView({ nav }: { nav: Nav }) {
       <Kpi label="Open tickets" value={String(school.tickets.filter(t => t.status !== 'Resolved').length)} note="Support queue" onClick={() => nav.go('tickets')} />
     </div>
 
-    <section className="panel coverage" aria-labelledby="coverage-title">
-      <div className="coverage-head">
-        <h2 id="coverage-title">Module coverage</h2>
-        <p><strong>{liveModules.length}</strong> of {modules.length} modules work on this browser's data. {blueprintModules.length} publish the spec they need before they can be built.</p>
-      </div>
-      <div className="progress" role="img" aria-label={`${liveModules.length} of ${modules.length} modules live`}><span style={{ width: `${pct(liveModules.length, modules.length)}%` }} /></div>
-      {focus && <div className="focus-row"><Layers3 size={17} aria-hidden="true" /><div><strong>Next up: {focus.name}</strong><span>{focus.blurb}</span></div><Button size="sm" variant="outline" onClick={() => nav.go(focus.id)}>Open blueprint <ChevronRight size={14} /></Button><Button size="sm" variant="ghost" onClick={() => dispatch({ type: 'set-focus', moduleId: null })}>Clear</Button></div>}
-    </section>
-
     <div className="overview-grid">
       <div className="module-board">
-        {byGroup.map(({ group, items }) => <section className="board-group" key={group} aria-label={group}>
-          <h2>{group}<span>{items.filter(i => i.status === 'live').length} live</span></h2>
+        {portalModuleGroups.map(group => <section className="board-group" key={group} aria-label={group}>
+          <h2>{group}<span>{portalModules.filter(item => item.group === group).length} active</span></h2>
           <div className="tile-grid">
-            {items.map(item => <button className={`tile${item.status === 'blueprint' ? ' is-plan' : ''}`} key={item.id} onClick={() => nav.go(item.id)}>
-              <span className="tile-top"><span className={`tile-icon${item.status === 'live' ? ' live' : ''}`}><item.icon aria-hidden="true" /></span><span className={`status-dot ${item.status}`}>{item.status === 'live' ? 'Live' : item.status === 'integration' ? 'Not connected' : 'Blueprint'}</span></span>
+            {portalModules.filter(item => item.group === group).map(item => <button className="tile" key={item.id} onClick={() => nav.go(item.id)}>
+              <span className="tile-top"><span className={`tile-icon${item.status === 'live' ? ' live' : ''}`}><item.icon aria-hidden="true" /></span><span className="status-dot live">Active</span></span>
               <strong>{item.name}</strong>
               <span className="tile-metric">{metric(school, item.id)}</span>
               <span className="tile-arrow"><ArrowUpRight size={15} aria-hidden="true" /></span>
