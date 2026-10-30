@@ -31,16 +31,16 @@ test('school creation is metadata-only even if a caller requests sample records'
   assert.deepEqual(school.timetable, []);
 });
 
-test('project hub contains only the six known, repository-backed school projects', () => {
+test('project hub contains the known, repository-backed school projects', () => {
   assert.deepEqual(projects.map(project => project.id), [
     'school-data-records', 'report-central', 'digital-letter-registry',
-    'udise-automation-suite', 'eshikshakosh-automation', 'n8n-operations',
+    'udise-automation-suite', 'eshikshakosh-automation', 'vetan-vipatra', 'n8n-operations',
   ]);
   for (const project of projects) {
     assert.ok(project.repositoryUrl.startsWith('https://github.com/zzpsah/'));
     assert.ok(project.boundary.length > 20);
   }
-  assert.equal(projects.filter(project => project.applicationUrl).length, 4);
+  assert.equal(projects.filter(project => project.applicationUrl).length, 5);\n  const payroll = projects.find(project => project.id === 'vetan-vipatra');\n  assert.equal(payroll?.applicationUrl, 'https://vetan-vipatra.vercel.app');\n  assert.match(payroll?.boundary ?? '', /do not copy teacher payroll data/i);
 });
 
 test('platform dependencies are registered separately from school applications', () => {
