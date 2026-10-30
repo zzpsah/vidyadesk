@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "School-agnostic multi-school management workspace: React 19 + Vite + Tailwind 4 front end with a scoped module registry, per-school data isolation and build blueprints for every module.",
+  "description": "Unified project hub and integration workspace for UMV Tethali, built with React 19, Vite and Tailwind 4.",
   "engines": {
     "node": "^22.13.0 || >=24.0.0"
   },
