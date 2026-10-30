@@ -5,7 +5,7 @@ A school-agnostic workspace for running a school's day-to-day records. Nothing i
 It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
 
 ```
-15 of 24 modules work against real (local) data · 9 publish a build blueprint
+16 of 24 modules work against real (local) data · 8 publish a build blueprint
 ```
 
 ## What it does today
@@ -14,10 +14,10 @@ It is a front end built to be extended, not a finished product. There is no logi
 |---|---|---|
 | Students | Enrollment, Attendance, Exams & results, Fees & payments | IMPLEMENTED · OFFLINE_TESTED |
 | People & transfers | Teachers & staff, Staff leave, and four transfer workflows | IMPLEMENTED · OFFLINE_TESTED |
-| Academics | Classes & sections, Timetable | IMPLEMENTED · OFFLINE_TESTED |
+| Academics | Classes & sections, Timetable, Reports | IMPLEMENTED · OFFLINE_TESTED |
 | Communication | Notification board, Support tickets | IMPLEMENTED · OFFLINE_TESTED |
 | Operations | PM Poshan mid-day meal register | IMPLEMENTED · OFFLINE_TESTED |
-| Registered, not built | Sports assessment, Model school, Academic reports, Safe Saturday, Committee (MoM), Library, Transport, Inventory, Parent portal | SPEC PUBLISHED (blueprint page) |
+| Registered, not built | Sports assessment, Model school, Safe Saturday, Committee (MoM), Library, Transport, Inventory, Parent portal | SPEC PUBLISHED (blueprint page) |
 
 `OFFLINE_TESTED` here means: exercised end to end in an isolated Chromium session against the local build — forms, validation, per-school isolation, reload persistence, CSV export, and 320/390/768/1280 px layouts, with zero page errors. Nothing reads from or writes to a live portal, so `LIVE_READ` and `LIVE_SAVE` deliberately do not apply yet.
 
@@ -28,6 +28,7 @@ core/          domain + state, no JSX except workspace.tsx
   types.ts       School = SchoolMeta & SchoolData; every record type lives here
   modules.ts     the registry: id, name, group, status, icon, blueprint spec
   seed.ts        deterministic fictional fixtures for a new school
+  graph.ts       cross-module derivation — the only place two modules are combined
   workspace.tsx  reducer + Context + localStorage persistence
   metrics.ts     one-line live context per module (sidebar + tiles)
   format.ts      currency, dates, CSV cell escaping and download
@@ -41,20 +42,30 @@ features/        one file per module group; views are pure consumers of the stor
 src/             App.tsx (route switch), main.tsx, globals.css (design tokens)
 ```
 
-Three rules keep it multi-school:
+Four rules keep it coherent:
 
-1. **A school owns its records.** `School` holds `students`, `staff`, `classes`, `notices`, `fees`, `attendance`, `leaveRequests`, `transferApplications`, `tickets` and `mdmEntries`. The reducer's `onSchool()` helper only ever touches `state.activeSchoolId`, so no action can write into another school's data.
-2. **The registry drives the chrome.** Navigation, the overview board and the blueprint pages are generated from `modules.ts`. Adding a module is a registry entry plus a view — the shell never changes.
-3. **Views get data through the store.** No view holds a copy of school data, so switching schools re-renders the whole workspace consistently (the `<main>` element is keyed on `route + school.id`).
+1. **A school owns its records.** `School` holds `students`, `staff`, `classes`, `notices`, `fees`, `attendance`, `leaveRequests`, `transferApplications`, `tickets`, `mdmEntries`, `assessments`, `marks` and `timetable`. The reducer's `onSchool()` helper only ever touches `state.activeSchoolId`, so no action can write into another school's data.
+2. **Relationships are stored, not inferred from names.** A mark points at an `assessmentId` + `studentId`, a period at a `classId` + `staffId`, a ticket or notice at a `classId`, a transfer at a `staffId`. Renaming a teacher never silently re-parents their records.
+3. **Derived numbers live in one file.** `core/graph.ts` is the only place two collections are combined — attendance percentages, per-student progress, staff workload, the meal-vs-register reconciliation. The module screens and the Reports screens call the same functions, so they cannot disagree.
+4. **The registry drives the chrome, and views hold no copies.** Navigation, the overview board and the blueprint pages are generated from `modules.ts`; switching schools re-renders the whole workspace consistently (`<main>` is keyed on `route + school.id`).
 
-State persists under `vidyadesk.workspace.v1`. Removing that key, or *Settings → Reset workspace*, restores the three demo schools.
+State persists under `vidyadesk.workspace.v1`. Removing that key, or *Settings → Reset workspace*, restores the three demo schools. Workspaces saved before assessments and timetable periods became stored records are upgraded on load — the migration derives the same figures the old generated screens showed.
+
+### Reports
+
+`features/reports.tsx` holds eight report definitions, each declaring the module ids it joins and a `build(school, schools)` that returns headings, rows and a one-line note:
+
+`Attendance by class` · `Fee dues` · `Student progress cards` · `Staff workload` · `Meal register vs attendance` · `Transfer pipeline` · `Facility backlog` · `All schools compared`
+
+Nothing is stored twice — a report is recomputed from the registers each time it renders, and *Export CSV* writes exactly the rows on screen. The last one only exists because the workspace holds several schools.
 
 ### Adding a module
 
 1. Add an entry to `core/modules.ts` (`id`, `name`, `nav`, `blurb`, `group`, `status`, `icon`). A `blueprint` entry needs `entities`, `workflow` and `checks` and renders automatically.
 2. Add the entity type to `core/types.ts` and to `emptyData()` in `core/seed.ts` so a new school starts with an empty collection.
-3. Add an action to the reducer in `core/workspace.tsx` and route it through `onSchool`.
-4. Write the view in `features/`, register it in `renderView()` in `src/App.tsx`, and give it a line in `core/metrics.ts`.
+3. Add an action to the reducer in `core/workspace.tsx` and route it through `onSchool`. If older saved workspaces lack the collection, upgrade them in `upgrade()` there rather than in a view.
+4. If the module's numbers combine two collections, add the derivation to `core/graph.ts` and read it from both the screen and the report.
+5. Write the view in `features/`, register it in `renderView()` in `src/App.tsx`, and give it a line in `core/metrics.ts`.
 
 The four transfer workflows are the reference example: one `TransfersView` component serves all four module ids, and each school keeps its own drafts.
 
@@ -84,7 +95,7 @@ The next build is pinned from any blueprint page (*Pin as next build*) and appea
 
 1. **Persistence that is not a browser** — a Postgres schema keyed by `school_id`, mirroring `core/types.ts`, and a token-scoped API behind the same reducer actions.
 2. **Accounts and roles** — head teacher, clerk, district viewer; the school picker becomes a list of schools a user may see.
-3. **The remaining nine modules**, each already specified: entities, order of work and the checks that must pass before it can be called live.
+3. **The remaining eight modules**, each already specified: entities, order of work and the checks that must pass before it can be called live.
 4. **Import and export** — bulk student import, and report output that matches the formats the state portals expect.
 
 Connecting any of this to a real portal is a separate, explicit decision: it needs authenticated APIs, and an HTTP 200 is not proof that a record was saved.

@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable, EmptyState, FilterField, Kpi, NoResults, PageHead, Panel, Pill, SearchField, Toolbar } from '@/components/common';
-import { DAYS, subjectScores, timetableFor } from '@/core/seed';
+import { DAYS, examStart } from '@/core/seed';
+import { classAttendance, classGrid, feeSummary, gradeFor, studentProfile } from '@/core/graph';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { dateLabel, downloadCsv, initialsOf, pct, rupees } from '@/core/format';
 import { modules } from '@/core/modules';
@@ -114,14 +115,21 @@ export function ClassesView({ nav }: { nav: Nav }) {
       {school.classes.map(section => {
         const teacher = school.staff.find(s => s.id === section.teacherId);
         const strength = school.students.filter(s => s.className === section.id).length;
+        const attendance = classAttendance(school, section.id);
+        const dues = feeSummary(school, section.id);
+        const subjects = [...new Set(school.timetable.filter(p => p.classId === section.id).map(p => p.subject))];
         return <article className="panel compact-card" key={section.id}>
           <header><span className="class-chip">{section.id}</span><Pill tone={strength ? 'ok' : 'mute'}>{strength} enrolled</Pill></header>
           <div className="card-rows">
             <div><span>Class teacher</span><strong>{teacher ? teacher.name : 'Unassigned'}</strong></div>
-            <div><span>Subject</span><strong>{teacher?.subject ?? '—'}</strong></div>
-            <div><span>Timetable</span><strong>{DAYS.length} days · 8 periods</strong></div>
+            <div><span>Subjects taught</span><strong>{subjects.length ? `${subjects.length} · ${subjects.slice(0, 2).join(', ')}` : 'No timetable yet'}</strong></div>
+            <div><span>Attendance</span><strong>{attendance.roster ? `${attendance.percent}% over ${attendance.days} day${attendance.days === 1 ? '' : 's'}` : 'Nothing marked'}</strong></div>
+            <div><span>Fee position</span><strong>{dues.due ? `${rupees(dues.outstanding)} due from ${dues.due}` : dues.records ? 'Fully collected' : 'No dues raised'}</strong></div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => nav.go('timetable')}>Open timetable</Button>
+          <div className="card-actions">
+            <Button variant="outline" size="sm" onClick={() => nav.go('timetable')}>Timetable</Button>
+            <Button variant="outline" size="sm" onClick={() => nav.go('attendance')}>Register</Button>
+          </div>
         </article>;
       })}
     </div>}
@@ -129,73 +137,99 @@ export function ClassesView({ nav }: { nav: Nav }) {
 }
 
 export function TimetableView({ nav }: { nav: Nav }) {
-  const { school } = useWorkspace();
+  const { school, dispatch } = useWorkspace();
   const [section, setSection] = useState(school.classes[0]?.id ?? '');
   const [day, setDay] = useState(DAYS[0]);
-  const rows = timetableFor(school, section, day);
+  const grid = classGrid(school, section, day);
+  const teachers = school.staff.filter(s => s.role !== 'Head teacher');
+  const week = school.timetable.filter(p => p.classId === section).length;
+  const unassigned = school.timetable.filter(p => p.classId === section && !teachers.some(t => t.id === p.staffId)).length;
   return <>
     <PageHead module={def('timetable')} crumb="Academics" />
     <Panel title="Weekly grid" meta={`${school.name} · ${section || 'no section'} · ${day}`}
+      caption={<span>These are stored periods, not generated ones — reassigning a slot is a real edit and the staff workload report follows it.</span>}
       actions={<div className="panel-actions"><FilterField label="Section" value={section} options={school.classes.map(c => c.id)} onChange={setSection} /><FilterField label="Day" value={day} options={DAYS} onChange={setDay} /></div>}>
       {!school.classes.length ? <EmptyState title="No sections" text="Add classes for this school to build a timetable." /> : <DataTable headings={['Period', 'Time', 'Subject', 'Teacher']}
-        rows={rows.map(row => <TableRow key={row.time}>
-          <TableCell className="mono">{row.period}</TableCell>
+        rows={grid.map(row => <TableRow key={`${row.slot}-${row.time}`}>
+          <TableCell className="mono">{row.break ? '—' : row.slot + 1}</TableCell>
           <TableCell className="mono muted">{row.time}</TableCell>
-          <TableCell className={row.subject.includes('break') ? 'muted' : ''}>{row.subject}</TableCell>
-          <TableCell className="muted">{row.teacher}</TableCell>
+          {row.break ? <TableCell className="muted" colSpan={2}>{row.break}</TableCell> : <>
+            <TableCell>{row.period?.subject ?? 'Free period'}</TableCell>
+            <TableCell>{row.period ? <select className="row-select" aria-label={`Teacher for ${section} ${day} period ${row.slot + 1}`} value={row.period.staffId} onChange={e => dispatch({ type: 'assign-period', classId: section, day, slot: row.slot, staffId: e.target.value })}>
+              {teachers.some(t => t.id === row.period?.staffId) ? null : <option value={row.period.staffId}>Unassigned</option>}
+              {teachers.map(teacher => <option key={teacher.id} value={teacher.id}>{teacher.name} · {teacher.subject}</option>)}
+            </select> : <span className="muted">No period stored</span>}</TableCell>
+          </>}
         </TableRow>)} />}
     </Panel>
-    <p className="foot-line">Periods repeat per section with different subject order. Wire this to a real allocation engine when the timetable module stores its own rows.</p>
+    <p className="foot-line">{week} periods stored for {section || 'this section'} across {DAYS.length} days{unassigned ? ` · ${unassigned} point at a teacher who is no longer on staff` : ''}.</p>
     <Button variant="ghost" size="sm" className="link-button" onClick={() => nav.go('staff')}>Teacher workload lives in Teachers &amp; staff</Button>
   </>;
 }
 
-function gradeFor(percent: number) { return percent >= 85 ? 'A' : percent >= 70 ? 'B' : percent >= 55 ? 'C' : percent >= 35 ? 'D' : 'E'; }
-
 export function ExamsView({ nav }: { nav: Nav }) {
-  const { school } = useWorkspace();
-  const subjects = useMemo(() => [...new Set(school.staff.filter(s => s.role !== 'Head teacher').map(s => s.subject))].slice(0, 4), [school.staff]);
-  const start = useMemo(() => { const now = new Date(); const next = new Date(now.getFullYear(), now.getMonth() + 1, 5); return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-05`; }, []);
-  const rows = school.students;
+  const { school, dispatch } = useWorkspace();
+  const [section, setSection] = useState(school.classes[0]?.id ?? '');
+  const cycle = useMemo(() => examStart(todayISO()), []);
+  const assessments = school.assessments.filter(a => a.className === section);
+  const roster = school.students.filter(s => s.className === section && s.status === 'Enrolled');
+  const scoreOf = (assessmentId: string, studentId: string) => school.marks.find(m => m.assessmentId === assessmentId && m.studentId === studentId)?.score ?? null;
+
   return <>
     <PageHead module={def('exams')} crumb="Students">
       <Pill>Session {school.session}</Pill>
     </PageHead>
-    {!subjects.length ? <EmptyState title="No subjects yet" text="Add teachers with subjects and the assessment grid builds itself." action={<Button variant="outline" onClick={() => nav.go('staff')}>Open teachers</Button>} /> : <>
+    {!school.assessments.length ? <EmptyState title="No assessments scheduled" text="Enroll students and staff with subjects, then the cycle for this school is created." action={<Button variant="outline" onClick={() => nav.go('staff')}>Open teachers</Button>} /> : <>
       <Tabs defaultValue="schedule">
-        <TabsList className="inner-tabs" aria-label="Assessment views"><TabsTrigger value="schedule">Schedule</TabsTrigger><TabsTrigger value="results">Marks entry</TabsTrigger></TabsList>
+        <TabsList className="inner-tabs" aria-label="Assessment views"><TabsTrigger value="schedule">Schedule</TabsTrigger><TabsTrigger value="results">Marks board</TabsTrigger></TabsList>
         <TabsContent value="schedule">
-          <Panel title="Assessment schedule" meta={`${subjects.length} subjects · from ${dateLabel(start)}`} caption={<span><CalendarDays size={13} aria-hidden="true" /> Dates shift with the current month so the schedule always shows an upcoming cycle.</span>}>
-            <DataTable headings={['Date', 'Subject', 'Sections', 'Time', 'Max marks']}
-              rows={subjects.map((subject, index) => <TableRow key={subject}>
-                <TableCell>{dateLabel(isoAdd(start, index * 2))}</TableCell>
-                <TableCell>{subject}</TableCell>
-                <TableCell>{school.classes.length} sections</TableCell>
-                <TableCell className="mono">09:00–11:00</TableCell>
-                <TableCell className="mono">50</TableCell>
+          <Panel title="Assessment schedule" meta={`${assessments.length} papers for ${section || 'this section'} · cycle opens ${dateLabel(cycle)}`}
+            caption={<span><CalendarDays size={13} aria-hidden="true" /> One stored paper per subject and section. Editing a mark below writes to that paper.</span>}>
+            <DataTable headings={['Date', 'Subject', 'Paper', 'Section', 'Max marks', 'Marks entered']}
+              rows={assessments.map(assessment => <TableRow key={assessment.id}>
+                <TableCell>{dateLabel(assessment.date)}</TableCell>
+                <TableCell>{assessment.subject}</TableCell>
+                <TableCell className="muted">{assessment.name}</TableCell>
+                <TableCell className="mono">{assessment.className}</TableCell>
+                <TableCell className="mono">{assessment.max}</TableCell>
+                <TableCell className="mono">{school.marks.filter(m => m.assessmentId === assessment.id).length} / {school.students.filter(s => s.className === assessment.className).length}</TableCell>
               </TableRow>)} />
           </Panel>
         </TabsContent>
         <TabsContent value="results">
-          <Panel title="Marks board" meta="Sample scoring · nothing is submitted anywhere">
-            {!rows.length ? <EmptyState title="No students" text="Enroll students to see a marks board." /> : <DataTable headings={['Student', 'Class', ...subjects, 'Total', 'Percent', 'Grade']}
-              rows={rows.map(student => {
-                const marks = subjects.map(subject => subjectScores(school, student, subject));
-                const total = marks.reduce((sum, mark) => sum + mark, 0);
-                const percent = pct(total, subjects.length * 50);
+          <Panel title="Marks board" meta={`${section} · ${roster.length} students × ${assessments.length} papers`}
+            caption={<span>Type a score and it is stored against that student and paper. Blank means not yet entered — it is never counted as zero.</span>}
+            actions={<div className="panel-actions"><FilterField label="Section" value={section} options={school.classes.map(c => c.id)} onChange={setSection} /></div>}>
+            {!roster.length ? <EmptyState title="No students in this section" text="Pick another section or enroll students first." /> : <DataTable headings={['Roll', 'Student', ...assessments.map(a => a.subject), 'Total', 'Percent', 'Grade']}
+              rows={roster.map(student => {
+                const entered = assessments.map(assessment => scoreOf(assessment.id, student.id));
+                const scored = entered.filter((value): value is number => value !== null);
+                const total = scored.reduce((sum, value) => sum + value, 0);
+                const max = assessments.filter((_, index) => entered[index] !== null).reduce((sum, assessment) => sum + assessment.max, 0);
+                const percent = pct(total, max);
                 return <TableRow key={student.id}>
+                  <TableCell className="mono muted">{student.roll}</TableCell>
                   <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.className}</TableCell>
-                  {marks.map((mark, index) => <TableCell className="mono" key={index}>{mark}</TableCell>)}
-                  <TableCell className="mono"><strong>{total}</strong></TableCell>
-                  <TableCell className="mono">{percent}%</TableCell>
-                  <TableCell><Pill tone={percent >= 70 ? 'ok' : percent >= 35 ? 'warn' : 'bad'}>{gradeFor(percent)}</Pill></TableCell>
+                  {assessments.map((assessment, index) => <TableCell key={assessment.id}>
+                    <input className="mark-input" type="number" min={0} max={assessment.max} aria-label={`${assessment.subject} mark for ${student.name}`}
+                      value={entered[index] ?? ''} placeholder="—"
+                      onChange={e => {
+                        const raw = e.target.value;
+                        if (raw === '') return;
+                        const next = Math.max(0, Math.min(assessment.max, Number(raw)));
+                        dispatch({ type: 'set-mark', assessmentId: assessment.id, studentId: student.id, score: next });
+                      }} />
+                  </TableCell>)}
+                  <TableCell className="mono"><strong>{scored.length ? total : '—'}</strong></TableCell>
+                  <TableCell className="mono">{scored.length ? `${percent}%` : '—'}</TableCell>
+                  <TableCell>{scored.length ? <Pill tone={percent >= 70 ? 'ok' : percent >= 35 ? 'warn' : 'bad'}>{gradeFor(percent)}</Pill> : <span className="muted small">Not graded</span>}</TableCell>
                 </TableRow>;
               })} />}
           </Panel>
         </TabsContent>
       </Tabs>
-      <p className="foot-line">Replace the derived marks with an assessments table when the exam module stores entries per student, subject and cycle.</p>
+      <p className="foot-line">The same {assessments.length} papers feed the student progress-card report, so a mark entered here appears there without a second entry.</p>
+      <Button variant="ghost" size="sm" className="link-button" onClick={() => nav.go('reports')}>Open the progress-card report</Button>
     </>}
   </>;
 }

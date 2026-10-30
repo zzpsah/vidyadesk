@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from 'react';
-import { defaultSchools } from './seed';
-import type { AttendanceStatus, Fee, LeaveRequest, Notice, School, SchoolMeta, Student, Ticket, TransferApplication, MdmEntry } from './types';
+import { buildAssessments, buildTimetable, defaultSchools, emptyData, examSubjectsOf } from './seed';
+import type { AttendanceStatus, Fee, LeaveRequest, Mark, Notice, School, SchoolMeta, Student, Ticket, TransferApplication, MdmEntry } from './types';
 
 export const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
@@ -23,6 +23,8 @@ export type Action =
   | { type: 'add-ticket'; ticket: Ticket }
   | { type: 'set-ticket-status'; id: string; status: Ticket['status'] }
   | { type: 'add-mdm'; entry: MdmEntry }
+  | { type: 'set-mark'; assessmentId: string; studentId: string; score: number }
+  | { type: 'assign-period'; classId: string; day: string; slot: number; staffId: string }
   | { type: 'set-focus'; moduleId: string | null }
   | { type: 'reset' };
 
@@ -58,6 +60,18 @@ export function reducer(state: State, action: Action): State {
     case 'add-ticket': return onSchool(state, s => ({ ...s, tickets: [action.ticket, ...s.tickets] }));
     case 'set-ticket-status': return onSchool(state, s => ({ ...s, tickets: s.tickets.map(t => (t.id === action.id ? { ...t, status: action.status } : t)) }));
     case 'add-mdm': return onSchool(state, s => ({ ...s, mdmEntries: [action.entry, ...s.mdmEntries] }));
+    case 'set-mark': return onSchool(state, s => {
+      const rest = s.marks.filter(m => !(m.assessmentId === action.assessmentId && m.studentId === action.studentId));
+      return { ...s, marks: [...rest, { assessmentId: action.assessmentId, studentId: action.studentId, score: action.score } satisfies Mark] };
+    });
+    case 'assign-period': return onSchool(state, s => ({
+      ...s,
+      timetable: s.timetable.map(p => {
+        if (p.classId !== action.classId || p.day !== action.day || p.slot !== action.slot) return p;
+        const teacher = s.staff.find(member => member.id === action.staffId);
+        return { ...p, staffId: action.staffId, subject: teacher?.subject ?? p.subject };
+      }),
+    }));
     case 'set-focus': return { ...state, focusModuleId: action.moduleId };
     case 'reset': return initialState();
   }
@@ -69,13 +83,30 @@ export function initialState(): State {
   return { schools, activeSchoolId: schools[0].id, focusModuleId: 'model-school' };
 }
 
+/**
+ * Workspaces saved before exams and timetables became real records get them on load.
+ * The generators are deterministic, so a migrated school shows the same marks and
+ * periods it showed before — they simply stop being invented at render time.
+ */
+function upgrade(school: School): School {
+  const out: School = { ...emptyData(), ...school };
+  if (!out.assessments.length && out.students.length) {
+    const built = buildAssessments(out.id, out.classes, out.students, examSubjectsOf(out.staff), todayISO());
+    out.assessments = built.assessments;
+    out.marks = built.marks;
+  }
+  if (!out.timetable.length) out.timetable = buildTimetable(out.id, out.classes, out.staff);
+  return out;
+}
+
 function loadState(): State {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return initialState();
     const parsed = JSON.parse(raw) as State;
     if (!Array.isArray(parsed.schools) || !parsed.schools.length || !parsed.schools.every(s => typeof s?.id === 'string' && Array.isArray(s.students))) return initialState();
-    return { ...parsed, activeSchoolId: parsed.schools.some(s => s.id === parsed.activeSchoolId) ? parsed.activeSchoolId : parsed.schools[0].id };
+    const schools = parsed.schools.map(upgrade);
+    return { ...parsed, schools, activeSchoolId: schools.some(s => s.id === parsed.activeSchoolId) ? parsed.activeSchoolId : schools[0].id };
   } catch { return initialState(); }
 }
 

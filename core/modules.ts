@@ -33,10 +33,7 @@ export const modules: ModuleDef[] = [
     entities: ['School', 'Compliance area', 'Evidence item', 'Review visit'],
     workflow: ['Load the checklist template', 'Attach evidence per area', 'Score each area', 'Publish the school profile'],
     checks: ['Checklist source of truth', 'Photo/document evidence storage', 'Area scoring rules', 'District review view'] },
-  { id: 'reports', name: 'Academic reports', nav: 'Academic reports', blurb: 'Term-wise analytics across classes and subjects.', group: 'Academics', status: 'blueprint', icon: BarChart3,
-    entities: ['Assessment', 'Subject', 'Class', 'Attendance series'],
-    workflow: ['Freeze the term dataset', 'Compute pass bands and attendance', 'Compare across sections', 'Export the term book'],
-    checks: ['Metric definitions signed off', 'Chart library decision', 'Per-user saved reports', 'Term freeze policy'] },
+  { id: 'reports', name: 'Reports', nav: 'Reports', blurb: 'Cross-module reports assembled from attendance, marks, fees, timetable and registers.', group: 'Academics', status: 'live', icon: BarChart3 },
 
   // Communication
   { id: 'notices', name: 'Notification board', nav: 'Notifications', blurb: 'Notices with audience, category and archive.', group: 'Communication', status: 'live', icon: Bell },

@@ -1,9 +1,8 @@
-import type { AttendanceStatus, ClassSection, MdmEntry, NewSchoolInput, School, SchoolData, StaffMember, Student } from './types';
+import type { Assessment, AttendanceStatus, ClassSection, Mark, MdmEntry, NewSchoolInput, Period, School, SchoolData, StaffMember, Student } from './types';
 
 const FIRST = ['Aarav', 'Ananya', 'Kabir', 'Meera', 'Vivaan', 'Diya', 'Ishaan', 'Sana', 'Rohan', 'Avni', 'Arjun', 'Nisha', 'Yuvan', 'Aarohi', 'Ved', 'Myra', 'Kiaan', 'Ira', 'Reyansh', 'Anika', 'Dev', 'Sara', 'Naitik', 'Pari', 'Ayan', 'Zoya'];
 const LAST = ['Kumar', 'Singh', 'Sharma', 'Das', 'Roy', 'Patel', 'Gupta', 'Ali', 'Verma', 'Sinha', 'Mishra', 'Rao', 'Yadav', 'Pandey', 'Thakur', 'Chandra'];
 const SUBJECTS = ['Mathematics', 'Science', 'English', 'Social studies', 'Hindi', 'Sanskrit', 'Computer', 'Physical education'];
-const BREAKS = ['Morning break', 'Lunch break'];
 export const MENUS = ['Rice & dal', 'Roti & seasonal sabji', 'Rice & vegetable curry', 'Khichdi with curd', 'Roti & paneer bhurji'];
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export const SCHOOL_CATEGORIES = ['Primary (I–V)', 'Upper primary (I–VIII)', 'Secondary (VI–X)', 'Senior secondary (VI–XII)'];
@@ -32,7 +31,7 @@ export function sectionsFor(category: string): ClassSection[] {
 }
 
 export function emptyData(): SchoolData {
-  return { students: [], staff: [], classes: [], notices: [], fees: [], attendance: {}, leaveRequests: [], transferApplications: [], tickets: [], mdmEntries: [] };
+  return { students: [], staff: [], classes: [], notices: [], fees: [], attendance: {}, leaveRequests: [], transferApplications: [], tickets: [], mdmEntries: [], assessments: [], marks: [], timetable: [] };
 }
 
 function buildStudents(schoolId: string, classes: ClassSection[], seeded: boolean): Student[] {
@@ -81,6 +80,8 @@ export function createSchool(input: NewSchoolInput, today: string): School {
   const students = buildStudents(id, classes, input.seedRecords);
   const book = seedAttendance(id, students, today);
   const feeAmount = input.category.startsWith('Primary') ? 300 : input.category.startsWith('Upper') ? 400 : 600;
+  const subjects = examSubjectsOf(staff);
+  const { assessments, marks } = buildAssessments(id, classes, students, subjects, today);
   return {
     id, name: input.name, category: input.category, block: input.block, district: input.district, medium: input.medium, session: input.session, createdAt: today,
     students, staff, classes,
@@ -90,10 +91,12 @@ export function createSchool(input: NewSchoolInput, today: string): School {
     ] : [],
     fees: students.map(s => ({ id: `${id}-fee-${s.id}`, studentId: s.id, term: 'October', amount: feeAmount, paid: hash(`${id}${s.id}`) % 10 < 7 })),
     leaveRequests: staff.length > 2 ? [{ id: `${id}-lv-1`, staffId: staff[2].id, type: 'Casual', from: today, to: today, days: 1, reason: 'Personal work at home district.', status: 'Pending review' }] : [],
-    transferApplications: staff.length > 1 ? [{ id: `${id}-tr-1`, kind: 'transfer-special', applicant: staff[1].name, fromSchool: input.name, to: pick(['District A', 'District B', 'District C', 'District D'], id), ground: 'Spouse posted in another district', reason: 'Family stays together in one district.', ref: `${id.slice(4, 10).toUpperCase()}-SPL-001`, status: 'Draft', createdAt: today }] : [],
-    tickets: input.seedRecords ? [{ id: `${id}-tk-1`, subject: 'Classroom light fixture', category: 'Infrastructure', detail: 'Two tube lights in the upper-primary block are flickering.', status: 'Open', createdAt: today }] : [],
+    transferApplications: staff.length > 1 ? [{ id: `${id}-tr-1`, kind: 'transfer-special', applicant: staff[1].name, staffId: staff[1].id, fromSchool: input.name, to: pick(['District A', 'District B', 'District C', 'District D'], id), ground: 'Spouse posted in another district', reason: 'Family stays together in one district.', ref: `${id.slice(4, 10).toUpperCase()}-SPL-001`, status: 'Draft', createdAt: today }] : [],
+    tickets: input.seedRecords ? [{ id: `${id}-tk-1`, subject: 'Classroom light fixture', category: 'Infrastructure', detail: 'Two tube lights in the upper-primary block are flickering.', classId: classes[0]?.id, status: 'Open', createdAt: today }] : [],
     attendance: input.seedRecords && students.length ? { [today]: book } : {},
     mdmEntries: input.seedRecords && students.length ? seedMdm(id, today, students, book) : [],
+    assessments, marks,
+    timetable: buildTimetable(id, classes, staff),
   };
 }
 
@@ -103,16 +106,56 @@ export const defaultSchools = (today: string): School[] => [
   createSchool({ name: 'Demo Blank Primary School', category: SCHOOL_CATEGORIES[0], block: 'Demo Block West', district: 'Demo District', medium: MEDIUMS[1], session: '2026–27', seedRecords: false }, today),
 ];
 
-export function timetableFor(school: School, classId: string, day: string) {
-  const slots = ['08:30–09:15', '09:15–10:00', '10:00–10:20', '10:20–11:05', '11:05–11:50', '11:50–12:30', '12:30–13:15', '13:15–14:00'];
-  const subjects = school.staff.filter(s => s.role !== 'Head teacher');
-  return slots.map((time, index) => {
-    if (index === 2 || index === 5) return { time, subject: BREAKS[index === 2 ? 0 : 1], teacher: '—', period: '—' };
-    const slot = subjects.length ? subjects[(hash(`${school.id}${classId}${day}`) + index * 3) % subjects.length] : undefined;
-    return { time, subject: slot?.subject ?? 'Free period', teacher: slot?.name ?? 'Unassigned', period: String(index < 2 ? index + 1 : index) };
-  });
+export const SLOT_TIMES = ['08:30–09:15', '09:15–10:00', '10:00–10:20', '10:20–11:05', '11:05–11:50', '11:50–12:30', '12:30–13:15', '13:15–14:00'];
+/** Slot index → break label. These slots hold no teaching period, so no teacher is free or busy in them. */
+export const BREAK_SLOTS: Record<number, string> = { 2: 'Morning break', 5: 'Lunch break' };
+export const EXAM_MAX = 50;
+export const EXAM_NAME = 'First unit test';
+
+const iso = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+export function isoAdd(date: string, days: number) { const value = new Date(`${date}T00:00:00`); value.setDate(value.getDate() + days); return iso(value); }
+/** The next assessment cycle always opens on the 5th of the coming month. */
+export function examStart(today: string) { const now = new Date(`${today}T00:00:00`); return iso(new Date(now.getFullYear(), now.getMonth() + 1, 5)); }
+
+/** Subjects actually taught, in staff order. Kept to four so a marks board fits one screen. */
+export function examSubjectsOf(staff: StaffMember[]) { return [...new Set(staff.filter(s => s.role !== 'Head teacher').map(s => s.subject))].slice(0, 4); }
+
+export function buildTimetable(schoolId: string, classes: ClassSection[], staff: StaffMember[]): Period[] {
+  const teachers = staff.filter(s => s.role !== 'Head teacher');
+  if (!teachers.length) return [];
+  const out: Period[] = [];
+  classes.forEach(section => DAYS.forEach(day => SLOT_TIMES.forEach((_, slot) => {
+    if (BREAK_SLOTS[slot]) return;
+    const teacher = teachers[(hash(`${schoolId}${section.id}${day}`) + slot * 3) % teachers.length];
+    out.push({ classId: section.id, day, slot, subject: teacher.subject, staffId: teacher.id });
+  })));
+  return out;
 }
 
-export function subjectScores(school: School, student: Student, subject: string) {
-  return 24 + hash(`${school.id}${student.id}${subject}`) % 26;
+/** One assessment per section per subject, with a score for every student in that section. */
+export function buildAssessments(schoolId: string, classes: ClassSection[], students: Student[], subjects: string[], today: string) {
+  const start = examStart(today);
+  const assessments: Assessment[] = [];
+  const marks: Mark[] = [];
+  subjects.forEach((subject, subjectIndex) => classes.forEach(section => {
+    const id = `${schoolId}-asm-${subjectIndex}-${section.id.replace(/\W+/g, '')}`;
+    assessments.push({ id, name: EXAM_NAME, subject, className: section.id, date: isoAdd(start, subjectIndex * 2), max: EXAM_MAX });
+    students.filter(s => s.className === section.id).forEach(s => marks.push({ assessmentId: id, studentId: s.id, score: 24 + hash(`${schoolId}${s.id}${subject}`) % 26 }));
+  }));
+  return { assessments, marks };
+}
+
+/** Reads stored periods; a slot with no period is genuinely free, not generated on the fly. */
+export function timetableFor(school: School, classId: string, day: string) {
+  const bySlot = new Map(school.timetable.filter(p => p.classId === classId && p.day === day).map(p => [p.slot, p]));
+  return SLOT_TIMES.map((time, slot) => {
+    const period = bySlot.get(slot);
+    const teacher = period ? school.staff.find(member => member.id === period.staffId) : undefined;
+    return {
+      time,
+      subject: BREAK_SLOTS[slot] ?? period?.subject ?? 'Free period',
+      teacher: BREAK_SLOTS[slot] ? '—' : teacher?.name ?? 'Unassigned',
+      period: BREAK_SLOTS[slot] ? '—' : String(slot + 1),
+    };
+  });
 }

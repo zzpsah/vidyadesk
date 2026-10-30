@@ -210,6 +210,7 @@ button.kpi:hover { border-color: var(--ring); box-shadow: var(--shadow-hover); }
 .pill-warn { background: var(--warning-surface); color: var(--warning); }
 .pill-bad { background: var(--danger-surface); color: var(--danger); }
 .pill-mute { background: var(--muted); color: var(--muted-foreground); }
+.pill-stack { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
 /* ---------- toolbars & controls ---------- */
 .toolbar { display: flex; align-items: center; gap: 11px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -262,6 +263,22 @@ select { height: 38px; min-width: 130px; border: 1px solid var(--input); border-
 .insight h3 { font-size: 12.5px; margin-bottom: 8px; color: var(--muted-foreground); font-weight: 600; }
 .insight strong { font: 400 22px/1.2 var(--display-font); display: block; }
 
+/* ---------- reports ---------- */
+.report-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); gap: 10px; padding: 16px 18px; }
+.report-chip { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; transition: border-color .14s, box-shadow .14s, background .14s; }
+.report-chip:hover { border-color: var(--ring); box-shadow: var(--shadow-panel); }
+.report-chip strong { font-size: 13px; font-weight: 650; }
+.report-chip span { font-size: 12px; line-height: 1.55; color: var(--muted-foreground); }
+.report-chip em { font-style: normal; font-size: 10px; letter-spacing: .7px; text-transform: uppercase; color: var(--primary); background: var(--muted); border-radius: 5px; padding: 4px 7px; }
+.report-chip.on { border-color: var(--primary); background: var(--secondary); }
+.report-chip.on strong { color: var(--primary); }
+
+/* ---------- inline edits in tables ---------- */
+.row-select { min-width: 200px; height: 32px; font-size: 12.5px; padding: 0 8px; border-radius: 6px; }
+.mark-input { width: 62px; height: 32px; border: 1px solid var(--input); border-radius: 6px; background: var(--card); padding: 0 7px; font-size: 13px; text-align: center; font-variant-numeric: tabular-nums; }
+.mark-input:hover { border-color: var(--ring); }
+.mark-input::placeholder { color: var(--input); }
+
 /* ---------- blueprint ---------- */
 .blueprint-hero { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
 .blueprint-hero .tile-icon { width: 36px; height: 36px; }
@@ -306,6 +323,17 @@ select { height: 38px; min-width: 130px; border: 1px solid var(--input); border-
 .detail-list dt { color: var(--muted-foreground); }
 .detail-list dd { margin: 0; text-align: right; font-weight: 550; overflow-wrap: anywhere; }
 .payment-box { display: flex; flex-direction: column; gap: 5px; background: var(--secondary); color: var(--primary); border-radius: 8px; padding: 15px 17px; }
+.profile-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 9px; margin-top: 16px; }
+.profile-stats > span { display: flex; flex-direction: column; gap: 3px; background: var(--muted); border-radius: 8px; padding: 11px 13px; }
+.profile-stats small { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600; }
+.profile-stats strong { font: 400 20px/1.2 var(--display-font); }
+.profile-stats em { font-style: normal; font-size: 11px; color: var(--muted-foreground); line-height: 1.5; }
+.mini-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 12.5px; }
+.mini-table th { text-align: left; font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; color: var(--muted-foreground); padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.mini-table th + th, .mini-table td + td { text-align: right; }
+.mini-table td { padding: 7px 0; border-bottom: 1px dashed var(--border); }
+.mini-table tr:last-child td { border-bottom: 0; }
+.dialog-note { font-size: 11.5px; color: var(--muted-foreground); border-left: 2px solid var(--border); padding-left: 11px; margin-top: 16px; line-height: 1.6; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1240px) {

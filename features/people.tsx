@@ -3,7 +3,8 @@ import { Download, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { DataTable, EmptyState, FilterField, Kpi, NoResults, PageHead, Panel, Pill, SearchField, Toolbar } from '@/components/common';
-import { modules } from '@/core/modules';
+import { moduleById, modules } from '@/core/modules';
+import { staffSummary } from '@/core/graph';
 import { dateLabel, downloadCsv, initialsOf, shortDate } from '@/core/format';
 import { useWorkspace } from '@/core/workspace';
 import type { LeaveRequest, TransferApplication } from '@/core/types';
@@ -17,7 +18,7 @@ export function StaffView({ nav }: { nav: Nav }) {
   const rows = school.staff.filter(s => `${s.name} ${s.subject} ${s.assignedClass} ${s.role}`.toLowerCase().includes(query.toLowerCase()));
   return <>
     <PageHead module={def('staff')} crumb="People & transfers">
-      <Button variant="outline" disabled={!rows.length} onClick={() => downloadCsv(`${school.name.toLowerCase().replace(/\W+/g, '-')}-staff.csv`, [['Name', 'Subject', 'Role', 'Section', 'Hours', 'Leave balance'], ...rows.map(s => [s.name, s.subject, s.role, s.assignedClass, s.schedule, s.leaveBalance])])}><Download size={15} /> Export</Button>
+      <Button variant="outline" disabled={!rows.length} onClick={() => downloadCsv(`${school.name.toLowerCase().replace(/\W+/g, '-')}-staff.csv`, [['Name', 'Subject', 'Role', 'Class teacher of', 'Periods per week', 'Sections taught', 'Hours', 'Leave balance'], ...rows.map(s => { const r = staffSummary(school, s.id); return [s.name, s.subject, s.role, r?.classTeacherOf.join(', ') || '—', r?.periodsPerWeek ?? 0, r?.taughtClasses.length ?? 0, s.schedule, s.leaveBalance]; })])}><Download size={15} /> Export</Button>
       <Button onClick={() => nav.open({ kind: 'leave' })}><Plus size={15} /> Record leave</Button>
     </PageHead>
     {!school.staff.length
@@ -33,16 +34,21 @@ export function StaffView({ nav }: { nav: Nav }) {
           <span className="toolbar-count">{rows.length} of {school.staff.length}</span>
         </Toolbar>
         {!rows.length ? <NoResults text="Try another name, subject or section." /> : <div className="card-grid">
-          {rows.map(member => <article className="panel compact-card" key={member.id}>
-            <header><span className="person"><span className="avatar">{initialsOf(member.name)}</span><div><strong>{member.name}</strong><span className="muted small">{member.subject}</span></div></span><Pill tone={member.leaveBalance > 10 ? 'ok' : 'warn'}>{member.leaveBalance} days left</Pill></header>
-            <div className="card-rows">
-              <div><span>Role</span><strong>{member.role}</strong></div>
-              <div><span>Section</span><strong>{member.assignedClass}</strong></div>
-              <div><span>School hours</span><strong>{member.schedule}</strong></div>
-              <div><span>Students taught</span><strong>{school.students.filter(s => s.className === member.assignedClass).length}</strong></div>
-            </div>
-            <div className="card-actions"><Button variant="outline" size="sm" onClick={() => nav.open({ kind: 'leave' })}>Record leave</Button>{member.assignedClass !== '—' && <Button variant="ghost" size="sm" onClick={() => nav.go('classes')}>View section</Button>}</div>
-          </article>)}
+          {rows.map(member => {
+            const record = staffSummary(school, member.id);
+            const transfers = record?.transfers.length ?? 0;
+            return <article className="panel compact-card" key={member.id}>
+              <header><span className="person"><span className="avatar">{initialsOf(member.name)}</span><div><strong>{member.name}</strong><span className="muted small">{member.subject}</span></div></span><Pill tone={member.leaveBalance > 10 ? 'ok' : 'warn'}>{member.leaveBalance} days left</Pill></header>
+              <div className="card-rows">
+                <div><span>Role</span><strong>{member.role}</strong></div>
+                <div><span>Class teacher of</span><strong>{record?.classTeacherOf.join(', ') || '—'}</strong></div>
+                <div><span>Periods this week</span><strong>{record?.periodsPerWeek ?? 0} across {record?.taughtClasses.length ?? 0} sections</strong></div>
+                <div><span>Students taught</span><strong>{school.students.filter(s => record?.taughtClasses.includes(s.className)).length}</strong></div>
+                {transfers > 0 && <div><span>Transfer drafts</span><strong>{transfers} open in {moduleById.get(school.transferApplications.find(a => a.staffId === member.id)?.kind ?? '')?.nav ?? 'transfers'}</strong></div>}
+              </div>
+              <div className="card-actions"><Button variant="outline" size="sm" onClick={() => nav.open({ kind: 'leave' })}>Record leave</Button><Button variant="outline" size="sm" onClick={() => nav.go('timetable')}>Timetable</Button>{member.assignedClass !== '—' && <Button variant="ghost" size="sm" onClick={() => nav.go('classes')}>View section</Button>}</div>
+            </article>;
+          })}
         </div>}
       </>}
   </>;

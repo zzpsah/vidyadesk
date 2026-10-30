@@ -21,12 +21,18 @@ export type AttendanceStatus = 'Present' | 'Absent' | 'Leave';
 export type Student = { id: string; roll: number; name: string; className: string; guardian: string; gender: 'Boy' | 'Girl'; joined: string; status: 'Enrolled' | 'Withdrawn' };
 export type StaffMember = { id: string; name: string; initials: string; subject: string; role: string; assignedClass: string; schedule: string; leaveBalance: number };
 export type ClassSection = { id: string; teacherId: string };
-export type Notice = { id: string; title: string; body: string; audience: string; category: string; date: string };
+export type Notice = { id: string; title: string; body: string; audience: string; category: string; date: string; classId?: string };
 export type Fee = { id: string; studentId: string; term: string; amount: number; paid: boolean };
 export type LeaveRequest = { id: string; staffId: string; type: string; from: string; to: string; days: number; reason: string; status: 'Pending review' | 'Approved' | 'Declined' };
-export type TransferApplication = { id: string; kind: string; applicant: string; fromSchool: string; to: string; ground: string; reason: string; ref: string; status: 'Draft' | 'Ready to file' | 'Filed elsewhere'; createdAt: string };
-export type Ticket = { id: string; subject: string; category: string; detail: string; status: 'Open' | 'In progress' | 'Resolved'; createdAt: string };
+export type TransferApplication = { id: string; kind: string; applicant: string; staffId?: string; fromSchool: string; to: string; ground: string; reason: string; ref: string; status: 'Draft' | 'Ready to file' | 'Filed elsewhere'; createdAt: string };
+export type Ticket = { id: string; subject: string; category: string; detail: string; classId?: string; status: 'Open' | 'In progress' | 'Resolved'; createdAt: string };
 export type MdmEntry = { id: string; date: string; menu: string; meals: number; classCount: number; note: string };
+
+/** One stored exam per class and subject. Marks point at it, so a score always has context. */
+export type Assessment = { id: string; name: string; className: string; subject: string; date: string; max: number };
+export type Mark = { assessmentId: string; studentId: string; score: number };
+/** A taught period. Storing it is what lets staff load, timetable and attendance agree. */
+export type Period = { classId: string; day: string; slot: number; subject: string; staffId: string };
 
 /** attendance[date][studentId] */
 export type AttendanceBook = Record<string, Record<string, AttendanceStatus>>;
@@ -43,6 +49,9 @@ export type SchoolData = {
   transferApplications: TransferApplication[];
   tickets: Ticket[];
   mdmEntries: MdmEntry[];
+  assessments: Assessment[];
+  marks: Mark[];
+  timetable: Period[];
 };
 export type School = SchoolMeta & SchoolData;
 

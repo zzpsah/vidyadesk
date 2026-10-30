@@ -6,6 +6,7 @@ import { DataTable, EmptyState, FilterField, Kpi, NoResults, PageHead, Panel, Pi
 import { modules } from '@/core/modules';
 import { MENUS } from '@/core/seed';
 import { dateLabel, initialsOf, pct } from '@/core/format';
+import { attendanceDates, mealsExpected } from '@/core/graph';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import type { Ticket } from '@/core/types';
 import type { Nav } from '@/core/nav';
@@ -34,7 +35,11 @@ export function NoticesView({ nav }: { nav: Nav }) {
           <header><Pill tone="accent">{notice.category}</Pill><span className="muted small">{dateLabel(notice.date)}</span></header>
           <h3>{notice.title}</h3>
           <p>{notice.body}</p>
-          <footer><span className="avatar tiny">{initialsOf(school.name)}</span><span className="muted small">Head office · visible to {notice.audience}</span></footer>
+          <footer>
+            <span className="avatar tiny">{initialsOf(school.name)}</span>
+            <span className="muted small">Head office · visible to {notice.audience}</span>
+            {notice.classId && <Button variant="ghost" size="sm" className="link-button" onClick={() => nav.go('classes')}>Affects {notice.classId} only</Button>}
+          </footer>
         </article>)}</div>}
     <p className="foot-line">Push delivery — SMS, WhatsApp or app notifications — needs a consent record per parent and a messaging backend. The board only proves the authoring flow.</p>
   </>;
@@ -62,7 +67,7 @@ export function TicketsView({ nav }: { nav: Nav }) {
       {!rows.length ? <EmptyState title={school.tickets.length ? 'Nothing with this status' : 'No tickets raised'} text={school.tickets.length ? 'Switch the status filter to see the rest of the queue.' : `Raise the first ${school.name} ticket.`} action={<Button variant="outline" onClick={() => nav.open({ kind: 'ticket' })}>Raise ticket</Button>} /> : <DataTable headings={['Subject', 'Category', 'Detail', 'Status', 'Raised', '']}
         rows={rows.map(ticket => <TableRow key={ticket.id}>
           <TableCell>{ticket.subject}</TableCell>
-          <TableCell><Pill tone="mute">{ticket.category}</Pill></TableCell>
+          <TableCell><div className="pill-stack"><Pill tone="mute">{ticket.category}</Pill>{ticket.classId && <Button variant="ghost" size="sm" className="link-button" onClick={() => nav.go('classes')}>{ticket.classId}</Button>}</div></TableCell>
           <TableCell className="muted wrap">{ticket.detail}</TableCell>
           <TableCell><Pill tone={ticket.status === 'Resolved' ? 'ok' : ticket.status === 'In progress' ? 'accent' : 'warn'}>{ticket.status}</Pill></TableCell>
           <TableCell className="mono muted">{dateLabel(ticket.createdAt)}</TableCell>
@@ -79,6 +84,7 @@ export function MdmView({ nav }: { nav: Nav }) {
   const eligible = school.students.filter(s => book[s.id] !== 'Absent').length;
   const served = school.mdmEntries.reduce((sum, e) => sum + e.meals, 0);
   const rate = pct(school.mdmEntries.filter(e => e.date === today).length ? eligible : 0, school.students.length);
+  const unlogged = attendanceDates(school).filter(date => !school.mdmEntries.some(e => e.date === date));
 
   return <>
     <PageHead module={def('mdm')} crumb="Students">
@@ -92,14 +98,22 @@ export function MdmView({ nav }: { nav: Nav }) {
     <div className="menu-strip"><UtensilsCrossed size={16} aria-hidden="true" /><strong>Weekly menu template</strong>{MENUS.map((menu, index) => <span key={menu}>{['Mon', 'Tue', 'Wed', 'Thu', 'Fri'][index]} · {menu}</span>)}</div>
     <Panel title="Serving register" meta={`${school.name} · PM Poshan sample entries`}
       caption={<span>Cook-cum-helper duty, grain stock and muster roll belong to the next build step; this register only records what was served.</span>}>
-      {!school.mdmEntries.length ? <EmptyState title="No serving entries" text={school.students.length ? 'Log the first meal day for this school.' : 'Enroll students before keeping a meal register.'} action={<Button variant="outline" onClick={() => nav.open({ kind: 'mdm' })}>Log a meal day</Button>} /> : <DataTable headings={['Date', 'Menu', 'Classes served', 'Meals', 'Note']}
-        rows={school.mdmEntries.map(entry => <TableRow key={entry.id}>
-          <TableCell className="mono">{dateLabel(entry.date)}</TableCell>
-          <TableCell>{entry.menu}</TableCell>
-          <TableCell className="mono">{entry.classCount}</TableCell>
-          <TableCell className="mono"><strong>{entry.meals}</strong></TableCell>
-          <TableCell className="muted wrap">{entry.note || '—'}</TableCell>
-        </TableRow>)} />}
+      {!school.mdmEntries.length ? <EmptyState title="No serving entries" text={school.students.length ? 'Log the first meal day for this school.' : 'Enroll students before keeping a meal register.'} action={<Button variant="outline" onClick={() => nav.open({ kind: 'mdm' })}>Log a meal day</Button>} /> : <DataTable headings={['Date', 'Menu', 'Classes served', 'Meals', 'Vs register', 'Note']}
+        rows={school.mdmEntries.map(entry => {
+          const expected = mealsExpected(school, entry.date);
+          const delta = expected === null ? null : entry.meals - expected;
+          return <TableRow key={entry.id}>
+            <TableCell className="mono">{dateLabel(entry.date)}</TableCell>
+            <TableCell>{entry.menu}</TableCell>
+            <TableCell className="mono">{entry.classCount}</TableCell>
+            <TableCell className="mono"><strong>{entry.meals}</strong></TableCell>
+            <TableCell>{delta === null
+              ? <span className="muted small">No register for this date</span>
+              : <span className="pill-stack"><span className="muted small">{expected} expected</span><Pill tone={delta === 0 ? 'ok' : delta > 0 ? 'warn' : 'bad'}>{delta === 0 ? 'matches' : `${delta > 0 ? '+' : ''}${delta}`}</Pill></span>}</TableCell>
+            <TableCell className="muted wrap">{entry.note || '—'}</TableCell>
+          </TableRow>;
+        })} />}
     </Panel>
+    {unlogged.length > 0 && <p className="foot-line">{unlogged.length} register {unlogged.length === 1 ? 'day has' : 'days have'} no meal entry yet — the mid-day meal audit report lists the same {unlogged.length === 1 ? 'gap' : 'gaps'}.</p>}
   </>;
 }

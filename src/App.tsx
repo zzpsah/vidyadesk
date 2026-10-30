@@ -5,6 +5,7 @@ import { DialogHost, type DialogState } from '@/components/dialogs';
 import { ClassesView, AttendanceView, ExamsView, FeesView, StudentsView, TimetableView } from '@/features/academics';
 import { LeaveView, StaffView, TransfersView } from '@/features/people';
 import { MdmView, NoticesView, TicketsView } from '@/features/services';
+import { ReportsView } from '@/features/reports';
 import { BlueprintView } from '@/features/blueprint';
 import { OverviewView } from '@/features/overview';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
@@ -29,6 +30,7 @@ function renderView(route: string, nav: Nav) {
   if (route === 'notices') return <NoticesView nav={nav} />;
   if (route === 'tickets') return <TicketsView nav={nav} />;
   if (route === 'mdm') return <MdmView nav={nav} />;
+  if (route === 'reports') return <ReportsView nav={nav} />;
   return <BlueprintView moduleId={route} nav={nav} />;
 }
 

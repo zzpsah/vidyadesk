@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { MEDIUMS, MENUS, SCHOOL_CATEGORIES, createSchool } from '@/core/seed';
+import { studentProfile } from '@/core/graph';
 import { moduleById } from '@/core/modules';
 import { todayISO, useWorkspace } from '@/core/workspace';
 import { dateLabel, rupees } from '@/core/format';
@@ -85,7 +86,7 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
     const title = String(form.get('title') || '').trim();
     const body = String(form.get('body') || '').trim();
     if (!title || !body) return fail('Enter a notice title and message.');
-    dispatch({ type: 'add-notice', notice: { id: id(`${school.id}-not`), title, body, audience: String(form.get('audience')), category: String(form.get('category')), date: todayISO() } });
+    dispatch({ type: 'add-notice', notice: { id: id(`${school.id}-not`), title, body, audience: String(form.get('audience')), category: String(form.get('category')), date: todayISO(), classId: String(form.get('classId') || '') || undefined } });
     toast.success('Notice published to the local board.', { description: 'No message was sent to anyone.' });
     close();
   }
@@ -110,12 +111,13 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
     event.preventDefault();
     if (!dialog || dialog.kind !== 'transfer') return;
     const form = new FormData(event.currentTarget);
-    const applicant = String(form.get('applicant') || '').trim();
+    const staffId = String(form.get('staffId') || '');
+    const member = school.staff.find(s => s.id === staffId);
     const to = String(form.get('to') || '').trim();
     const ground = String(form.get('ground') || '').trim();
-    if (!applicant || !to || !ground) return fail('Fill in the teacher, the destination and the ground.');
+    if (!member || !to || !ground) return fail('Choose the teacher, then fill in the destination and the ground.');
     const kind = moduleById.get(dialog.moduleId);
-    dispatch({ type: 'add-transfer', application: { id: id(`${school.id}-tr`), kind: dialog.moduleId, applicant, fromSchool: school.name, to, ground, reason: String(form.get('reason') || '').trim(), ref: `${school.id.slice(-4).toUpperCase()}-${(kind?.nav.slice(0, 3) || 'TRF').toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`, status: 'Draft', createdAt: todayISO() } });
+    dispatch({ type: 'add-transfer', application: { id: id(`${school.id}-tr`), kind: dialog.moduleId, applicant: member.name, staffId: member.id, fromSchool: school.name, to, ground, reason: String(form.get('reason') || '').trim(), ref: `${school.id.slice(-4).toUpperCase()}-${(kind?.nav.slice(0, 3) || 'TRF').toUpperCase()}-${Math.floor(Math.random() * 900 + 100)}`, status: 'Draft', createdAt: todayISO() } });
     toast.success('Draft application created.', { description: 'It is not submitted to any department from here.' });
     close();
   }
@@ -126,7 +128,8 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
     const subject = String(form.get('subject') || '').trim();
     const detail = String(form.get('detail') || '').trim();
     if (!subject || !detail) return fail('Enter a subject and the detail.');
-    dispatch({ type: 'add-ticket', ticket: { id: id(`${school.id}-tk`), subject, category: String(form.get('category')), detail, status: 'Open', createdAt: todayISO() } });
+    const classId = String(form.get('classId') || '');
+    dispatch({ type: 'add-ticket', ticket: { id: id(`${school.id}-tk`), subject, category: String(form.get('category')), detail, classId: classId || undefined, status: 'Open', createdAt: todayISO() } });
     toast.success('Ticket opened locally.', { description: 'Assign an owner once the support backend exists.' });
     close();
   }
@@ -206,6 +209,7 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
           <div className="form-grid">
             <Row><Label htmlFor="notice-audience">Audience</Label><select id="notice-audience" name="audience">{['Everyone', 'Students', 'Parents', 'Staff'].map(a => <option key={a}>{a}</option>)}</select></Row>
             <Row><Label htmlFor="notice-category">Category</Label><select id="notice-category" name="category">{['Academic', 'Admin', 'Welfare', 'Exam'].map(c => <option key={c}>{c}</option>)}</select></Row>
+            <Row><Label htmlFor="notice-class">Class it affects</Label><select id="notice-class" name="classId"><option value="">Whole school</option>{school.classes.map(c => <option key={c.id} value={c.id}>{c.id}</option>)}</select></Row>
           </div>
           <div className="form-actions"><Button variant="outline" type="button" onClick={close}>Cancel</Button><Button type="submit">Publish locally</Button></div>
         </form>}
@@ -222,7 +226,7 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
         </form>}
 
         {dialog.kind === 'transfer' && <form className="preview-form" onSubmit={addTransfer}>
-          <Row><Label htmlFor="transfer-applicant">Teacher on transfer</Label><Input id="transfer-applicant" name="applicant" maxLength={80} defaultValue={school.staff[1]?.name} placeholder="Fictional name" /></Row>
+          <Row><Label htmlFor="transfer-applicant">Teacher on transfer</Label><select id="transfer-applicant" name="staffId" defaultValue={school.staff.find(s => s.role !== 'Head teacher')?.id}>{school.staff.filter(s => s.role !== 'Head teacher').map(s => <option key={s.id} value={s.id}>{s.name} · {s.subject}</option>)}</select></Row>
           <Row><Label htmlFor="transfer-to">Destination</Label><Input id="transfer-to" name="to" maxLength={80} placeholder={dialog.moduleId === 'transfer-district' ? 'Target district or block' : 'School, block or district office'} /></Row>
           <Row><Label htmlFor="transfer-ground">{dialog.moduleId === 'transfer-mutual' ? 'Counterpart teacher' : dialog.moduleId === 'transfer-teacher' ? 'Preference note' : 'Ground'}</Label><Input id="transfer-ground" name="ground" maxLength={120} placeholder={dialog.moduleId === 'transfer-special' ? 'Spouse posted elsewhere · medical · disability' : 'Short statement'} /></Row>
           <Row><Label htmlFor="transfer-reason">Supporting note</Label><Textarea id="transfer-reason" name="reason" rows={3} maxLength={600} /></Row>
@@ -234,6 +238,7 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
           <Row><Label htmlFor="ticket-subject">Subject</Label><Input id="ticket-subject" name="subject" maxLength={120} placeholder="e.g. Drinking water pump" /></Row>
           <Row><Label htmlFor="ticket-category">Category</Label><select id="ticket-category" name="category">{['Infrastructure', 'Academic', 'Payroll', 'Mid-day meal', 'Transport', 'Other'].map(c => <option key={c}>{c}</option>)}</select></Row>
           <Row><Label htmlFor="ticket-detail">Detail</Label><Textarea id="ticket-detail" name="detail" rows={4} maxLength={1200} /></Row>
+          <Row><Label htmlFor="ticket-class">Affects</Label><select id="ticket-class" name="classId"><option value="">Whole campus</option>{school.classes.map(c => <option key={c.id} value={c.id}>Class {c.id}</option>)}</select></Row>
           <div className="form-actions"><Button variant="outline" type="button" onClick={close}>Cancel</Button><Button type="submit">Open ticket</Button></div>
         </form>}
 
@@ -247,17 +252,28 @@ export function DialogHost({ dialog, onClose }: { dialog: DialogState; onClose: 
           <div className="form-actions"><Button variant="outline" type="button" onClick={close}>Cancel</Button><Button type="submit" disabled={!school.students.length}>Save entry</Button></div>
         </form>}
 
-        {dialog.kind === 'profile' && <>
-          <dl className="detail-list">
-            <div><dt>Roll & class</dt><dd>{dialog.student.roll} · {dialog.student.className}</dd></div>
-            <div><dt>Guardian</dt><dd>{dialog.student.guardian}</dd></div>
-            <div><dt>Gender</dt><dd>{dialog.student.gender}</dd></div>
-            <div><dt>Enrolled on</dt><dd>{dateLabel(dialog.student.joined)}</dd></div>
-            <div><dt>Today</dt><dd>{(school.attendance[todayISO()] ?? {})[dialog.student.id] ?? 'Not marked'}</dd></div>
-            <div><dt>Fee status</dt><dd>{rupees(school.fees.find(f => f.studentId === dialog.student.id)?.amount ?? 0)} · {school.fees.find(f => f.studentId === dialog.student.id)?.paid ? 'Paid' : 'Due'}</dd></div>
-          </dl>
-          <div className="form-actions"><Button variant="outline" onClick={close}>Close</Button></div>
-        </>}
+        {dialog.kind === 'profile' && (() => {
+          const profile = studentProfile(school, dialog.student);
+          return <>
+            <dl className="detail-list">
+              <div><dt>Roll & class</dt><dd>{dialog.student.roll} · {dialog.student.className}</dd></div>
+              <div><dt>Class teacher</dt><dd>{profile.teacher?.name ?? 'Unassigned'}</dd></div>
+              <div><dt>Guardian</dt><dd>{dialog.student.guardian}</dd></div>
+              <div><dt>Enrolled on</dt><dd>{dateLabel(dialog.student.joined)}</dd></div>
+              <div><dt>Today</dt><dd>{(school.attendance[todayISO()] ?? {})[dialog.student.id] ?? 'Not marked'}</dd></div>
+            </dl>
+            <div className="profile-stats">
+              <span><small>Attendance</small><strong>{profile.attendance.marked ? `${profile.attendance.percent}%` : '—'}</strong><em>{profile.attendance.present} present · {profile.attendance.absent} absent · {profile.attendance.leave} leave over {profile.attendance.days} day{profile.attendance.days === 1 ? '' : 's'}</em></span>
+              <span><small>Fees</small><strong>{profile.due ? rupees(profile.due) : 'Clear'}</strong><em>{rupees(profile.paid)} collected · {profile.fees.length} record{profile.fees.length === 1 ? '' : 's'}</em></span>
+              <span><small>Exams</small><strong>{profile.rows.length ? `${profile.percent}% · ${profile.grade}` : '—'}</strong><em>{profile.rows.length} paper{profile.rows.length === 1 ? '' : 's'} entered</em></span>
+            </div>
+            {profile.rows.length > 0 && <table className="mini-table"><thead><tr><th>Paper</th><th>Score</th></tr></thead><tbody>
+              {profile.rows.map(row => <tr key={row.assessment.id}><td>{row.assessment.subject}</td><td className="mono">{row.score} / {row.assessment.max}</td></tr>)}
+            </tbody></table>}
+            <p className="dialog-note">These figures are read from the attendance, fees and exam modules as they stand — nothing here is stored twice.</p>
+            <div className="form-actions"><Button variant="outline" onClick={close}>Close</Button></div>
+          </>;
+        })()}
 
         {dialog.kind === 'payment' && <>
           <div className="payment-box"><strong>{school.students.find(s => s.id === dialog.fee.studentId)?.name}</strong><span>{rupees(dialog.fee.amount)} · {dialog.fee.term} term</span></div>
