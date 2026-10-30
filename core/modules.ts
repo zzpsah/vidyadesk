@@ -3,12 +3,12 @@ import type { ModuleDef, ModuleGroup } from './types';
 
 /**
  * The module board mirrors the functional areas a government school dashboard
- * works with. `live` modules run against this browser only; `blueprint`
- * modules publish the data, workflow and build checks they need first.
+ * used to prototype. Legacy CRUD entries are retired from the school portal;
+ * project-backed capabilities are listed in core/projects.ts.
  */
 export const modules: ModuleDef[] = [
   // Students
-  { id: 'students', name: 'Student enrollment', nav: 'Enrollment', blurb: 'Admission register, profiles and class records.', group: 'Students', status: 'live', icon: BookOpen },
+  { id: 'students', name: 'Student enrollment', nav: 'Enrollment', blurb: 'Admission register, profiles and class records.', group: 'Students', status: 'retired', icon: BookOpen },
   { id: 'attendance', name: 'Attendance', blurb: 'Daily register per class with monthly summaries.', nav: 'Attendance', group: 'Students', status: 'live', icon: ClipboardCheck },
   { id: 'exams', name: 'Exams & results', nav: 'Exams', blurb: 'Assessment schedule, marks and grade cards.', group: 'Students', status: 'live', icon: GraduationCap },
   { id: 'fees', name: 'Fees & payments', nav: 'Fees', blurb: 'Term dues, collection register and receipts.', group: 'Students', status: 'live', icon: IndianRupee },
