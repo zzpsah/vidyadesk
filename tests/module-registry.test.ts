@@ -18,8 +18,10 @@ test('overview is the only route exposed until a project-backed module is accept
   assert.equal(resolveWorkspaceRoute('overview'), 'overview');
   assert.equal(isWorkspaceRoute('overview'), true);
 });
-test('internal legacy registry metadata remains structurally valid but is not school-facing', () => {
+test('legacy module registry is structurally valid and all old CRUD modules are retired', () => {
   assert.ok(modules.every(module => moduleGroups.includes(module.group)));
+  assert.ok(modules.every(module => module.status === 'retired' || module.status === 'blueprint' || module.status === 'integration'));
+  assert.ok(modules.every(module => module.status !== 'live'));
   assert.deepEqual(validateModuleRegistry(), []);
 });
 test('every retained blueprint declares entities, workflow and acceptance checks', () => {
