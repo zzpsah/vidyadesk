@@ -1,7 +1,7 @@
 import { ArrowUpRight, Boxes, ExternalLink, FileText, GitBranch, Network, ShieldCheck } from 'lucide-react';
 import { PageHead, Panel, Pill } from '@/components/common';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
-import { projects } from '@/core/projects';
+import { infrastructureProjects, projects } from '@/core/projects';
 
 const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch } as const;
 
@@ -42,6 +42,16 @@ export function OverviewView() {
         </Panel>;
       })}
     </div>
+
+    <Panel title="Platform infrastructure" meta="Infrastructure dependencies · not school modules">
+      <div className="card-rows">
+        {infrastructureProjects.map(item => <div key={item.id} className="flex flex-col gap-1">
+          <div className="flex items-center justify-between gap-3"><strong>{item.name}</strong><a className="inline-flex items-center gap-1 text-sm underline underline-offset-4" href={item.repositoryUrl} target="_blank" rel="noreferrer">Repository <ExternalLink size={13} /></a></div>
+          <p>{item.purpose}</p>
+          <p className="scope-note">{item.boundary}</p>
+        </div>)}
+      </div>
+    </Panel>
 
     <div className="blueprint-grid mt-4">
       <Panel title="Data integrity" meta="Current operating rule">
