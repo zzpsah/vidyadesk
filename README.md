@@ -1,7 +1,8 @@
 # VidyaDesk
 
-**Monitoring address:** <https://shikshakosh.vercel.app> (attached and Vercel-verified; production deployment pending)  
-**Development preview:** <https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app> (Vercel team SSO protected)  
+**Production monitoring address:** <https://shikshakosh.vercel.app> (production deployment verified; HTTP 200)  
+**Alternate alias:** <https://sikshakosh.vercel.app>  
+**Protected development preview:** <https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app>  
 **Public static site:** <https://zzpsah.github.io/vidyadesk/> (GitHub Pages; not suitable for private school data)  
 **Repository:** <https://github.com/zzpsah/vidyadesk>
 
@@ -34,7 +35,7 @@ UDISE+ and eShikshaKosh remain separate systems. OFSS is treated as an admission
 - [Oracle Server](https://github.com/zzpsah/oracle-server) owns VPS host operations, private networking and runtime services.
 - [PostgreSQL Services](https://github.com/zzpsah/postgresql-services) owns database operations, security and backup/restore standards. Its documented registry currently covers the DLR database; a School Data Records database has not been onboarded there.
 - The connected Supabase account currently reports both `umv-db` and `official-letter-intelligence-archive` as **INACTIVE**. Do not treat their historical schemas/counts as a reachable live source.
-- The registered Oracle VPS Desktop Commander device is **OFFLINE** (last seen 410 hours before this audit). Service health and live PostgreSQL state therefore remain unverified from this development session.
+- The registered Oracle VPS Desktop Commander device was **OFFLINE** at the time of the baseline audit. Service health and live PostgreSQL state therefore remain unverified from that audit.
 
 ## Data and security rules
 
@@ -68,7 +69,7 @@ npm run build
 npm run dev
 ```
 
-A branch push triggers GitHub Actions and a protected Vercel preview. Only the approved production branch/deployment workflow may change the public site. Do not merge or promote a preview until the phase gates and release checklist pass.
+A branch push triggers GitHub Actions and a protected Vercel preview. The `main` branch triggers the production deployment. Production changes must pass CI and the release checklist; preview URLs remain protected.
 
 ## Delivery roadmap
 
