@@ -70,7 +70,8 @@ export const modules: ModuleDef[] = [
 
 export const moduleGroups: ModuleGroup[] = ['Students', 'People & transfers', 'Academics', 'Communication', 'Operations'];
 export const moduleById = new Map(modules.map(m => [m.id, m]));
-export const liveModules = modules.filter(m => m.status === 'live');
+export const liveModules: ModuleDef[] = []; // No legacy CRUD module is approved for live use.
+export const retiredModules = modules.filter(m => m.status === 'retired');
 export const blueprintModules = modules.filter(m => m.status === 'blueprint');
 export const integrationModules = modules.filter(m => m.status === 'integration');
 
