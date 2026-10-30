@@ -83,11 +83,6 @@ export function initialState(): State {
   return { schools, activeSchoolId: schools[0].id, focusModuleId: null };
 }
 
-/**
- * Workspaces saved before exams and timetables became real records get them on load.
- * The generators are deterministic, so a migrated school shows the same marks and
- * periods it showed before — they simply stop being invented at render time.
- */
 /** Fill absent collections only. Never derive synthetic marks or timetable rows from imported people. */
 function upgrade(school: School): School {
   return { ...emptyData(), ...school };
