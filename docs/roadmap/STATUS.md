@@ -186,3 +186,15 @@ Every implementation update must add:
 - Added `docs/workforce/offline-workforce.md` describing the offline-only scope, calculation rules and data safeguards.
 - This feature uses only the current browser-local workspace. It does not require Oracle VPS or any external provider. Current fixture records remain fictional.
 - GitHub Actions CI was triggered for this branch update; results are pending. No phase is marked accepted until the tests/build pass and UI acceptance is performed.
+
+## 2026-10-30 — Corrected product foundation: real-project hub
+
+- Audited the active branch and confirmed that the previous school dashboard seeded fictional students, staff, classes, attendance, fees, notices, marks and timetable records. The previous "offline modules" were not connected to the school's real systems.
+- Replaced the default workspace with one fixed UMV Tethali school identity and empty collections. School creation is now metadata-only, even if a legacy caller requests seed records.
+- Bumped browser storage to `vidyadesk.workspace.v2`. The previous v1 demo key is left untouched and is never loaded into the new school workspace.
+- Removed all legacy school CRUD modules from school-facing navigation and route resolution. Their old source files remain internal pending a safe deletion review.
+- Replaced the home dashboard with a project hub for six verified repositories: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and n8n Operations. Known app shortcuts are shown only for Report Central and DLR.
+- Added explicit ownership and integration boundaries. All six projects are marked "Not connected to VidyaDesk"; no project is labelled live based on repository existence or a URL.
+- UDISE+ and eShikshaKosh remain separate. OFSS is an evidence/data source, not a separate app. Oracle VPS is infrastructure, not a school module.
+- No private records were fetched, no provider writes were made, and no production deployment was changed.
+- Validation is pending CI and protected preview deployment for the resulting commit. Phase 0 and Phase 1 remain open.
