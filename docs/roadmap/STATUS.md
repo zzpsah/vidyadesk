@@ -1,18 +1,19 @@
 # VidyaDesk — Live Development Status
 
-**Last updated:** 2026-10-30  
+**Last updated:** 2026-10-31  
 **Repository:** https://github.com/zzpsah/vidyadesk  
-**Active PR:** https://github.com/zzpsah/vidyadesk/pull/5 (draft; not merged)  
-**Branch:** feat/internal-access-student-records  
-**Monitoring domain:** https://shikshakosh.vercel.app (attached and verified; not serving a production release yet)  
-**Protected Vercel preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app  
-**Latest verified code deployment:** READY, commit b3143092681cb3599526776b379551c050168bd3 (deployment dpl_3NcWbXFqDFEFaWG6iotojK46fNZG)
+**Production branch:** `main`  
+**Release commit:** `3ebe3caf2b6da159a037740b580396009584ebec`  
+**Production URL:** https://shikshakosh.vercel.app — Vercel deployment READY; live page returned HTTP 200  
+**Alternate production alias:** https://sikshakosh.vercel.app  
+**Production deployment:** `dpl_7NknGzCuyaCVuRznqGzHFS1nmeH3`  
+**Merged change:** PR #5, https://github.com/zzpsah/vidyadesk/pull/5
 
 ## Product definition
 
-VidyaDesk is the unified project hub for UMV Tethali. It will connect existing school systems without replacing their ownership or creating a competing copy of their data.
+VidyaDesk is the unified project hub for UMV Tethali. It connects the school's existing systems through a single user-facing workspace without replacing source ownership or creating an unverified copy of school data.
 
-The six school projects currently registered are:
+The six school projects registered are:
 
 1. School Data Records
 2. Report Central
@@ -21,19 +22,19 @@ The six school projects currently registered are:
 5. eShikshaKosh Automation
 6. n8n Operations
 
-Oracle Server and PostgreSQL Services are shown separately as infrastructure dependencies, not school modules. UDISE+ and eShikshaKosh remain separate. OFSS is an admissions/stream evidence source, not a standalone application.
+Oracle Server and PostgreSQL Services are infrastructure dependencies, not school modules. UDISE+ and eShikshaKosh remain separate. OFSS is an admissions/stream evidence source, not a standalone application.
 
 ## Current lifecycle position
 
-**Phase 0 — Baseline audit: in progress**  
-**Phase 1 — Project-hub foundation: in progress**  
-**Overall: 0 of 12 phases accepted.**
+**Project-hub foundation:** deployed to production; acceptance and hardening continue.  
+**Production release:** public domain and deployment verified.  
+**Overall phase acceptance:** 0 of 12 phases formally accepted; the remaining acceptance gates require browser, security, integration and school UAT evidence.
 
-| Phase | Status | Acceptance evidence still required |
+| Phase | Status | Remaining acceptance evidence |
 |---|---|---|
-| 0. Baseline audit | In progress | Reconcile live database ownership and school mapping when Oracle runtime is reachable |
-| 1. Platform foundation | In progress | Browser acceptance, accessibility, release review and follow-up CI on the documentation-only head |
-| 2. Internal access and security | Not started | PIN exchange, server-issued sessions, durable rate limits, role checks and security tests |
+| 0. Baseline audit | Partial | Reconcile live database ownership, canonical school mapping and VPS service health when Oracle runtime is reachable |
+| 1. Platform foundation | Deployed | Complete browser acceptance, accessibility review and regression coverage |
+| 2. Internal access and security | Not started | PIN exchange, server-issued sessions, durable rate limits, expiry/revocation, role checks and security tests |
 | 3. Data gateway and school scope | Blocked | Reachable canonical data source, verified UMV school mapping and least-privilege API contract |
 | 4. Student information system | Blocked | Source-backed student list and complete available profiles |
 | 5. Staff and school administration | Blocked | Source-backed staff data and explicit administrative requirements |
@@ -41,52 +42,53 @@ Oracle Server and PostgreSQL Services are shown separately as infrastructure dep
 | 7. Documents and communication | Not started | DLR read-only integration, print/PDF and delivery status |
 | 8. Reports and reconciliation | Not started | Verified Report Central contract, freshness, provenance and audit views |
 | 9. Unified integrations | Not started | Separate tested adapters for each owner project |
-| 10. Release hardening and UAT | Not started | Security, E2E, accessibility, performance, recovery and school UAT |
-| 11. Production release and handover | Not started | Approved production release, runbooks, backup/recovery evidence and handover |
+| 10. Release hardening and UAT | In progress | Security, E2E, accessibility, performance, recovery and school UAT |
+| 11. Production release and handover | Deployed; handover pending | Operational runbooks, monitoring, rollback evidence and handover |
 
-## Implemented in the current branch
+## Implemented
 
 - Replaced the generic offline school dashboard with a project hub for six real, repository-backed school projects.
-- Added four documented application shortcuts: Report Central, eLetters, UDISE Automation and eShikshaKosh workbench.
+- Added documented application shortcuts for Report Central, eLetters, UDISE Automation and eShikshaKosh workbench.
 - Added separate infrastructure links for Oracle Server and PostgreSQL Services.
-- Removed the previous default school sample records and fixture generators; the new app does not load or display fictional student, staff, attendance, fee, class, mark or timetable data.
-- Bumped the legacy browser workspace key to v2 during the cleanup; the old v1 demo key is left untouched and is not migrated.
+- Removed default sample records and fixture generators; the active app does not load fictional student, staff, attendance, fee, class, mark or timetable data.
 - Removed old CRUD navigation and retired the unsupported module catalogue from the school-facing app.
-- Removed the unbacked offline workforce/HR prototype, its calculations, tests and documentation. Teacher report ownership remains with eShikshaKosh Automation.
-- Rewrote the overview as an ownership-aware project directory with explicit "Not connected to VidyaDesk" status.
-- Added project ownership/API integration plan and updated README, contributor, DevOps, security and roadmap documentation.
-- Kept the Report Central aggregate-only credential boundary unchanged.
-- No production database writes, migrations, VPS changes, source-system writes or production deployment were performed.
+- Removed the unbacked offline workforce/HR prototype. Teacher report ownership remains with eShikshaKosh Automation.
+- Added explicit project ownership, integration boundaries, route contracts, loading/error states and aggregate-only Report Central proxy validation.
+- Merged PR #5 into `main` using squash merge. The release commit is `3ebe3caf2b6da159a037740b580396009584ebec`.
+- Published the production Vercel deployment and attached both verified ShikshaKosh aliases.
+- Corrected the project metadata and deployment documentation after the production release.
 
-## Verified infrastructure blockers
+## Verified blockers
 
-- Supabase project inventory reports historical projects umv-db and official-letter-intelligence-archive as **INACTIVE**. No table or personal-record query was made.
-- PostgreSQL Services documentation currently registers the DLR primary database. It describes School Data Records as a future workload requiring separate onboarding; no active student-data database was verified through this owner repository.
-- The registered Oracle VPS Desktop Commander device is **OFFLINE**, last seen 410 hours before this audit. The laptop device is also offline.
-- The School Data Records automation data contract explicitly describes its consumer API as a design contract, not an implemented connector.
-- Therefore Oracle service health, live PostgreSQL state, current student data and a source-backed VidyaDesk gateway cannot be verified from this session.
+- The connected Supabase inventory reported historical projects `umv-db` and `official-letter-intelligence-archive` as **INACTIVE** during the baseline audit. No table or personal-record query was made.
+- PostgreSQL Services documentation currently registers the DLR primary database. A School Data Records database has not been onboarded there.
+- The registered Oracle VPS Desktop Commander device was **OFFLINE** at the time of the baseline audit; live PostgreSQL and Oracle service health were not verified.
+- The School Data Records automation data contract describes its consumer API as a design contract, not an implemented connector.
+- Therefore current student records, canonical school ID, Oracle API availability and a source-backed VidyaDesk gateway remain unverified.
 - No school ID, credentials, API payloads or database state have been guessed.
 
 ## Validation evidence
 
-- Vercel protected preview reached **READY** for code commit b3143092681cb3599526776b379551c050168bd3. Its branch alias is the protected preview URL above.
-- The Vercel build executes TypeScript checking and production bundle generation.
-- GitHub Actions CI run #268 **PASSED** for latest branch head 078eb2e773898db68a76d7119bad252c7a20b53c, including npm ci, npm run test:contract and npm run build.
-- The latest deployment has not had authenticated browser/UI acceptance or a live provider read test.
-- The public GitHub Pages site and production configuration have not been changed.
+- Vercel production deployment `dpl_7NknGzCuyaCVuRznqGzHFS1nmeH3` reached **READY** for commit `3ebe3caf2b6da159a037740b580396009584ebec`.
+- The production deployment build completed TypeScript checking and Vite production bundle generation.
+- A live scrape of https://shikshakosh.vercel.app returned **HTTP 200** and rendered the expected VidyaDesk project hub.
+- GitHub Actions contract CI passed for the pre-merge head `7bc8a5a0f16a5204f7a2cd80a8c2b7889289aee7`. The post-merge main workflow is still being monitored; its final result must be recorded when complete.
+- No authenticated private-data journey or live provider read has been accepted because the source APIs and school-scoped security gateway are not ready.
 
 ## Next work
 
-1. Perform browser acceptance on the protected preview once available through the owner's SSO session.
-3. When Oracle runtime access returns, inspect only service health and documented API health first; do not mutate data or restart services.
-4. Reconcile the School Data Records source database with PostgreSQL Services and document the authoritative primary store.
-5. Design and implement a dedicated read-only, fixed-school source contract before adding student/staff UI.
-6. Implement session security only after durable persistence and the source identity are verified.
-7. Add owner-project modules one by one with contract tests, error states, provenance and audit.
+1. Finish the post-merge GitHub Actions run and address any failure.
+2. Complete visual, responsive, accessibility and route-level acceptance of the deployed dashboard.
+3. When Oracle runtime access returns, inspect documented health endpoints and service state first; do not mutate data or restart services.
+4. Reconcile School Data Records with PostgreSQL Services and document the authoritative primary store and verified school mapping.
+5. Implement dedicated read-only source adapters only after owner contracts, authentication and fixed-school scope are verified.
+6. Complete internal access and session security before enabling private student/staff screens.
+7. Add project-backed workflows one by one with contract tests, provenance, failure states and audit coverage.
 
-## Release rules
+## Release and data rules
 
-- Do not merge PR #5 or promote production without passing CI, browser acceptance and release review.
 - Do not expose private records before the session and fixed-school gateway gates pass.
-- Do not claim an integration is live from a URL, old README count, repository existence or HTTP 200 alone.
+- Do not widen the Report Central aggregate-only token to student/staff endpoints.
+- Do not claim an integration is live from a URL, repository existence or HTTP 200 alone.
+- Keep government portal credentials, OTP/CAPTCHA, cookies, private workbooks and source-system writes inside their owning systems.
 - A phase is accepted only with implementation, tests, deployment evidence, documentation and the relevant owner/project approval.
