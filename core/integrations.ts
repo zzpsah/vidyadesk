@@ -26,3 +26,21 @@ export const integrations: IntegrationDef[] = [
   { id: 'udise-eshikshakosh', name: 'UDISE / eShikshaKosh', purpose: 'Government portal workflows and exports.', owner: 'udise-automation-suite · eshikshakosh-automation', status: 'external-system', icon: Network, boundary: 'Login, CAPTCHA, OTP and portal writes remain outside VidyaDesk.', dataDomains: ['Active enrolment', 'Student master exports', 'Portal workflow state'] },
   { id: 'n8n-operations', name: 'n8n Operations', purpose: 'Controlled automation workflows.', owner: 'n8n-operations', status: 'read-only-planned', icon: GitBranch, boundary: 'No workflow trigger is enabled until an authenticated webhook contract is approved.', dataDomains: ['Workflow definitions', 'Run status', 'Delivery events'] },
 ];
+
+export type DataSourceDef = {
+  id: string;
+  name: string;
+  role: string;
+  domains: string[];
+  freshness: string;
+  sensitivity: 'restricted' | 'external' | 'local-fixture';
+};
+
+/** The source map is descriptive; checkpoint figures are never treated as live truth. */
+export const dataSources: DataSourceDef[] = [
+  { id: 'udise', name: 'UDISE+', role: 'Active enrolment and school-status source.', domains: ['Active students', 'Class views', 'Historical snapshots'], freshness: 'Checkpoint documented 2026-10-02', sensitivity: 'restricted' },
+  { id: 'eshiksha', name: 'e-Shiksha Kosh', role: 'State student-master source.', domains: ['Student master', 'Class XI streams', 'Versioned imports'], freshness: 'Checkpoint documented 2026-10-02', sensitivity: 'restricted' },
+  { id: 'ofss', name: 'OFSS', role: 'Class XI admission and stream evidence.', domains: ['Science admissions', 'Arts admissions', 'Commerce admissions'], freshness: 'Cycle 2026–28', sensitivity: 'restricted' },
+  { id: 'report-central-store', name: 'Report Central store', role: 'Versioned snapshots and reviewed cross-source reconciliation.', domains: ['Unified students', 'Conflicts', 'Import audit'], freshness: 'External system · not connected', sensitivity: 'restricted' },
+  { id: 'vidyadesk-fixtures', name: 'VidyaDesk sample workspace', role: 'Fictional local records for interface development.', domains: ['Students', 'Attendance', 'Staff', 'Reports'], freshness: 'Local browser only', sensitivity: 'local-fixture' },
+];

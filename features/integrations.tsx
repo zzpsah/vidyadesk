@@ -1,6 +1,6 @@
 import { ExternalLink, LockKeyhole } from 'lucide-react';
 import { PageHead, Panel, Pill } from '@/components/common';
-import { integrations } from '@/core/integrations';
+import { dataSources, integrations } from '@/core/integrations';
 import type { Nav } from '@/core/nav';
 
 export function IntegrationsView(_props: { nav: Nav }) {
@@ -25,6 +25,12 @@ export function IntegrationsView(_props: { nav: Nav }) {
         <p className="scope-note">{integration.boundary}</p>
       </Panel>)}
     </div>
+
+    <Panel title="UMV data source map" meta="Checkpoint-aware">
+      <div className="table-scroll"><table className="data-table"><thead><tr><th>Source</th><th>Role</th><th>Domains</th><th>Freshness</th><th>Handling</th></tr></thead><tbody>
+        {dataSources.map(source => <tr key={source.id}><td><strong>{source.name}</strong></td><td>{source.role}</td><td>{source.domains.join(' · ')}</td><td>{source.freshness}</td><td><Pill tone={source.sensitivity === 'restricted' ? 'warn' : source.sensitivity === 'local-fixture' ? 'mute' : 'accent'}>{source.sensitivity}</Pill></td></tr>)}
+      </tbody></table></div>
+    </Panel>
 
     <p className="foot-line">The next integration step is a separately verified read-only adapter, beginning with Report Central. Credentials, portal actions and production data remain outside this browser-only workspace.</p>
   </>;
