@@ -3,7 +3,9 @@
 **Last updated:** 2026-10-30  
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
-**Active branch:** feat/internal-access-student-records
+**Active branch:** feat/internal-access-student-records  
+**Vercel project:** vidyadesk (team SSO protection enabled)  
+**Preview candidate:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (deployment queued; not yet accepted as a working preview)
 
 ## Current lifecycle position
 
@@ -49,7 +51,7 @@
 - [ ] Inventory all app routes, module files and current data stores.
 - [ ] Inventory all provider endpoints and auth/session contracts relevant to VidyaDesk.
 - [ ] Record build, type-check and contract-test baseline.
-- [ ] Verify Vercel team/project linkage and preview protection for this repo.
+- [x] Verify Vercel team/project linkage and preview protection for this repo (project prj_YAkSd2ZFjyHDcI70rRyqty9zn7No; SSO protection enabled).
 - [ ] Confirm canonical UMV Tethali school mapping and source ownership.
 - [ ] Publish audit findings and move Phase 0 to accepted only when evidence is complete.
 
@@ -64,3 +66,12 @@ Every implementation update must add:
 - Blockers and next acceptance criteria
 
 **Rule:** Do not mark a phase complete on the basis of a plan, mockup, documentation-only commit, or unverified deployment.
+
+
+## 2026-10-30 implementation activity
+
+- Roadmap and tracker added in commits 3b8dd10 and b862da7.
+- Preview project linked to the GitHub repository under the user's Vercel team; deployment protection reports SSO enabled for all non-custom domains.
+- First deployment attempt targeting production was immediately canceled before completion; no production release was made.
+- Preview deployment of commit b862da7 failed because the Edge function imported the contract from outside its function bundle. The handler's validation was made self-contained in commit 43e8798.
+- Replacement preview for commit 43e8798 is queued. It must reach READY and be checked behind SSO before being called a usable progress URL.
