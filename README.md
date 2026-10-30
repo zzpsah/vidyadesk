@@ -112,7 +112,8 @@ Node `^22.13.0 || >=24.0.0`.
 ```sh
 npm install
 npm run dev        # Vite on the printed loopback URL
-npm run test:contract # aggregate integration contract tests\nnpm run build      # tsc --noEmit, then a static bundle in dist/
+npm run test:contract # aggregate integration contract tests
+npm run build      # tsc --noEmit, then a static bundle in dist/
 npm run preview    # serve dist/
 ```
 
