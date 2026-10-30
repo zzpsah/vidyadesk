@@ -8,6 +8,7 @@ import { MdmView, NoticesView, TicketsView } from '@/features/services';
 import { ReportsView } from '@/features/reports';
 import { BlueprintView } from '@/features/blueprint';
 import { OverviewView } from '@/features/overview';
+import { IntegrationsView } from '@/features/integrations';
 import { WorkspaceProvider, useWorkspace } from '@/core/workspace';
 import type { Nav } from '@/core/nav';
 
@@ -31,6 +32,7 @@ function renderView(route: string, nav: Nav) {
   if (route === 'tickets') return <TicketsView nav={nav} />;
   if (route === 'mdm') return <MdmView nav={nav} />;
   if (route === 'reports') return <ReportsView nav={nav} />;
+  if (route === 'integrations') return <IntegrationsView nav={nav} />;
   return <BlueprintView moduleId={route} nav={nav} />;
 }
 
