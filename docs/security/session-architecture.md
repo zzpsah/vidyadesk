@@ -67,6 +67,10 @@ Use database constraints and transactions for uniqueness, expiry/revocation upda
 - Audit records contain no PIN, session token or student/staff data.
 - Provider outage, persistence outage and unresolved school mapping all fail closed.
 
+## Public custom-domain deployment boundary
+
+The intended monitoring domain `shikshakosh.vercel.app` is attached to the Vercel project. The project-level SSO setting excludes custom domains, so the domain must not be assigned to a preview deployment as a shortcut around preview protection. Treat the first custom-domain deployment as public internet exposure: review every route and asset before aliasing it, and keep private records inaccessible until this document's session and fixed-school gateway gates are accepted.
+
 ## Implementation gate
 
 Do not implement or enable private session endpoints until all of the following are verified:
