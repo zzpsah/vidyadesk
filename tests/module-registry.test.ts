@@ -16,9 +16,13 @@ test('unknown and empty route input safely resolves to overview', () => {
 });
 test('overview and every registered module resolve unchanged', () => {
   assert.equal(resolveWorkspaceRoute('overview'), 'overview');
-  for (const module of modules) {
+  for (const module of portalModules) {
     assert.equal(resolveWorkspaceRoute(module.id), module.id);
     assert.equal(isWorkspaceRoute(module.id), true);
+  }
+  for (const module of modules.filter(entry => entry.status !== 'live')) {
+    assert.equal(resolveWorkspaceRoute(module.id), 'overview');
+    assert.equal(isWorkspaceRoute(module.id), false);
   }
 });
 test('all modules belong to a known navigation group and pass registry validation', () => {
