@@ -34,7 +34,9 @@ Never promote state based on a URL, HTTP 200 alone, mock data, old logs or histo
 ## Security boundary
 - GitHub Pages is public. Never put provider credentials in frontend environment variables or bundles.
 - The public VidyaDesk Vercel proxy uses a dedicated server-side machine token, exact school/session scope, strict response validation, an 8-second timeout and short CDN caching. It is disabled by default; GitHub Pages cannot execute the function.
-- No user login is part of this phase. When the proxy is enabled, its four approved aggregate sections are public. CORS is not authentication. Do not activate it until the live school mapping and public-data approval are recorded.
+- The current preview may show fictional local records without an application login. Phase 2 must implement the approved PIN-to-server-session exchange before any private records are exposed. When the separate aggregate proxy is enabled, its four approved aggregate sections are public; CORS is not authentication. Do not activate it until the live school mapping and public-data approval are recorded.
+- Vercel preview deployments are protected by team SSO. Keep previews synthetic-only until application authorization and school scope have both been verified.
+- The Vercel preview project is linked to the VidyaDesk repository. The protected branch preview is a development surface, not a production deployment.
 - Keep cookies, tokens, passwords, OTPs, CAPTCHA material and raw provider responses out of browser storage/logs.
 - Aggregate contracts reject unexpected fields. No write methods belong in the read adapter.
 - Write workflows need a separate design and explicit approval.
