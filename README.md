@@ -2,7 +2,7 @@
 
 **Live demo:** <https://zzpsah.github.io/vidyadesk/> — the current `main` branch, built and served by GitHub Pages. Fictional data, no account, nothing you enter leaves the browser.
 
-A school-agnostic workspace for running a school's day-to-day records. Nothing in the interface, the data model or the module registry names a particular school: you add a school, and every registered module becomes available to it with its own isolated records.
+VidyaDesk is customized as the primary UMV Tetahali school-management workspace. The underlying offline workspace retains an isolated multi-school data model for its existing demo and future expansion; the deployed school identity and first integration scope remain UMV Tetahali. Every school’s local records stay isolated.
 
 It is a front end built to be extended, not a finished product. There is no login, no database and no network call — records live in `localStorage` in your own browser. It is not affiliated with, and is not an interface to, any government portal.
 
@@ -43,7 +43,7 @@ VidyaDesk now defines a versioned, aggregate-only contract for a future Report C
 - Scope is fixed to the UMV Tetahali school identity and academic session `2026-2027`; the session must be verified against the provider before data is accepted.
 - Read models are limited to overview counts, separate UDISE/e-ShikshaKosh source summary, conflict totals and import-audit totals.
 - Every future response must carry source identity, school/session scope, retrieval timestamp and snapshot id/version.
-- Envelope metadata validation is provided; payload-specific validators must be added before each read model is consumed.
+- Envelope and payload validators reject wrong-school/session data, unknown fields, invalid counts and inconsistent source/conflict/audit totals.
 - The adapter interface intentionally has no write methods. No browser credentials, tokens, cookies or direct provider calls are permitted.
 - The Integrations screen reports this contract as **unconfigured**. This is not a live connection, API health check or verification of current Report Central data.
 - A future implementation needs an approved authenticated server-side proxy, role/scope enforcement, CORS-independent server communication, and provider-side verification. GitHub Pages remains a public static frontend and must never contain provider secrets.
