@@ -4,6 +4,7 @@
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Active PR:** https://github.com/zzpsah/vidyadesk/pull/5 (draft; not merged)  
 **Branch:** feat/internal-access-student-records  
+**Monitoring domain:** https://shikshakosh.vercel.app (attached and verified; not serving a production release yet)  
 **Protected Vercel preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app  
 **Latest verified code deployment:** READY, commit b3143092681cb3599526776b379551c050168bd3 (deployment dpl_3NcWbXFqDFEFaWG6iotojK46fNZG)
 
