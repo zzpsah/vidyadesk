@@ -40,7 +40,10 @@ test('project hub contains the known, repository-backed school projects', () => 
     assert.ok(project.repositoryUrl.startsWith('https://github.com/zzpsah/'));
     assert.ok(project.boundary.length > 20);
   }
-  assert.equal(projects.filter(project => project.applicationUrl).length, 5);\n  const payroll = projects.find(project => project.id === 'vetan-vipatra');\n  assert.equal(payroll?.applicationUrl, 'https://vetan-vipatra.vercel.app');\n  assert.match(payroll?.boundary ?? '', /do not copy teacher payroll data/i);
+  assert.equal(projects.filter(project => project.applicationUrl).length, 5);
+  const payroll = projects.find(project => project.id === 'vetan-vipatra');
+  assert.equal(payroll?.applicationUrl, 'https://vetan-vipatra.vercel.app');
+  assert.match(payroll?.boundary ?? '', /do not copy teacher payroll data/i);
 });
 
 test('platform dependencies are registered separately from school applications', () => {
