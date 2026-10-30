@@ -57,7 +57,7 @@ function Workspace() {
   return <div className="app-shell">
     <a className="skip-link" href="#main">Skip to content</a>
     <aside className={`side-drawer${menuOpen ? ' open' : ''}`}>
-      <Sidebar route={route} nav={nav} onClose={() => setMenuOpen(false)} onAddSchool={() => setDialog({ kind: 'add-school' })} />
+      <Sidebar route={route} nav={nav} onClose={() => setMenuOpen(false)} />
     </aside>
     {menuOpen && <button className="scrim" aria-label="Close navigation" onClick={() => setMenuOpen(false)} />}
 
