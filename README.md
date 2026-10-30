@@ -1,5 +1,6 @@
 # VidyaDesk
 
+**Monitoring address:** <https://shikshakosh.vercel.app> (attached and Vercel-verified; production deployment pending)  
 **Development preview:** <https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app> (Vercel team SSO protected)  
 **Public static site:** <https://zzpsah.github.io/vidyadesk/> (GitHub Pages; not suitable for private school data)  
 **Repository:** <https://github.com/zzpsah/vidyadesk>
