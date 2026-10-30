@@ -29,7 +29,7 @@ For a Pages-path build: `PAGES_BASE=/vidyadesk/ npm run build`.
 | verified | Real read-only response passes source, school, session and schema validation |
 | stale/unavailable | Freshness or provider request fails; show last verified time and warning |
 
-Never promote state based on a URL, HTTP 200 alone, mock data, old logs or historical checkpoint counts.
+Never promote state based on a URL, HTTP 200 alone, mock data, old logs or historical checkpoint counts. The current Report Central dashboard is presentation-only and remains `unconfigured`; placeholder dashes are not zero counts.
 
 ## Security boundary
 - GitHub Pages is public. Never put provider credentials in frontend environment variables or bundles.
