@@ -57,6 +57,7 @@ test('requires UDISE and e-ShikshaKosh as distinct source evidence', () => {
 test('checks conflict totals and import audit arithmetic', () => {
   assert.equal(isReportCentralConflictSummary({ openTotal: 3, bySeverity: { error: 1, warning: 1, info: 1 } }), true);
   assert.equal(isReportCentralConflictSummary({ openTotal: 4, bySeverity: { error: 1, warning: 1, info: 1 } }), false);
-  assert.equal(isReportCentralImportAudit({ attempts: 5, succeeded: 3, failed: 1, ignoredDuplicates: 1, latestAttemptAt: timestamp }), true);
-  assert.equal(isReportCentralImportAudit({ attempts: 2, succeeded: 3, failed: 0, ignoredDuplicates: 0, latestAttemptAt: timestamp }), false);
+  assert.equal(isReportCentralImportAudit({ attempts: 5, succeeded: 3, failed: 1, ignoredDuplicates: 1, latestAttemptAt: timestamp, historyCoverage: 'school_scoped_records_only' }), true);
+  assert.equal(isReportCentralImportAudit({ attempts: 2, succeeded: 3, failed: 0, ignoredDuplicates: 0, latestAttemptAt: timestamp, historyCoverage: 'school_scoped_records_only' }), false);
+  assert.equal(isReportCentralImportAudit({ attempts: 1, succeeded: 1, failed: 0, ignoredDuplicates: 0, latestAttemptAt: timestamp, historyCoverage: 'complete' }), false);
 });
