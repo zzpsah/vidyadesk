@@ -79,6 +79,7 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
           <div><span>Ignored duplicates</span><strong>—</strong></div>
           <div><span>Latest attempt</span><strong>—</strong></div>
         </div>
+        <p className="foot-line">Only imports with verified school scope are counted. Historical attempts without a school mapping are excluded, not guessed.</p>
       </Panel>
       <Panel title="Snapshot and freshness" meta="Provider timestamps only">
         <div className="card-rows">
