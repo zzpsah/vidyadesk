@@ -1,10 +1,7 @@
 import {
   REPORT_CENTRAL_SCOPE,
-  isReportCentralConflictSummary,
+  isReportCentralAggregate,
   isReportCentralEnvelope,
-  isReportCentralImportAudit,
-  isReportCentralOverview,
-  isReportCentralSourceComparison,
 } from "../core/report-central-contract.ts";
 
 const AGGREGATE_PATH = "/v1/integrations/vidyadesk/aggregate";
@@ -13,21 +10,6 @@ const UPSTREAM_TIMEOUT_MS = 8_000;
 
 type ProxyEnv = Record<string, string | undefined>;
 type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isVidyaDeskAggregate(value: unknown): value is Record<string, unknown> {
-  if (!isRecord(value)) return false;
-  const keys = ["overview", "sourceComparison", "conflictSummary", "importAudit"];
-  return Object.keys(value).length === keys.length
-    && keys.every(key => Object.hasOwn(value, key))
-    && isReportCentralOverview(value.overview)
-    && isReportCentralSourceComparison(value.sourceComparison)
-    && isReportCentralConflictSummary(value.conflictSummary)
-    && isReportCentralImportAudit(value.importAudit);
-}
 
 function response(
   status: number,
@@ -125,7 +107,7 @@ export async function handleReportCentralRequest(
       return response(502, { ok: false, error: "provider_response_invalid" }, headers);
     }
 
-    if (!isReportCentralEnvelope(payload, isVidyaDeskAggregate)
+    if (!isReportCentralEnvelope(payload, isReportCentralAggregate)
       || payload.scope.schoolKey !== REPORT_CENTRAL_SCOPE.schoolKey
       || payload.scope.academicSession !== REPORT_CENTRAL_SCOPE.academicSession) {
       return response(502, { ok: false, error: "provider_contract_mismatch" }, headers);
