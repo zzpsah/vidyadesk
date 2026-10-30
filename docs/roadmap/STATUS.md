@@ -5,18 +5,18 @@
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
 **Active branch:** feat/internal-access-student-records  
 **Vercel project:** vidyadesk (team SSO protection enabled)  
-**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest previously verified deployment commit 8b43f34)
+**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; latest code deployment verified at commit b314309)
 
 ## Current lifecycle position
 
-**Phase 0 — Baseline audit in progress; Phase 1 foundation work started**
+**Phase 0 — Baseline audit in progress; Phase 1 project-hub foundation in progress**
 
-**Overall:** 0 of 12 phases accepted; Phase 1 implementation is underway; first CI regression was fixed and the latest quality gate passed. Phase 0 audit is partially evidenced; implementation work has not yet passed a phase gate.
+**Overall:** 0 of 12 phases accepted. The misleading offline demo has been replaced by a real-project hub and the protected Vercel preview builds successfully. GitHub Actions contract-test runs are currently queued; browser acceptance and live provider checks remain outstanding.
 
 | Phase | Status | Evidence / exit condition |
 |---|---|---|
-| 0. Baseline audit | In progress | App and package inspected. Current app is a Vite/React SPA; it identifies records as fictional and browser-local. GitHub Pages is static. Provider currently has an aggregate-only VidyaDesk contract. Complete inventory and baseline CI evidence still required. |
-| 1. Platform foundation | In progress | Shared route registry, module metadata validation, safe route fallback and module error isolation implemented; 18/18 contract tests and TypeScript/Vite build pass; UI browser acceptance remains |
+| 0. Baseline audit | In progress | Repository and six project owners audited. Supabase projects are inactive; Oracle VPS Desktop Commander is offline; no student-data consumer API is implemented. Live service/database verification remains blocked. |
+| 1. Platform foundation | In progress | Project hub, fixed school identity, empty data state, retired CRUD routes, project/infrastructure registry and ownership docs implemented. Vercel protected preview READY at b314309; GitHub Actions contract tests queued; browser acceptance pending. |
 | 2. Internal access and security | Not started | Server-side session, PIN exchange, rate limiting, authorization and security tests |
 | 3. Data gateway and school scope | Not started | Verified provider contract and canonical school mapping |
 | 4. Student information system | Not started | Source-backed student list and complete available profiles |
@@ -183,3 +183,17 @@ Every implementation update must add:
 - The offline workforce directory and its synthetic staff/leave calculations were removed. eShikshaKosh Automation owns teacher roster and full-profile exports; no standalone HR/leave application is registered for this school.
 - The generic people feature, workforce derivation code, its tests and its offline-workforce documentation were deleted from the active branch.
 - The feature is not replaced with fake teacher data. VidyaDesk remains a project hub until a verified source-backed teacher data contract is available.
+
+
+## 2026-10-30 — Integration-source and runtime verification
+
+- Verified the current project list in GitHub: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and n8n Operations. Added Oracle Server and PostgreSQL Services as separate infrastructure dependencies.
+- Read each owning project's README and relevant handoff/API docs. Confirmed the School Data Records automation consumer API is documented but not implemented; UDISE and eShikshaKosh have separate Oracle-backed application interfaces; DLR owns private originals and its own auth/data plane; n8n editor and bridges are private.
+- Read-only Supabase project inventory reports both historical projects (umv-db and official-letter-intelligence-archive) as INACTIVE. No table or personal-record query was made.
+- Desktop Commander device inventory reports oracle-server OFFLINE (last seen 410 hours before this check); LAPTOP-P156ON74 also offline. No VPS command, database query, service restart or migration was attempted.
+- PostgreSQL Services README documents only the DLR primary database in its current project database registry; School Data Records is a future database workload pending onboarding. This means no reachable canonical student-data database/API is currently verified.
+- Removed the offline workforce prototype and its tests/docs because teacher records belong to eShikshaKosh Automation and no separate HR product is registered.
+- Vercel deployment dpl_3NcWbXFqDFEFaWG6iotojK46fNZG reached READY for code commit b3143092681cb3599526776b379551c050168bd3. Protected branch alias remains https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app.
+- Vercel build includes TypeScript checking and production bundle generation. GitHub Actions contract-test runs are still queued; no test pass is claimed for the latest head. No authenticated browser/UI acceptance has been performed.
+- PR #5 remains draft and has been retitled to reflect the actual project-hub scope. It is not merged. Production GitHub Pages and production Vercel configuration remain unchanged.
+- Phase 0 and Phase 1 remain open. Real data integration is blocked on restored Oracle access and a verified School Data Records data gateway.
