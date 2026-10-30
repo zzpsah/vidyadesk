@@ -1,8 +1,5 @@
-import type { Assessment, AttendanceStatus, ClassSection, Mark, MdmEntry, NewSchoolInput, Period, School, SchoolData, StaffMember, Student } from './types';
+import type { Assessment, ClassSection, Mark, NewSchoolInput, Period, School, SchoolData, StaffMember, Student } from './types';
 
-const FIRST = ['Aarav', 'Ananya', 'Kabir', 'Meera', 'Vivaan', 'Diya', 'Ishaan', 'Sana', 'Rohan', 'Avni', 'Arjun', 'Nisha', 'Yuvan', 'Aarohi', 'Ved', 'Myra', 'Kiaan', 'Ira', 'Reyansh', 'Anika', 'Dev', 'Sara', 'Naitik', 'Pari', 'Ayan', 'Zoya'];
-const LAST = ['Kumar', 'Singh', 'Sharma', 'Das', 'Roy', 'Patel', 'Gupta', 'Ali', 'Verma', 'Sinha', 'Mishra', 'Rao', 'Yadav', 'Pandey', 'Thakur', 'Chandra'];
-const SUBJECTS = ['Mathematics', 'Science', 'English', 'Social studies', 'Hindi', 'Sanskrit', 'Computer', 'Physical education'];
 export const MENUS = ['Rice & dal', 'Roti & seasonal sabji', 'Rice & vegetable curry', 'Khichdi with curd', 'Roti & paneer bhurji'];
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 export const SCHOOL_CATEGORIES = ['Primary (I–V)', 'Upper primary (I–VIII)', 'Secondary (VI–X)', 'Senior secondary (VI–XII)'];
@@ -16,8 +13,6 @@ const CLASS_LABELS: Record<string, string[]> = {
 };
 
 function hash(value: string) { let h = 2166136261; for (let i = 0; i < value.length; i++) { h ^= value.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
-function pick<T>(list: T[], salt: string) { return list[hash(salt) % list.length]; }
-const initials = (name: string) => name.split(' ').map(word => word[0]).slice(0, 2).join('').toUpperCase();
 
 export function classLabelsFor(category: string) { return CLASS_LABELS[category] ?? CLASS_LABELS[SCHOOL_CATEGORIES[1]]; }
 
@@ -32,44 +27,6 @@ export function sectionsFor(category: string): ClassSection[] {
 
 export function emptyData(): SchoolData {
   return { students: [], staff: [], classes: [], notices: [], fees: [], attendance: {}, leaveRequests: [], transferApplications: [], tickets: [], mdmEntries: [], assessments: [], marks: [], timetable: [] };
-}
-
-function buildStudents(schoolId: string, classes: ClassSection[], seeded: boolean): Student[] {
-  if (!seeded) return [];
-  const out: Student[] = [];
-  classes.forEach((section, sectionIndex) => {
-    const strength = 6 + (hash(`${schoolId}${section.id}`) % 5);
-    for (let i = 1; i <= strength; i++) {
-      const salt = `${schoolId}-${section.id}-${i}`;
-      const given = pick(FIRST, `${salt}-g`);
-      const family = pick(LAST, `${salt}-f`);
-      out.push({ id: `${schoolId}-stu-${sectionIndex}-${i}`, roll: i, name: `${given} ${family}`, className: section.id, guardian: `${pick(FIRST, `${salt}-p`)} ${family}`, gender: hash(`${salt}-x`) % 2 ? 'Girl' : 'Boy', joined: `2026-04-${String(1 + (hash(salt) % 27)).padStart(2, '0')}`, status: 'Enrolled' });
-    }
-  });
-  return out;
-}
-
-function buildStaff(schoolId: string, classes: ClassSection[], seeded: boolean): StaffMember[] {
-  if (!seeded) return [];
-  const team: StaffMember[] = [{ id: `${schoolId}-stf-0`, name: `${pick(FIRST, `${schoolId}-h`)} ${pick(LAST, `${schoolId}-h2`)}`, initials: '', subject: 'School administration', role: 'Head teacher', assignedClass: '—', schedule: '08:00–15:00', leaveBalance: 12 }];
-  classes.forEach((section, index) => {
-    const subject = SUBJECTS[index % SUBJECTS.length];
-    const name = `${pick(FIRST, `${schoolId}-t${index}`)} ${pick(LAST, `${schoolId}-t${index}x`)}`;
-    team.push({ id: `${schoolId}-stf-${index + 1}`, name, initials: initials(name), subject, role: 'Teacher & class teacher', assignedClass: section.id, schedule: '08:30–14:00', leaveBalance: 20 - (hash(`${schoolId}${index}`) % 9) });
-  });
-  return team.map(member => ({ ...member, initials: member.initials || initials(member.name) }));
-}
-
-function seedAttendance(schoolId: string, students: Student[], date: string): Record<string, AttendanceStatus> {
-  const book: Record<string, AttendanceStatus> = {};
-  students.forEach(s => { const r = hash(`${schoolId}${s.id}${date}`) % 100; book[s.id] = r < 82 ? 'Present' : r < 92 ? 'Absent' : 'Leave'; });
-  return book;
-}
-
-function seedMdm(schoolId: string, date: string, students: Student[], book: Record<string, AttendanceStatus>): MdmEntry[] {
-  if (!students.length) return [];
-  const meals = Object.values(book).filter(status => status !== 'Absent').length;
-  return [{ id: `${schoolId}-mdm-1`, date, menu: pick(MENUS, `${schoolId}${date}`), meals, classCount: new Set(students.map(s => s.className)).size, note: 'Cooking cost shown at the sample rate; nothing is reported to a government portal.' }];
 }
 
 /** Create metadata only. VidyaDesk must never generate fictional school records. */
