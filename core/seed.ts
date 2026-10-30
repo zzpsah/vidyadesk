@@ -72,39 +72,31 @@ function seedMdm(schoolId: string, date: string, students: Student[], book: Reco
   return [{ id: `${schoolId}-mdm-1`, date, menu: pick(MENUS, `${schoolId}${date}`), meals, classCount: new Set(students.map(s => s.className)).size, note: 'Cooking cost shown at the sample rate; nothing is reported to a government portal.' }];
 }
 
+/** Create metadata only. VidyaDesk must never generate fictional school records. */
 export function createSchool(input: NewSchoolInput, today: string): School {
-  const id = `sch-${hash(`${input.name}${Date.now()}`).toString(36)}`;
-  const classes = sectionsFor(input.category).map(section => ({ ...section }));
-  const staff = buildStaff(id, classes, input.seedRecords);
-  classes.forEach((section, index) => { if (staff[index + 1]) section.teacherId = staff[index + 1].id; });
-  const students = buildStudents(id, classes, input.seedRecords);
-  const book = seedAttendance(id, students, today);
-  const feeAmount = input.category.startsWith('Primary') ? 300 : input.category.startsWith('Upper') ? 400 : 600;
-  const subjects = examSubjectsOf(staff);
-  const { assessments, marks } = buildAssessments(id, classes, students, subjects, today);
   return {
-    id, name: input.name, category: input.category, block: input.block, district: input.district, medium: input.medium, session: input.session, createdAt: today,
-    students, staff, classes,
-    notices: input.seedRecords ? [
-      { id: `${id}-not-1`, title: 'Parent meeting on the first Saturday', body: 'Class teachers will share term progress with parents between 10:00 and 12:30. Students carry their portfolio folder.', audience: 'Parents', category: 'Academic', date: today },
-      { id: `${id}-not-2`, title: 'Monthly register audit', body: 'Attendance, mid-day meal and inventory registers for the previous month are due with the head teacher.', audience: 'Staff', category: 'Admin', date: today },
-    ] : [],
-    fees: students.map(s => ({ id: `${id}-fee-${s.id}`, studentId: s.id, term: 'October', amount: feeAmount, paid: hash(`${id}${s.id}`) % 10 < 7 })),
-    leaveRequests: staff.length > 2 ? [{ id: `${id}-lv-1`, staffId: staff[2].id, type: 'Casual', from: today, to: today, days: 1, reason: 'Personal work at home district.', status: 'Pending review' }] : [],
-    transferApplications: staff.length > 1 ? [{ id: `${id}-tr-1`, kind: 'transfer-special', applicant: staff[1].name, staffId: staff[1].id, fromSchool: input.name, to: pick(['District A', 'District B', 'District C', 'District D'], id), ground: 'Spouse posted in another district', reason: 'Family stays together in one district.', ref: `${id.slice(4, 10).toUpperCase()}-SPL-001`, status: 'Draft', createdAt: today }] : [],
-    tickets: input.seedRecords ? [{ id: `${id}-tk-1`, subject: 'Classroom light fixture', category: 'Infrastructure', detail: 'Two tube lights in the upper-primary block are flickering.', classId: classes[0]?.id, status: 'Open', createdAt: today }] : [],
-    attendance: input.seedRecords && students.length ? { [today]: book } : {},
-    mdmEntries: input.seedRecords && students.length ? seedMdm(id, today, students, book) : [],
-    assessments, marks,
-    timetable: buildTimetable(id, classes, staff),
+    id: `sch-${hash(`${input.name}${Date.now()}`).toString(36)}`,
+    name: input.name,
+    category: input.category,
+    block: input.block,
+    district: input.district,
+    medium: input.medium,
+    session: input.session,
+    createdAt: today,
+    ...emptyData(),
   };
 }
 
-export const defaultSchools = (today: string): School[] => [
-  createSchool({ name: 'UMV Tetahali · UCHCH MADHYAMIK VIDYALAY', category: SCHOOL_CATEGORIES[3], block: 'Tetahali', district: 'Siwan', medium: MEDIUMS[0], session: '2026–27', seedRecords: true }, today),
-  createSchool({ name: 'Demo Village Upper Primary School', category: SCHOOL_CATEGORIES[1], block: 'Demo Block East', district: 'Demo District', medium: MEDIUMS[2], session: '2026–27', seedRecords: true }, today),
-  createSchool({ name: 'Demo Blank Primary School', category: SCHOOL_CATEGORIES[0], block: 'Demo Block West', district: 'Demo District', medium: MEDIUMS[1], session: '2026–27', seedRecords: false }, today),
-];
+/** One fixed school context, with no assumed classes, staff or student records. */
+export const defaultSchools = (today: string): School[] => [createSchool({
+  name: 'UCHCH MADHYAMIK VIDYALAY, TETAHALI',
+  category: SCHOOL_CATEGORIES[3],
+  block: 'Tetahali',
+  district: 'Siwan',
+  medium: MEDIUMS[0],
+  session: '2026-2027',
+  seedRecords: false,
+}, today)];
 
 export const SLOT_TIMES = ['08:30–09:15', '09:15–10:00', '10:00–10:20', '10:20–11:05', '11:05–11:50', '11:50–12:30', '12:30–13:15', '13:15–14:00'];
 /** Slot index → break label. These slots hold no teaching period, so no teacher is free or busy in them. */
