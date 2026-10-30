@@ -26,9 +26,9 @@ All counts are non-negative integers. All timestamps are ISO-8601 parseable stri
 | Overview | Current snapshot count, failed snapshot count, open conflict count, last successful snapshot timestamp |
 | Source comparison | Separate source ids (`udise`, `eshikshakosh`), current snapshot count, last snapshot timestamp, academic session |
 | Conflict summary | Open total and counts by error/warning/info severity |
-| Import audit | Attempt, success, failure and ignored-duplicate counts; latest attempt timestamp |
+| Import audit | Attempt, success, failure and ignored-duplicate counts; latest attempt timestamp; `historyCoverage=school_scoped_records_only` (older unscoped history is excluded) |
 
-No student names, PEN, Aadhaar values, phone numbers, guardian names, row-level source values, raw payloads or workbook bytes belong in these dashboard contracts.
+No student names, PEN, Aadhaar values, phone numbers, guardian names, row-level source values, raw payloads or workbook bytes belong in these dashboard contracts. Import audit totals include only rows with a verified source-school scope; historical rows without a school id are not inferred or backfilled.
 
 ## Response envelope
 
