@@ -1,9 +1,9 @@
-export type ProjectIcon = 'records' | 'reports' | 'letters' | 'udise' | 'eshikshakosh' | 'automation';
+export type ProjectIcon = 'records' | 'reports' | 'letters' | 'udise' | 'eshikshakosh' | 'automation' | 'payroll';
 export type SchoolProject = {
   id: string;
   name: string;
   owner: string;
-  kind: 'Source of truth' | 'Reporting' | 'Documents' | 'Government workflow' | 'Automation';
+  kind: 'Source of truth' | 'Reporting' | 'Documents' | 'Government workflow' | 'Automation' | 'Payroll';
   purpose: string;
   ownership: string;
   boundary: string;
@@ -48,6 +48,13 @@ export const projects: SchoolProject[] = [
     ownership: 'Student/teacher report generation, protected runners, job status and private workbook delivery.',
     boundary: 'eShikshaKosh is separate from UDISE+. Credentials and workbook bytes remain on the protected VPS; VidyaDesk must consume only scoped job/status summaries.',
     repositoryUrl: 'https://github.com/zzpsah/eshikshakosh-automation', applicationUrl: 'https://eshikshakosh-coral.vercel.app/', icon: 'eshikshakosh',
+  },
+  {
+    id: 'vetan-vipatra', name: 'Vetan-Vipatra', owner: 'Vetan-Vipatra',
+    kind: 'Payroll', purpose: 'Existing teacher absence statement and monthly salary calculation application with fitment preview, deductions and print-ready output.',
+    ownership: 'Teacher roster import, attendance days, salary components, fitment preview, monthly statement and PDF/CSV output.',
+    boundary: 'The existing standalone application remains authoritative for its payroll workflow. VidyaDesk provides a launch link only; do not copy teacher payroll data into VidyaDesk or infer final pay fixation from estimates. Verify service records and applicable official orders in the owning application.',
+    repositoryUrl: 'https://github.com/zzpsah/Vetan-Vipatra', applicationUrl: 'https://vetan-vipatra.vercel.app', icon: 'payroll',
   },
   {
     id: 'n8n-operations', name: 'n8n Operations', owner: 'n8n-operations',
