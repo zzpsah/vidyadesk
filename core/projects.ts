@@ -57,3 +57,29 @@ export const projects: SchoolProject[] = [
     repositoryUrl: 'https://github.com/zzpsah/n8n-operations', icon: 'automation',
   },
 ];
+
+export type InfrastructureProject = {
+  id: string;
+  name: string;
+  purpose: string;
+  boundary: string;
+  repositoryUrl: string;
+};
+
+/** Platform dependencies are visible but deliberately not classified as school modules. */
+export const infrastructureProjects: InfrastructureProject[] = [
+  {
+    id: 'oracle-server',
+    name: 'Oracle VPS / Server Operations',
+    purpose: 'Host operations, private networking, system services, runtime access and recovery.',
+    boundary: 'Infrastructure only. Service health is currently unverified because the registered Oracle Desktop Commander device is offline.',
+    repositoryUrl: 'https://github.com/zzpsah/oracle-server',
+  },
+  {
+    id: 'postgresql-services',
+    name: 'PostgreSQL Services',
+    purpose: 'Shared PostgreSQL operations, database security, capacity, backup and restore standards.',
+    boundary: 'Database operations only. The documented database registry currently covers DLR; a dedicated School Data Records database has not been onboarded.',
+    repositoryUrl: 'https://github.com/zzpsah/postgresql-services',
+  },
+];
