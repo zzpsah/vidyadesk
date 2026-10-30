@@ -5,7 +5,7 @@
 **Active implementation PR:** https://github.com/zzpsah/vidyadesk/pull/5  
 **Active branch:** feat/internal-access-student-records  
 **Vercel project:** vidyadesk (team SSO protection enabled)  
-**Preview candidate:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (deployment queued; not yet accepted as a working preview)
+**Protected development preview:** https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (READY; SSO protection enabled; tested commit 678e658)
 
 ## Current lifecycle position
 
@@ -40,19 +40,19 @@
 
 ## Active blockers
 
-1. No verified server-capable VidyaDesk deployment is connected to this repository yet.
+1. A protected Vercel preview is connected to this repository. It currently hosts the existing SPA and aggregate proxy only; authenticated full-record API is not implemented.
 2. No complete authenticated VidyaDesk-to-provider student-record contract has been implemented and tested.
 3. The 2244 bootstrap PIN/session exchange is specified but not implemented.
 4. Source field availability, school identity mapping and full-record provenance must be verified against actual provider data before exposing records.
-5. No protected preview URL has been verified for this branch.
+5. The branch preview is READY at https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app (deployment dpl_4V6Biiro2X9ocVVg4RvJaZR7bQcM; commit 678e658; SSO protection enabled).
 
 ## Next actions — Phase 0 exit
 
-- [ ] Inventory all app routes, module files and current data stores.
-- [ ] Inventory all provider endpoints and auth/session contracts relevant to VidyaDesk.
-- [ ] Record build, type-check and contract-test baseline.
+- [x] Inventory all app routes and major module/data-store structure from the current app shell and source tree.
+- [x] Inventory provider student/staff/unified routes, role permissions, session contract and source-field limitations.
+- [x] Record CI baseline: VidyaDesk CI passed on commit 678e658 (contract tests and production build); Vercel preview build also completed successfully.
 - [x] Verify Vercel team/project linkage and preview protection for this repo (project prj_YAkSd2ZFjyHDcI70rRyqty9zn7No; SSO protection enabled).
-- [ ] Confirm canonical UMV Tethali school mapping and source ownership.
+- [ ] Confirm canonical UMV Tethali school mapping to provider numeric school_id and source ownership (not yet verified against live DB).
 - [ ] Publish audit findings and move Phase 0 to accepted only when evidence is complete.
 
 ## Progress update format
@@ -75,3 +75,25 @@ Every implementation update must add:
 - First deployment attempt targeting production was immediately canceled before completion; no production release was made.
 - Preview deployment of commit b862da7 failed because the Edge function imported the contract from outside its function bundle. The handler's validation was made self-contained in commit 43e8798.
 - Replacement preview for commit 43e8798 is queued. It must reach READY and be checked behind SSO before being called a usable progress URL.
+
+
+## Verified provider integration findings
+
+- Report Central has existing role-based user sessions with a 12-hour default TTL; session tokens are stored as SHA-256 hashes and permissions are checked per route.
+- The current provider service bearer token is explicitly denied access to protected data routes. It cannot be reused as a student-record token.
+- Existing authenticated user routes include /v1/students, /v1/teachers and /v1/unified/students; they require a real user session and the corresponding role permission.
+- The central student read model returns aadhaar_masked, not a reconstructable full Aadhaar value. The canonical unified student view includes source-specific names, class/section and contact fields, but not a complete raw source profile.
+- Source workbook download is separately gated by files.download and exposes raw source data; it must not be used as an unscoped general-purpose student API.
+- The VidyaDesk integration therefore needs a dedicated, read-only, fixed-school provider identity/contract or a securely delegated per-user session. It must not widen the existing aggregate token or trust a browser-supplied school_id.
+- Provider school_id mapping for UMV Tethali is still unverified; no live record has been exposed.
+
+## Preview deployment evidence
+
+- Vercel project: prj_YAkSd2ZFjyHDcI70rRyqty9zn7No
+- Deployment: dpl_4V6Biiro2X9ocVVg4RvJaZR7bQcM
+- Deployment URL: https://vidyadesk-2b0f4zb0f-zzpsah.vercel.app
+- Branch alias: https://vidyadesk-git-feat-internal-access-student-records-zzpsah.vercel.app
+- Commit: 678e6584a10472ad7a0c76e9210f96a23229dce6
+- Result: Vercel READY; build completed; project SSO protection enabled.
+- GitHub Actions: VidyaDesk CI run 41092365955 completed successfully (contract tests and build).
+- The first incorrectly targeted deployment was canceled before completion; no production release or production domain change was made.
