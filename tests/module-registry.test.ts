@@ -3,45 +3,29 @@ import test from 'node:test';
 import { modules, moduleGroups, portalModules, portalModuleGroups } from '../core/modules.ts';
 import { isWorkspaceRoute, resolveWorkspaceRoute, validateModuleRegistry, workspaceRoutes } from '../core/route-registry.ts';
 
-test('every available portal module has exactly one workspace route', () => {
-  const moduleRoutes = workspaceRoutes.filter(route => route.kind === 'module');
-  assert.equal(moduleRoutes.length, portalModules.length);
-  assert.deepEqual(moduleRoutes.map(route => route.id), portalModules.map(module => module.id));
+test('the school portal exposes no unbacked CRUD module routes', () => {
+  assert.deepEqual(portalModules, []);
+  assert.deepEqual(portalModuleGroups, []);
+  assert.deepEqual(workspaceRoutes.filter(route => route.kind === 'module'), []);
 });
-test('unknown and empty route input safely resolves to overview', () => {
-  for (const candidate of ['', 'not-a-module', '__proto__', null, undefined]) {
+test('unknown, retired and empty route input safely resolves to overview', () => {
+  for (const candidate of ['', 'not-a-module', '__proto__', 'students', 'staff', 'fees', 'report-central', null, undefined]) {
     assert.equal(resolveWorkspaceRoute(candidate), 'overview');
     assert.equal(isWorkspaceRoute(candidate), false);
   }
 });
-test('overview and every registered module resolve unchanged', () => {
+test('overview is the only route exposed until a project-backed module is accepted', () => {
   assert.equal(resolveWorkspaceRoute('overview'), 'overview');
-  for (const module of portalModules) {
-    assert.equal(resolveWorkspaceRoute(module.id), module.id);
-    assert.equal(isWorkspaceRoute(module.id), true);
-  }
-  for (const module of modules.filter(entry => entry.status !== 'live')) {
-    assert.equal(resolveWorkspaceRoute(module.id), 'overview');
-    assert.equal(isWorkspaceRoute(module.id), false);
-  }
+  assert.equal(isWorkspaceRoute('overview'), true);
 });
-test('all modules belong to a known navigation group and pass registry validation', () => {
+test('internal legacy registry metadata remains structurally valid but is not school-facing', () => {
   assert.ok(modules.every(module => moduleGroups.includes(module.group)));
   assert.deepEqual(validateModuleRegistry(), []);
 });
-test('every blueprint declares entities, workflow and acceptance checks', () => {
+test('every retained blueprint declares entities, workflow and acceptance checks', () => {
   for (const module of modules.filter(entry => entry.status === 'blueprint')) {
     assert.ok(module.entities?.length, module.id);
     assert.ok(module.workflow?.length, module.id);
     assert.ok(module.checks?.length, module.id);
   }
-});
-
-test('school portal exposes only implemented modules and omits empty groups', () => {
-  assert.ok(portalModules.length > 0);
-  assert.ok(portalModules.every(module => module.status === 'live'));
-  assert.ok(modules.some(module => module.status === 'blueprint'));
-  assert.ok(modules.some(module => module.status === 'integration'));
-  assert.ok(portalModuleGroups.every(group => portalModules.some(module => module.group === group)));
-  assert.ok(!portalModules.some(module => module.id === 'report-central' || module.id === 'integrations'));
 });
