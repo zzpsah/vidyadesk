@@ -37,7 +37,7 @@ export function StaffView({ nav }: { nav: Nav }) {
     <div className="kpi-row">
       <Kpi label="Staff on register" value={String(summary.total)} note="Local staff directory" />
       <Kpi label="Timetable assigned" value={String(summary.withTimetable)} note={`${summary.totalPeriods} periods across the week`} />
-      <Kpi label="No periods assigned" value={String(summary.withoutTimetable)} note="Review timetable allocation" tone={summary.withoutTimetable ? 'warn' : 'ok'} />
+      <Kpi label="Not timetabled" value={String(summary.withoutTimetable)} note="Includes non-teaching roles" />
       <Kpi label="Leave pending" value={String(summary.pendingLeave)} note="Awaiting a decision" tone={summary.pendingLeave ? 'warn' : 'ok'} />
     </div>
     {!school.staff.length ? <EmptyState title="No staff records" text={`${school.name} has no staff records in this browser. Add a verified staff master only after the authenticated school-data gateway is ready.`} /> : <>
