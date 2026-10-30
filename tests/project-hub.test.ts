@@ -40,5 +40,5 @@ test('project hub contains only the six known, repository-backed school projects
     assert.ok(project.repositoryUrl.startsWith('https://github.com/zzpsah/'));
     assert.ok(project.boundary.length > 20);
   }
-  assert.equal(projects.filter(project => project.applicationUrl).length, 2);
+  assert.equal(projects.filter(project => project.applicationUrl).length, 4);
 });
