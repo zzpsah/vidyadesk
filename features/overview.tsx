@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
 import { infrastructureProjects, projects } from '@/core/projects';
+import { operationalWorkspaces } from '@/core/workspaces';
 
 const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch, payroll: FileSpreadsheet } as const;
 
@@ -30,16 +31,22 @@ export function OverviewView({ nav }: { nav: Nav }) {
     <div className="blueprint-grid">
       {projects.map(project => {
         const Icon = icons[project.icon];
+        const workspace = operationalWorkspaces.find(item => item.owner === project.owner);
+        const accessLabel = workspace?.access === 'application' ? 'Owner app available'
+          : workspace?.access === 'protected' ? 'Protected owner app'
+          : workspace?.access === 'private-service' ? 'Private service' : 'Repository only';
+        const accessTone = workspace?.access === 'application' ? 'ok'
+          : workspace?.access === 'protected' ? 'warn' : 'mute';
         return <Panel key={project.id} title={project.name} meta={project.owner}>
           <div className="flex flex-wrap gap-2 mb-3">
-            <Pill tone="warn">Not connected to VidyaDesk</Pill>
+            <Pill tone={accessTone}>{accessLabel}</Pill>
             <Pill tone="mute">{project.kind}</Pill>
           </div>
           <p>{project.purpose}</p>
           <p className="foot-line"><strong>Owns:</strong> {project.ownership}</p>
           <p className="scope-note">{project.boundary}</p>
           <div className="flex flex-wrap gap-3 mt-3">
-            {project.applicationUrl && <a className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href={project.applicationUrl} target="_blank" rel="noreferrer">Open application <ExternalLink size={14} /></a>}
+            {project.applicationUrl && <a className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href={project.applicationUrl} target="_blank" rel="noreferrer">{workspace?.access === 'protected' ? 'Open protected application' : 'Open application'} <ExternalLink size={14} /></a>}
             <a className="inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href={project.repositoryUrl} target="_blank" rel="noreferrer">Repository <ArrowUpRight size={14} /></a>
           </div>
         </Panel>;
