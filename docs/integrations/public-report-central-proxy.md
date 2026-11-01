@@ -1,6 +1,6 @@
 # Public Report Central proxy (no user login)
 
-**Status:** The proxy code and tests are implemented. The Vercel project vidyadesk exists and is connected to this repository; branch pushes create preview deployments. Vercel SSO protection was disabled on 2026-11-01 to honor the no-login workspace requirement. No Vercel environment variables are configured, the aggregate proxy remains disabled by default, and the existing production alias continues to serve the last successful main-branch release until a new production deployment is explicitly promoted.
+**Status:** The proxy code and tests are implemented. The Vercel project vidyadesk exists and is connected to this repository; branch pushes create preview deployments. Vercel SSO protection was disabled on 2026-11-01 to honor the no-login workspace requirement. No Vercel environment variables are configured, the aggregate proxy remains disabled by default, and the existing production alias continues to serve the last successful main-branch release until a new production deployment is explicitly promoted. The current public PR preview serves the function but returns HTTP 503 integration_not_activated; no upstream request is made.
 
 VidyaDesk remains publicly accessible without user accounts in this phase. The Report Central connection is a server-to-server read-only path; the browser does not receive the upstream bearer token.
 
