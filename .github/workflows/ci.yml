@@ -2,7 +2,6 @@ name: VidyaDesk CI
 
 on:
   pull_request:
-    branches: [main]
   push:
     branches-ignore: [main]
 
@@ -23,5 +22,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run check:devos
       - run: npm run test:contract
       - run: npm run build
