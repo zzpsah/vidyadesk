@@ -20,3 +20,13 @@ test('private and repository-only services do not advertise public application e
   }
   assert.ok(workspaceGroups.includes('Student data'));
 });
+
+
+test('Vetan-Vipatra remains a protected owner application with one honest launch target', () => {
+  const payroll = operationalWorkspaces.find(item => item.id === 'payroll');
+  assert.ok(payroll);
+  assert.equal(payroll.access, 'protected');
+  assert.equal(payroll.applicationUrl, 'https://vetan-vipatra.vercel.app/');
+  assert.ok(payroll.actions.every(action => action.href === undefined), 'capability descriptions must not masquerade as deep links');
+  assert.match(payroll.note, /Vercel protection enabled/i);
+});

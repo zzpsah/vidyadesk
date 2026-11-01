@@ -58,9 +58,14 @@ export function WorkspacesView({ nav }: { nav: Nav }) {
                 </div>)}
               </div>
               <p className="scope-note">{item.note}</p>
-              {item.applicationUrl && <div className="workspace-action-links mt-4" aria-label={`${item.name} actions`}>
-                {item.actions.map(action => <Button asChild key={action.label} size="sm" variant="outline">
-                  <a href={action.href ?? item.applicationUrl} target="_blank" rel="noopener noreferrer" title={action.detail}>{action.label} <ExternalLink size={13} /></a>
+              {item.applicationUrl && <div className="workspace-action-links mt-4" aria-label={`${item.name} application links`}>
+                <Button asChild size="sm" variant="outline">
+                  <a href={item.applicationUrl} target="_blank" rel="noopener noreferrer">
+                    {item.access === 'protected' ? 'Open protected application' : 'Open application'} <ExternalLink size={13} />
+                  </a>
+                </Button>
+                {item.actions.filter(action => action.href).map(action => <Button asChild key={action.label} size="sm" variant="outline">
+                  <a href={action.href} target="_blank" rel="noopener noreferrer" title={action.detail}>{action.label} <ExternalLink size={13} /></a>
                 </Button>)}
               </div>}
               <div className="flex flex-wrap gap-2 mt-3">
