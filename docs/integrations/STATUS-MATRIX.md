@@ -47,3 +47,11 @@
 - The Vetan-Vipatra deployment redirects to Vercel SSO (HTTP 302). Keep the payroll application protected; VidyaDesk exposes a single clearly labeled protected-app launch rather than implying that capability descriptions are live deep links.
 - VidyaDesk PR #9 commit `6e51d5101e3bd3a8808fb1a167dad24f9f82da45` is deployed as a READY preview at `https://vidyadesk-fcwahoy3z-zzpsah.vercel.app`. Production remains on the last approved `main` deployment.
 - No owner token was provisioned, no migration or service restart was performed, and no Tailscale Serve/Funnel mapping was changed.
+
+
+## 2026-11-01 overview access accuracy update
+
+- VidyaDesk commit `8e7c0a7b6adca6dc5665a82c0d87b33fa58bcc6e` corrects the Overview project cards: owner applications are labelled available, payroll is explicitly labelled protected, and repository-only/private services are not presented as launched applications.
+- Added a contract test that checks every Overview project maps to its operational workspace and that Vetan-Vipatra remains protected. Contract suite: 51 passed; production build and `git diff --check` passed locally.
+- GitHub Actions run #337 was queued/running when this note was recorded; its final result must be checked before treating CI as complete.
+- PR #9 remains open and unmerged. No production deployment, provider token, migration, service restart or network change was made.
