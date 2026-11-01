@@ -1,14 +1,17 @@
 import { ArrowUpRight, Boxes, ExternalLink, FileSpreadsheet, FileText, GitBranch, Network, ShieldCheck } from 'lucide-react';
 import { PageHead, Panel, Pill } from '@/components/common';
+import { Button } from '@/components/ui/button';
+import type { Nav } from '@/core/nav';
 import { SCHOOL_PROFILE } from '@/core/school-profile';
 import { infrastructureProjects, projects } from '@/core/projects';
 
 const icons = { records: ShieldCheck, reports: Boxes, letters: FileText, udise: Network, eshikshakosh: Network, automation: GitBranch, payroll: FileSpreadsheet } as const;
 
-export function OverviewView() {
+export function OverviewView({ nav }: { nav: Nav }) {
   return <>
     <PageHead module={{ id: 'overview', name: 'VidyaDesk', nav: 'Overview', blurb: 'One control centre for the school’s existing systems.', group: 'Operations', status: 'integration', icon: Boxes }} crumb={SCHOOL_PROFILE.shortName}>
-      <Pill tone="warn">Integrations pending</Pill>
+      <Pill tone="mute">Operational workspaces</Pill>
+      <Button onClick={() => nav.go('workspaces')}>Open workspaces <ExternalLink size={14} /></Button>
     </PageHead>
 
     <section className="blueprint-hero" aria-labelledby="workspace-intro">
@@ -62,8 +65,8 @@ export function OverviewView() {
         </ul>
       </Panel>
       <Panel title="Connection readiness" meta="Honest status">
-        <p>Project links are registered, but a repository or application URL does not prove that its API is connected. Connection status will change only after a real health check and a source-backed read test succeed.</p>
-        <p className="scope-note">Private student and staff records remain unavailable here until the school-scoped authentication and read-only data gateway pass their security checks.</p>
+        <p>Each owner application is available from the Operational Workspaces page. Use those applications to create, edit, submit, approve and export records in their existing systems.</p>
+        <p className="scope-note">The common dashboard is being extended with secure in-page actions. Existing student, staff, letter, payroll and portal records continue to live in their owning applications.</p>
       </Panel>
     </div>
   </>;

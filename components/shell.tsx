@@ -15,12 +15,13 @@ export function Sidebar({ route, nav, onClose }: { route: string; nav: Nav; onCl
   return <div className="sidebar">
     <header className="side-brand">
       <span className="brand-mark" aria-hidden="true">{SCHOOL_PROFILE.initials}</span>
-      <div><strong>{SCHOOL_PROFILE.shortName}</strong><span>VidyaDesk school desk</span></div>
+      <div><strong>{SCHOOL_PROFILE.shortName}</strong><span>Unified school workbench</span></div>
       <Button variant="ghost" size="icon" className="side-close" aria-label="Close navigation" onClick={onClose}><X size={18} /></Button>
     </header>
 
     <nav className="side-nav" aria-label="Modules">
       {item('overview', 'Project overview')}
+      {item('workspaces', 'Operational workspaces')}
       {item('report-central', 'Report Central')}
       {item('integrations', 'Integrations')}
     </nav>
@@ -30,14 +31,14 @@ export function Sidebar({ route, nav, onClose }: { route: string; nav: Nav; onCl
 }
 
 export function Topbar({ onOpenMenu, route }: { onOpenMenu: () => void; route: string }) {
-  const labels: Record<string, string> = { overview: 'Project overview', 'report-central': 'Report Central', integrations: 'Integrations' };
+  const labels: Record<string, string> = { overview: 'Project overview', workspaces: 'Operational workspaces', 'report-central': 'Report Central', integrations: 'Integrations' };
   const crumbs = ['VidyaDesk', labels[route] ?? labels.overview];
 
   return <header className="topbar">
     <Button variant="ghost" size="icon" className="menu-button" aria-label="Open navigation" onClick={onOpenMenu}><Menu size={19} /></Button>
     <p className="crumbs"><span>{crumbs[0]}</span>{crumbs[1] && <><em>/</em><strong>{crumbs[1]}</strong></>}</p>
     <div className="topbar-right">
-      <span className="school-chip" title="School workspace">UMV Tethali</span>
+      <span className="school-chip" title="School workspace">UMV Tetahali</span>
       <span className="avatar" aria-label="School administrator">UM</span>
     </div>
   </header>;

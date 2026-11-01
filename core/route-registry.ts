@@ -6,6 +6,7 @@ export type RouteDefinition = { id: WorkspaceRoute; label: string; group: string
 /** Route catalogue derived from the same registry used by navigation. */
 export const workspaceRoutes: RouteDefinition[] = [
   { id: 'overview', label: 'Overview', group: 'Workspace', kind: 'overview' },
+  { id: 'workspaces', label: 'Operational workspaces', group: 'Workspace', kind: 'module' },
   ...integrationModules.map(module => ({ id: module.id, label: module.name, group: module.group, kind: 'integration' as const })),
   ...portalModules.map(module => ({ id: module.id, label: module.name, group: module.group, kind: 'module' as const })),
 ];
