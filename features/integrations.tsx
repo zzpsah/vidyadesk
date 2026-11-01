@@ -45,7 +45,7 @@ export function IntegrationsView({ nav }: { nav: Nav }) {
         <li><strong>Report Central:</strong> verify both school-source mappings, apply migration 022 and provision a dedicated server token.</li>
         <li><strong>Digital Letter Registry:</strong> provision a dedicated viewer account, verify the exact archive name and approve a read-only network path.</li>
         <li><strong>eShikshaKosh:</strong> review the fixed-school aggregate status endpoint in PR #1, provision its dedicated server-only token and approve the private network path.</li>
-        <li><strong>UDISE+:</strong> define a fixed-school read-only status contract and approve server-to-server access without exposing portal credentials.</li>
+        <li><strong>UDISE+:</strong> review the fixed-school aggregate status endpoint in PR #11, provision its dedicated server-only token and approve the private network path.</li>
         <li><strong>School Data Records:</strong> verify the primary Postgres schema and canonical school mapping before exposing any student data.</li>
       </ul>
       <p className="scope-note">These are activation blockers, not failed services. Local HTTP health checks are not proof of record-level correctness or successful portal sessions.</p>
