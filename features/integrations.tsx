@@ -4,6 +4,7 @@ import { PageHead, Panel, Pill } from '@/components/common';
 import { dataSources, integrations } from '@/core/integrations';
 import { REPORT_CENTRAL_CONTRACT_VERSION, REPORT_CENTRAL_SCOPE } from '@/core/report-central-contract';
 import type { Nav } from '@/core/nav';
+import { UdiseStatusPanel } from '@/features/udise-status';
 
 export function IntegrationsView({ nav }: { nav: Nav }) {
   return <>
@@ -28,6 +29,8 @@ export function IntegrationsView({ nav }: { nav: Nav }) {
         <p className="scope-note">{integration.boundary}</p>
       </Panel>)}
     </div>
+
+    <UdiseStatusPanel />
 
     <Panel title="Report Central · integration contract" meta={`Contract v${REPORT_CENTRAL_CONTRACT_VERSION}`}>
       <div className="flex flex-wrap items-center gap-2">
