@@ -1,5 +1,8 @@
 # VidyaDesk internal session architecture
 
+> **Current operating decision — 2026-11-01:** The owner has chosen a no-browser-login workspace for the current release. This document's PIN, cookie and user-session design is a future option, not an implemented requirement. Vercel SSO protection is disabled, so the production alias and preview deployments are public. VidyaDesk must therefore expose only project metadata and explicitly approved aggregate data; private student/staff routes remain unavailable. Service-to-service integrations use dedicated server-side tokens that never reach browser code.
+
+
 **Status:** Design baseline; implementation is gated on verified persistence and provider scope  
 **Date:** 2026-10-30  
 **Applies to:** Phase 2 — Internal access and security
@@ -53,27 +56,25 @@ Use database constraints and transactions for uniqueness, expiry/revocation upda
 - The provider adapter must use a dedicated read-only fixed-school identity or secure per-user delegation, with server-only credentials.
 - Do not expose masked Aadhaar as if it were a full value. Do not reconstruct missing values.
 
-## Acceptance tests required before Phase 2 can be accepted
+## Acceptance tests for the current no-login release
 
-- Anonymous requests cannot reach any private-data handler.
-- Correct PIN creates a cookie-backed server session; wrong PIN does not.
-- PIN alone cannot call protected APIs.
-- Cookie flags and no-store headers are present.
-- Expired, revoked, malformed and unknown sessions are denied.
-- Rate limits are durable across separate server instances and reset only according to policy.
-- CSRF/origin checks reject cross-origin state-changing requests.
-- Role/permission checks and fixed school scope are enforced server-side.
-- Logout and administrative revocation invalidate the same session immediately.
-- Audit records contain no PIN, session token or student/staff data.
-- Provider outage, persistence outage and unresolved school mapping all fail closed.
+- Anonymous visitors can access only the approved project hub and non-sensitive project metadata.
+- No student/staff CRUD routes or raw records are exposed in the browser bundle or API.
+- The Report Central proxy is disabled unless the server-side feature flag is explicitly enabled.
+- The Report Central machine token never appears in VITE variables, HTML, JavaScript bundles, URLs, browser storage or logs.
+- The provider accepts the dedicated machine token only on the exact fixed-scope aggregate GET route.
+- School/session overrides, extra fields, writes and unsupported methods are rejected.
+- Unresolved school mapping, missing migration, token failure and provider outage all fail closed.
+- CORS is treated only as a browser-origin policy, never as authentication.
+- No browser login, PIN, cookie or user-session flow is introduced without a separate owner decision.
 
-## Public custom-domain deployment boundary
+## Public deployment boundary
 
-The intended monitoring domain `shikshakosh.vercel.app` is attached to the Vercel project. The project-level SSO setting excludes custom domains, so the domain must not be assigned to a preview deployment as a shortcut around preview protection. Treat the first custom-domain deployment as public internet exposure: review every route and asset before aliasing it, and keep private records inaccessible until this document's session and fixed-school gateway gates are accepted.
+The custom alias shikshakosh.vercel.app is live and publicly reachable. Project-level SSO protection is disabled, so previews and aliases are public too. Treat every deployment as public internet exposure: review every route and asset, keep student/staff data unavailable, and publish only the approved aggregate contract after the school mapping and publication gates are accepted.
 
 ## Implementation gate
 
-Do not implement or enable private session endpoints until all of the following are verified:
+Do not implement or enable private student/staff data endpoints or a browser login/session flow unless the owner separately approves a change to the current no-login scope. The aggregate-only integration may be activated only after all of the following are verified:
 
 1. A durable database connection is available to the VidyaDesk server runtime, with migration/backup/restore ownership documented.
 2. The exact provider numeric school id for UMV Tethali is confirmed from an authorized read-only source.
@@ -81,4 +82,4 @@ Do not implement or enable private session endpoints until all of the following 
 4. Preview deployment secrets and origin configuration are confirmed without exposing their values.
 5. Automated tests cover the acceptance list above.
 
-At the time this document was written, the Oracle Desktop Commander device was offline, so the provider database could not be queried. No live records or database state were accessed or changed.
+Runtime follow-up on 2026-11-01: Desktop Commander access is restored and local health probes returned HTTP 200 for UDISE+, eShikshaKosh, DLR and Report Central. The Report Central database is reachable for read-only metadata checks, but the verified school-source mapping table has no rows and migration 022 is pending. No migration, mapping or production data change was performed.
