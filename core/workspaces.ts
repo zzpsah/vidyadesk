@@ -1,4 +1,4 @@
-export type WorkspaceAction = { label: string; detail: string };
+export type WorkspaceAction = { label: string; detail: string; href?: string };
 export type OperationalWorkspace = {
   id: string;
   name: string;
@@ -36,9 +36,9 @@ export const operationalWorkspaces: OperationalWorkspace[] = [
     owner: 'eshikshakosh-automation', applicationUrl: 'https://eshikshakosh-coral.vercel.app/',
     repositoryUrl: 'https://github.com/zzpsah/eshikshakosh-automation', access: 'application',
     actions: [
-      { label: 'Student OTR', detail: 'Prepare and run the school-scoped student OTR report.' },
-      { label: 'Teacher reports', detail: 'Generate teacher report workbooks using the existing job workflow.' },
-      { label: 'Job results', detail: 'Review job progress and retrieve protected report outputs.' },
+      { label: 'Student OTR', detail: 'Prepare and run the school-scoped student OTR report.', href: 'https://eshikshakosh-coral.vercel.app/#workbench' },
+      { label: 'Teacher reports', detail: 'Generate teacher report workbooks using the existing job workflow.', href: 'https://eshikshakosh-coral.vercel.app/#workbench' },
+      { label: 'Job results', detail: 'Review job progress and retrieve protected report outputs.', href: 'https://eshikshakosh-coral.vercel.app/#workbench' },
     ],
     note: 'Credentials and workbook files remain in the protected eShikshaKosh service; VidyaDesk does not copy them.',
   },
@@ -122,6 +122,18 @@ export function validateOperationalWorkspaces(): string[] {
       errors.push(`Workspace ${item.id} has no HTTPS application URL.`);
     }
     if (!item.actions.length) errors.push(`Workspace ${item.id} has no operational actions.`);
+    for (const action of item.actions) {
+      if (action.href) {
+        try {
+          const target = new URL(action.href);
+          const owner = item.applicationUrl ? new URL(item.applicationUrl) : null;
+          if (!owner || target.protocol !== 'https:' || target.origin !== owner.origin
+            || target.pathname !== owner.pathname || target.search) {
+            errors.push(`Workspace ${item.id} action ${action.label} leaves its verified owner application.`);
+          }
+        } catch { errors.push(`Workspace ${item.id} action ${action.label} has an invalid target.`); }
+      }
+    }
   }
   return errors;
 }

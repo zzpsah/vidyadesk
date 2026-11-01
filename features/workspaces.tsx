@@ -60,7 +60,7 @@ export function WorkspacesView({ nav }: { nav: Nav }) {
               <p className="scope-note">{item.note}</p>
               {item.applicationUrl && <div className="workspace-action-links mt-4" aria-label={`${item.name} actions`}>
                 {item.actions.map(action => <Button asChild key={action.label} size="sm" variant="outline">
-                  <a href={item.applicationUrl} target="_blank" rel="noopener noreferrer" title={action.detail}>{action.label} <ExternalLink size={13} /></a>
+                  <a href={action.href ?? item.applicationUrl} target="_blank" rel="noopener noreferrer" title={action.detail}>{action.label} <ExternalLink size={13} /></a>
                 </Button>)}
               </div>}
               <div className="flex flex-wrap gap-2 mt-3">
@@ -77,7 +77,7 @@ export function WorkspacesView({ nav }: { nav: Nav }) {
         <li><ShieldCheck size={14} /> Create, edit, submit, approve and export actions run in the owning application.</li>
         <li><ShieldCheck size={14} /> UDISE+ portal writes remain preview-first and require explicit approval and read-back.</li>
         <li><ShieldCheck size={14} /> Student and staff records are not copied into browser storage or duplicated in a second database.</li>
-        <li><ShieldCheck size={14} /> VidyaDesk will progressively add authenticated in-page actions where a stable owner API and session boundary exist.</li>
+        <li><ShieldCheck size={14} /> Actions open the exact owner workflow where a stable route is available; sensitive submissions continue to use the owner application's own approval controls.</li>
       </ul>
       <div className="flex flex-wrap gap-2 mt-4">
         <Button variant="outline" onClick={() => nav.go('report-central')}>Open source reconciliation <FileBarChart size={14} /></Button>
