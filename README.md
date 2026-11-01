@@ -84,3 +84,13 @@ A branch push triggers GitHub Actions and a protected Vercel preview. The `main`
 7. Complete end-to-end security, operational recovery, UAT and production handover.
 
 A phase is complete only with implementation, tests, deployment evidence and documentation. See [the implementation plan](docs/roadmap/IMPLEMENTATION-PLAN.md) and [the live status tracker](docs/roadmap/STATUS.md).
+
+## AI-assisted development
+
+VidyaDesk uses the repository-local Development OS context and portable Agent Skills:
+- .ai/ records project identity, current state, decisions, specialist roles and MCP/tool boundaries.
+- .agents/skills/ contains task-specific instructions for feature work, school-data contracts, integration readiness and release verification.
+- brain/ records substantial enhancements and their evidence.
+- GitHub Actions validates the DevOS context and skills before contract tests and the production build.
+
+Run npm run check:devos locally. Agent instructions do not grant credentials or approval; merges, deployments and production data changes remain separately controlled.
