@@ -1,11 +1,12 @@
-import { moduleById, modules, moduleGroups, portalModules } from './modules.ts';
+import { integrationModules, moduleById, modules, moduleGroups, portalModules } from './modules.ts';
 
 export type WorkspaceRoute = 'overview' | string;
-export type RouteDefinition = { id: WorkspaceRoute; label: string; group: string; kind: 'overview' | 'module' };
+export type RouteDefinition = { id: WorkspaceRoute; label: string; group: string; kind: 'overview' | 'integration' | 'module' };
 
 /** Route catalogue derived from the same registry used by navigation. */
 export const workspaceRoutes: RouteDefinition[] = [
   { id: 'overview', label: 'Overview', group: 'Workspace', kind: 'overview' },
+  ...integrationModules.map(module => ({ id: module.id, label: module.name, group: module.group, kind: 'integration' as const })),
   ...portalModules.map(module => ({ id: module.id, label: module.name, group: module.group, kind: 'module' as const })),
 ];
 const routeIds = new Set(workspaceRoutes.map(route => route.id));

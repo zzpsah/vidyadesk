@@ -50,3 +50,18 @@ test('platform dependencies are registered separately from school applications',
   assert.deepEqual(infrastructureProjects.map(item => item.id), ['oracle-server', 'postgresql-services']);
   assert.ok(infrastructureProjects.every(item => item.repositoryUrl.startsWith('https://github.com/zzpsah/')));
 });
+
+test('UDISE+ and eShikshaKosh remain separate integration owners', async () => {
+  const { integrations, dataSources } = await import('../core/integrations.ts');
+  const udise = integrations.find(item => item.id === 'udise-automation-suite');
+  const eshiksha = integrations.find(item => item.id === 'eshikshakosh-automation');
+  assert.ok(udise);
+  assert.ok(eshiksha);
+  assert.notEqual(udise.owner, eshiksha.owner);
+  assert.match(udise.name, /UDISE\+/);
+  assert.match(eshiksha.name, /eShikshaKosh/);
+  assert.ok(dataSources.some(source => source.id === 'udise'));
+  assert.ok(dataSources.some(source => source.id === 'eshiksha'));
+  assert.ok(!dataSources.some(source => source.id === 'vidyadesk-fixtures'));
+  assert.ok(!integrations.some(item => /udise.*eshiksha|eshiksha.*udise/i.test(item.name)));
+});

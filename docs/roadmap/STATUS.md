@@ -1,6 +1,6 @@
 # VidyaDesk — Live Development Status
 
-**Last updated:** 2026-10-31  
+**Last updated:** 2026-11-01
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Production branch:** `main`  
 **Release commit:** `3ebe3caf2b6da159a037740b580396009584ebec`  
@@ -11,6 +11,17 @@
 **Merged change:** PR #5, https://github.com/zzpsah/vidyadesk/pull/5  
 **Superseded PR:** #4 closed; its older direction is replaced by the current project-hub architecture.  
 **Integration blocker tracker:** https://github.com/zzpsah/vidyadesk/issues/6
+
+## 2026-11-01 access update
+
+- Oracle VPS oracle-server is reachable through Desktop Commander again (agent v0.3.0, device last seen within one minute during this check).
+- This restores administrative shell access only. It does not verify PostgreSQL, the School Data Records database, DLR, Report Central, UDISE/eShikshaKosh gateways or any application health endpoint.
+- The VidyaDesk repository was cloned to /home/prashant/vidyadesk at main commit 88d9b02 for continued development. The existing main branch was left unchanged; current work is isolated on fix/project-registry-accuracy.
+- No production services, databases, credentials or source records were changed or queried during this access check.
+- Dependency review found three high-severity npm advisories. Vite was updated to 8.3.5 and Zod to 4.6.7; the contract suite and production build pass, and npm audit now reports zero vulnerabilities.
+- The workspace now exposes three safe routes: Project overview, Report Central (aggregate-only) and Integrations (read-only). Student/staff CRUD routes remain unavailable. UDISE+ and eShikshaKosh have distinct integration-owner entries; the fictional sample-source row was removed.
+- Read-only host snapshot: 145 GB root disk with 55 GB free; 11 GiB RAM with 2 GiB swap fully used; no failed systemd units. Listener ports include 9135–9137, 8790, 8787, 5432 and 5678 on loopback. Listening sockets are not proof of service health.
+- Docker inspection is blocked for the current prashant account because /var/run/docker.sock is owned by root:docker and the account is not in the docker group. No permission changes were made.
 
 ## Product definition
 

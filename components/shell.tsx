@@ -21,14 +21,17 @@ export function Sidebar({ route, nav, onClose }: { route: string; nav: Nav; onCl
 
     <nav className="side-nav" aria-label="Modules">
       {item('overview', 'Project overview')}
+      {item('report-central', 'Report Central')}
+      {item('integrations', 'Integrations')}
     </nav>
 
     <footer className="side-foot"><p>Project hub · source systems retain ownership of school records.</p></footer>
   </div>;
 }
 
-export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
-  const crumbs = ['VidyaDesk', 'Project overview'];
+export function Topbar({ onOpenMenu, route }: { onOpenMenu: () => void; route: string }) {
+  const labels: Record<string, string> = { overview: 'Project overview', 'report-central': 'Report Central', integrations: 'Integrations' };
+  const crumbs = ['VidyaDesk', labels[route] ?? labels.overview];
 
   return <header className="topbar">
     <Button variant="ghost" size="icon" className="menu-button" aria-label="Open navigation" onClick={onOpenMenu}><Menu size={19} /></Button>
