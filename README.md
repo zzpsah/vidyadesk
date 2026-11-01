@@ -18,6 +18,10 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 - Operational school CRUD routes remain hidden until their source-backed data contract, authentication, school scope, tests and audit requirements are accepted.
 - No login is enabled yet, per the current development decision. This does not authorize private student/staff data exposure; the portal remains a project hub until the security phase is complete.
 
+## Integration status
+
+See [the current integration status matrix](docs/integrations/STATUS-MATRIX.md) for owner projects, runtime evidence, activation blockers and security boundaries.
+
 ## Project ownership map
 
 | Project | Owns | VidyaDesk integration |

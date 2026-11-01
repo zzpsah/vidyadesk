@@ -28,6 +28,8 @@
 - Latest VidyaDesk PR preview (commit 9050e7e) is publicly reachable at https://vidyadesk-bu35cjv77-zzpsah.vercel.app with HTTP 200 and no login wall. Its /api/report-central route returns HTTP 503 integration_not_activated, as intended while server variables and provider approval are absent.
 - The live Report Central Funnel still returns HTTP 404 for the new aggregate route because PR #3 has not been merged/deployed. The endpoint implementation is in the PR only.
 - Report Central owner work is isolated in /home/prashant/worktrees/report-central-vidyadesk on branch feat/vidyadesk-aggregate-readonly. It adds a dedicated token-only fixed-scope aggregate endpoint, school-scoped import-audit migration 022, and tests. Full Report Central suite: 233 tests passing. It has not been deployed.
+- DLR owner work is isolated in /home/prashant/worktrees/digital-letter-registry-vidyadesk on branch feat/vidyadesk-public-summary. PR #5 adds a dedicated-token, viewer-membership-checked aggregate endpoint and authenticated-only SQL RPC; 420 tests pass and Vercel preview deployment completed. No viewer account, token, migration or public network path has been configured.
+- The current owner-by-owner integration state and activation gates are recorded in docs/integrations/STATUS-MATRIX.md.
 - Live database metadata check: app.school_source_mappings exists but has zero rows; snapshot_import_runs.school_id is not yet present. Therefore the aggregate provider must remain fail-closed. Migration 022 was not applied, no school mappings were written, no token was generated, and no student data was exposed.
 
 ## Product definition
