@@ -6,6 +6,7 @@ import { REPORT_CENTRAL_CONTRACT_VERSION, REPORT_CENTRAL_SCOPE } from '@/core/re
 import type { Nav } from '@/core/nav';
 import { UdiseStatusPanel } from '@/features/udise-status';
 import { EshikshakoshStatusPanel } from '@/features/eshikshakosh-status';
+import { DlrSummaryPanel } from '@/features/dlr-summary';
 
 export function IntegrationsView({ nav }: { nav: Nav }) {
   return <>
@@ -33,6 +34,7 @@ export function IntegrationsView({ nav }: { nav: Nav }) {
 
     <UdiseStatusPanel />
     <EshikshakoshStatusPanel />
+    <DlrSummaryPanel />
 
     <Panel title="Report Central · integration contract" meta={`Contract v${REPORT_CENTRAL_CONTRACT_VERSION}`}>
       <div className="flex flex-wrap items-center gap-2">
