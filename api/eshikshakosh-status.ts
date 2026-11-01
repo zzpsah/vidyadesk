@@ -1,4 +1,16 @@
-import { isEshikshakoshStatusPayload } from '../core/eshikshakosh-status-contract.ts';
+function isEshikshakoshStatusPayload(value: unknown): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const v = value as Record<string, any>;
+  const keys = ['contractVersion','ok','service','scope','totalJobs','byStatus','staleQueued','staleRunning','latestJobAt','retrievedAt'];
+  const statuses = ['queued','running','done','failed','other'];
+  const count = (n: unknown) => Number.isSafeInteger(n) && Number(n) >= 0;
+  if (Object.keys(v).length !== keys.length || keys.some(k => !(k in v))) return false;
+  if (v.contractVersion !== '1.0.0' || v.service !== 'eshikshakosh-jobserver' || typeof v.ok !== 'boolean') return false;
+  if (!v.scope || Object.keys(v.scope).length !== 2 || v.scope.schoolKey !== 'umv-tetahali' || v.scope.udiseCode !== '10160203806') return false;
+  if (![v.totalJobs,v.staleQueued,v.staleRunning,v.retrievedAt].every(count) || (v.latestJobAt !== null && !count(v.latestJobAt))) return false;
+  if (!v.byStatus || typeof v.byStatus !== 'object' || Array.isArray(v.byStatus) || Object.keys(v.byStatus).length !== statuses.length || statuses.some(k => !count(v.byStatus[k]))) return false;
+  return statuses.reduce((sum,k) => sum + v.byStatus[k],0) === v.totalJobs && v.ok === (v.staleQueued === 0 && v.staleRunning === 0 && v.byStatus.other === 0);
+}
 const STATUS_PATH = "/rc/v1/integrations/vidyadesk/eshikshakosh-status";
 const STATUS_HOST = "oracle-server.tail2b7fe2.ts.net";
 const TIMEOUT_MS = 6_000;
