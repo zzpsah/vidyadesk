@@ -26,6 +26,12 @@ This document defines what belongs in VidyaDesk and what must remain in the exis
 - The registered Oracle VPS Desktop Commander device is **OFFLINE**, last seen 410 hours before this audit. Live PostgreSQL, service health and API behavior could not be checked from this development session.
 - Consequently, a student-data source database and the Oracle-hosted APIs are not currently verified as reachable dependencies for VidyaDesk. No private-data adapter can be implemented safely until the runtime is reachable and the owner confirms the actual primary store.
 
+### Runtime follow-up — 2026-11-01
+
+Desktop Commander access has been restored. Read-only local probes returned HTTP 200 for the UDISE+ control API, eShikshaKosh gateway and job service, DLR API, and Report Central API. Their systemd user services are running. This verifies endpoint liveness only; it does not verify student records, portal sessions, school mapping or source correctness. The Tailscale Serve configuration currently keeps UDISE+ and DLR routes tailnet-only, and the documented eShikshaKosh /gw path is not present in the current Serve configuration. The VidyaDesk Vercel project is connected and its verified public alias is https://shikshakosh.vercel.app; Vercel SSO protection is disabled to meet the no-login workspace requirement. No private API was made public.
+
+The Report Central database has the school_source_mappings table but no verified mapping rows, and snapshot_import_runs does not yet carry school_id. The VidyaDesk aggregate endpoint is being implemented behind a dedicated machine token and remains fail-closed until schema migration 022 and evidence-backed Tetahali mappings are reviewed and applied. No migration or data mutation was performed.
+
 ## Important classification decisions
 
 - UDISE+ and eShikshaKosh are independent government systems and must never be merged into one source label.
