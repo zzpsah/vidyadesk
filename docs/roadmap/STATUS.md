@@ -1,6 +1,6 @@
 # VidyaDesk — Live Development Status
 
-**Last updated:** 2026-10-31  
+**Last updated:** 2026-11-01
 **Repository:** https://github.com/zzpsah/vidyadesk  
 **Production branch:** `main`  
 **Release commit:** `3ebe3caf2b6da159a037740b580396009584ebec`  
@@ -11,6 +11,26 @@
 **Merged change:** PR #5, https://github.com/zzpsah/vidyadesk/pull/5  
 **Superseded PR:** #4 closed; its older direction is replaced by the current project-hub architecture.  
 **Integration blocker tracker:** https://github.com/zzpsah/vidyadesk/issues/6
+
+## 2026-11-01 access update
+
+- Oracle VPS oracle-server is reachable through Desktop Commander again (agent v0.3.0, device last seen within one minute during this check).
+- This restores administrative shell access only. It does not verify PostgreSQL, the School Data Records database, DLR, Report Central, UDISE/eShikshaKosh gateways or any application health endpoint.
+- The VidyaDesk repository was cloned to /home/prashant/vidyadesk at main commit 88d9b02 for continued development. The existing main branch was left unchanged; current work is isolated on fix/project-registry-accuracy.
+- No production services or source records were changed. Database access was read-only and limited to schema metadata plus the count of school-source mapping rows; no student/staff rows, credentials or workbook contents were queried.
+- Dependency review found three high-severity npm advisories. Vite was updated to 8.3.5 and Zod to 4.6.7; the contract suite and production build pass, and npm audit now reports zero vulnerabilities.
+- The workspace now exposes three safe routes: Project overview, Report Central (aggregate-only) and Integrations (read-only). Student/staff CRUD routes remain unavailable. UDISE+ and eShikshaKosh have distinct integration-owner entries; the fictional sample-source row was removed.
+- Read-only host snapshot: 145 GB root disk with 55 GB free; 11 GiB RAM with 2 GiB swap fully used; no failed systemd units. Listener ports include 9135–9137, 8790, 8787, 5432 and 5678 on loopback. Listening sockets are not proof of service health.
+- Docker inspection is blocked for the current prashant account because /var/run/docker.sock is owned by root:docker and the account is not in the docker group. No permission changes were made.
+- Read-only local health probes returned HTTP 200 for UDISE+ Control API (9135), eShikshaKosh Gateway (8790), eShikshaKosh Job Service (8787), DLR FastAPI (8877) and Report Central API (8795). Systemd user units for these services are running. This confirms liveness only, not data correctness or portal sessions.
+- Network boundary check: Tailscale Serve currently exposes UDISE+ (10000) and DLR (10001) as tailnet-only; the eShikshaKosh /gw path is not present in the current Serve configuration. Report Central /rc/health is publicly reachable, but its data routes require authentication. No private API was exposed.
+- The Vercel project vidyadesk is linked to this repository and the verified public alias is https://shikshakosh.vercel.app. Its SSO protection was disabled to meet the no-login requirement; no project environment variables are configured; the public alias returns HTTP 200 without a login wall and continues serving the last successful main-branch production release. The current PR preview is separate and has not been promoted. The server-side Report Central proxy remains disabled.
+- VidyaDesk PR #7 branch preview alias https://vidyadesk-git-fix-project-registry-accuracy-zzpsah.vercel.app returns HTTP 200 without a login wall and includes the integration activation-gates panel. Its /api/report-central route returns HTTP 503 integration_not_activated, as intended while server variables and provider approval are absent. No requests are sent. PR #7 GitHub CI and Vercel preview checks pass.
+- The live Report Central Funnel still returns HTTP 404 for the new aggregate route because PR #3 has not been merged/deployed. The endpoint implementation is in the PR only; its 233-test GitHub suite passes, while the Vercel check fails because GitHub could not verify a Vercel account for the commit (Report Central is a VPS API, not a Vercel deployment).
+- Report Central owner work is isolated in /home/prashant/worktrees/report-central-vidyadesk on branch feat/vidyadesk-aggregate-readonly. It adds a dedicated token-only fixed-scope aggregate endpoint, school-scoped import-audit migration 022, and tests. Full Report Central suite: 233 tests passing. It has not been deployed.
+- DLR owner work is isolated in /home/prashant/worktrees/digital-letter-registry-vidyadesk on branch feat/vidyadesk-public-summary. PR #5 adds a dedicated-token, viewer-membership-checked aggregate endpoint and authenticated-only SQL RPC; 420 tests pass and Vercel preview deployment completed. No viewer account, token, migration or public network path has been configured.
+- The current owner-by-owner integration state and activation gates are recorded in docs/integrations/STATUS-MATRIX.md.
+- Live database metadata check: app.school_source_mappings exists but has zero rows; snapshot_import_runs.school_id is not yet present. Therefore the aggregate provider must remain fail-closed. Migration 022 was not applied, no school mappings were written, no token was generated, and no student data was exposed.
 
 ## Product definition
 

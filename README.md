@@ -13,9 +13,14 @@ VidyaDesk is the unified project hub for **UCHCH MADHYAMIK VIDYALAY, TETAHALI**.
 - The default school context is a single fixed UMV Tethali identity.
 - The workspace starts empty. No sample students, staff, classes, attendance, fees, notices, marks or timetable entries are generated.
 - The project overview lists seven existing repositories verified in the owner's GitHub account: School Data Records, Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation, Vetan-Vipatra and n8n Operations.
+- The sidebar exposes the project overview, an aggregate-only Report Central view and a read-only integration catalogue. Legacy student/staff CRUD routes remain unavailable.
 - Five documented application entry points are provided for Report Central, Digital Letter Registry, UDISE+ Automation, eShikshaKosh Automation and the existing Vetan-Vipatra salary/absence statement app. A link is a launch shortcut, not a health check or proof of VidyaDesk integration.
 - Operational school CRUD routes remain hidden until their source-backed data contract, authentication, school scope, tests and audit requirements are accepted.
 - No login is enabled yet, per the current development decision. This does not authorize private student/staff data exposure; the portal remains a project hub until the security phase is complete.
+
+## Integration status
+
+See [the current integration status matrix](docs/integrations/STATUS-MATRIX.md) for owner projects, runtime evidence, activation blockers and security boundaries.
 
 ## Project ownership map
 
@@ -53,6 +58,7 @@ UDISE+ and eShikshaKosh remain separate systems. Vetan-Vipatra remains a separat
 - `core/seed.ts` / `core/workspace.tsx` — legacy state-model code retained for review; neither is imported by the active project-hub app.
 - `core/modules.ts` / `core/route-registry.ts` — legacy module metadata retained internally; the active app exposes no school CRUD routes.
 - `features/overview.tsx` — unified project hub.
+- `features/report-central.tsx` and `features/integrations.tsx` — aggregate-only Report Central view and read-only integration catalogue.
 - `api/` — server-side integration endpoints; disabled until their source, scope and security gates are met.
 - `docs/roadmap/` — phase gates and verified delivery status.
 - `docs/security/` — session, access and data-boundary decisions.

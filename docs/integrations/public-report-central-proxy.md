@@ -1,6 +1,6 @@
 # Public Report Central proxy (no user login)
 
-**Status:** The proxy code and tests are in this feature branch. It is not deployed, has no Vercel project configured yet, and is disabled by default.
+**Status:** The proxy code and tests are implemented. The Vercel project vidyadesk exists and is connected to this repository; branch pushes create preview deployments. Vercel SSO protection was disabled on 2026-11-01 to honor the no-login workspace requirement. No Vercel environment variables are configured, the aggregate proxy remains disabled by default, and the existing production alias continues to serve the last successful main-branch release until a new production deployment is explicitly promoted. The current public PR preview serves the function but returns HTTP 503 integration_not_activated; no upstream request is made.
 
 VidyaDesk remains publicly accessible without user accounts in this phase. The Report Central connection is a server-to-server read-only path; the browser does not receive the upstream bearer token.
 
@@ -20,7 +20,7 @@ Only four aggregate sections:
   overview · sourceComparison · conflictSummary · importAudit
 ```
 
-GitHub Pages is static and cannot execute `api/report-central.ts`. The existing GitHub Pages deployment remains unchanged. A separate Vercel project connected to this repository is required before the API route exists online. The Vercel project has not been created or deployed in this phase.
+GitHub Pages is static and cannot execute api/report-central.ts; that deployment remains unchanged. The existing Vercel project vidyadesk is connected to zzpsah/vidyadesk and runs the server-side API route in Vercel deployments. Its current project alias is https://shikshakosh.vercel.app. The Vercel project currently has no environment variables, so the proxy returns a disabled/not-configured response and never calls Report Central.
 
 ## No-login behavior
 
@@ -40,7 +40,7 @@ Configure these only in the Vercel project environment; never in `VITE_*` variab
 | `VIDYADESK_REPORT_CENTRAL_ENABLED` | Exact string `true` enables public reads. Keep `false` until all activation gates pass. |
 | `REPORT_CENTRAL_AGGREGATE_URL` | Full HTTPS URL ending exactly in `/rc/v1/integrations/vidyadesk/aggregate` on the current Report Central Funnel host. The current documented URL is `https://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/aggregate`. |
 | `REPORT_CENTRAL_VIDYADESK_READ_TOKEN` | Dedicated machine token; same secret is configured on the Report Central API host. |
-| `VIDYADESK_ALLOWED_ORIGIN` | Exact public frontend origin, currently `https://zzpsah.github.io`. |
+| `VIDYADESK_ALLOWED_ORIGIN` | Exact public frontend origin, currently https://shikshakosh.vercel.app. |
 
 Generate the token on an operator-controlled machine, store it in Bitwarden, and set the same value in both server environments. Never paste it into this repository or a chat. The Report Central API accepts it only on the exact aggregate GET route; it cannot act as a Report Central user or access other endpoints.
 
@@ -61,7 +61,7 @@ Do not activate the feature flag until all are true:
 2. Canonical UMV Tetahali school identity and both evidence-backed source mappings have been independently verified in the live database.
 3. The Report Central endpoint passes a read-only request with the dedicated machine token and returns the exact 1.0.0 contract.
 4. The school explicitly approves publishing the four aggregate operational indicators on a public site.
-5. The VidyaDesk Vercel project is created, connected to this repository, and configured with the four server-side variables.
+5. The existing VidyaDesk Vercel project is configured with the four server-side variables; the public alias is verified to load without a Vercel login wall.
 6. Preview deployment tests confirm the function stays disabled by default, rejects wrong origins and methods, and returns only the validated aggregate envelope when enabled.
 7. Production deployment is separately approved.
 

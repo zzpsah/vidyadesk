@@ -79,7 +79,7 @@ export const infrastructureProjects: InfrastructureProject[] = [
     id: 'oracle-server',
     name: 'Oracle VPS / Server Operations',
     purpose: 'Host operations, private networking, system services, runtime access and recovery.',
-    boundary: 'Infrastructure only. Service health is currently unverified because the registered Oracle Desktop Commander device is offline.',
+    boundary: 'Infrastructure only. Desktop Commander access is available for administration; application, database and API health must still be verified independently.',
     repositoryUrl: 'https://github.com/zzpsah/oracle-server',
   },
   {
