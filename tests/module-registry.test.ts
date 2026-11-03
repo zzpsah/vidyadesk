@@ -6,7 +6,7 @@ import { isWorkspaceRoute, resolveWorkspaceRoute, validateModuleRegistry, worksp
 test('the school portal exposes no unbacked CRUD module routes', () => {
   assert.deepEqual(portalModules, []);
   assert.deepEqual(portalModuleGroups, []);
-  assert.deepEqual(workspaceRoutes.filter(route => route.kind === 'module'), []);
+  assert.deepEqual(workspaceRoutes.filter(route => route.kind === 'module').map(route => route.id), ['workspaces']);
   assert.deepEqual(workspaceRoutes.filter(route => route.kind === 'integration').map(route => route.id), ['report-central', 'integrations']);
 });
 test('unknown, retired and empty route input safely resolves to overview', () => {
@@ -15,8 +15,8 @@ test('unknown, retired and empty route input safely resolves to overview', () =>
     assert.equal(isWorkspaceRoute(candidate), false);
   }
 });
-test('only the overview and read-only integration workspaces are exposed', () => {
-  for (const route of ['overview', 'report-central', 'integrations']) {
+test('only overview, the operational launchpad and approved integration routes are exposed', () => {
+  for (const route of ['overview', 'workspaces', 'report-central', 'integrations']) {
     assert.equal(resolveWorkspaceRoute(route), route);
     assert.equal(isWorkspaceRoute(route), true);
   }

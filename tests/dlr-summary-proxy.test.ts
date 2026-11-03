@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { handleDlrSummaryRequest } from '../api/dlr-summary.ts';
+const URL = 'https://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/dlr-summary';
+const TOKEN = 'dlr-bridge-test-token';
+const env = { VIDYADESK_DLR_SUMMARY_ENABLED: 'true', REPORT_CENTRAL_DLR_SUMMARY_URL: URL, REPORT_CENTRAL_VIDYADESK_DLR_SUMMARY_READ_TOKEN: TOKEN };
+const payload = () => ({ contractVersion: '1.0.0', sourceSystem: 'digital-letter-registry', scope: { schoolKey: 'umv-tetahali', schoolName: 'UCHCH MADHYAMIK VIDYALAY, TETAHALI' }, retrievedAt: '2026-11-01T09:00:00Z', snapshot: { id: 'dlr-vd-0123456789abcdef', version: 1, createdAt: '2026-11-01T09:00:00Z' }, data: { publicDocumentCount: 12, latestPublicDocumentAt: '2026-10-31T10:30:00Z' } });
+const request = (method = 'GET') => new Request('https://vidyadesk.example.test/api/dlr-summary', { method });
+test('DLR proxy disabled by default', async () => { const r = await handleDlrSummaryRequest(request(), {}); assert.equal(r.status, 503); assert.equal((await r.json()).error, 'integration_not_activated'); });
+test('DLR proxy permits GET only', async () => { const r = await handleDlrSummaryRequest(request('POST'), env); assert.equal(r.status, 405); });
+test('requires exact HTTPS bridge and server-only token', async () => { for (const url of ['http://oracle-server.tail2b7fe2.ts.net/rc/v1/integrations/vidyadesk/dlr-summary','https://attacker.example/rc/v1/integrations/vidyadesk/dlr-summary',URL+'?archive=other']) { const r = await handleDlrSummaryRequest(request(), {...env,REPORT_CENTRAL_DLR_SUMMARY_URL:url}); assert.equal(r.status,503); } });
+test('forwards server token and accepts only fixed archive aggregate', async () => { let call: any; const r = await handleDlrSummaryRequest(request(),env,async (input,init) => { call={url:String(input),init}; return Response.json(payload()); }); assert.equal(r.status,200); assert.deepEqual(await r.json(),payload()); assert.equal(call.url,URL); assert.equal(call.init.headers.Authorization,`Bearer ${TOKEN}`); });
+test('rejects wrong school, extra fields, invalid count and malformed timestamps', async () => { for (const mutate of [(p:any)=>p.scope.schoolKey='other',(p:any)=>p.data.letterIds=['secret'],(p:any)=>p.data.publicDocumentCount=-1,(p:any)=>p.retrievedAt='not-a-date']) { const bad=payload(); mutate(bad); const r=await handleDlrSummaryRequest(request(),env,async()=>Response.json(bad)); assert.equal(r.status,502); assert.equal((await r.json()).error,'provider_contract_mismatch'); } });
+test('provider errors become generic no-store responses', async () => { const r=await handleDlrSummaryRequest(request(),env,async()=>new Response('secret',{status:503})); assert.equal(r.status,502); assert.equal(r.headers.get('cache-control'),'no-store'); assert.deepEqual(await r.json(),{ok:false,error:'provider_unavailable'}); });

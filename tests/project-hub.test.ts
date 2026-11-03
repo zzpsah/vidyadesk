@@ -65,3 +65,22 @@ test('UDISE+ and eShikshaKosh remain separate integration owners', async () => {
   assert.ok(!dataSources.some(source => source.id === 'vidyadesk-fixtures'));
   assert.ok(!integrations.some(item => /udise.*eshiksha|eshiksha.*udise/i.test(item.name)));
 });
+
+
+test('overview access labels reflect real owner-app availability and preserve payroll protection', async () => {
+  const { operationalWorkspaces } = await import('../core/workspaces.ts');
+  const byOwner = new Map(operationalWorkspaces.map(item => [item.owner, item]));
+  for (const project of projects) {
+    const workspace = byOwner.get(project.owner);
+    assert.ok(workspace, `missing workspace for ${project.owner}`);
+    if (workspace.access === 'application') assert.ok(project.applicationUrl);
+    if (workspace.access === 'protected') {
+      assert.equal(project.id, 'vetan-vipatra');
+      assert.ok(project.applicationUrl);
+      assert.match(workspace.note, /protection enabled/i);
+    }
+    if (workspace.access === 'repository-only' || workspace.access === 'private-service') {
+      assert.equal(project.applicationUrl, undefined);
+    }
+  }
+});

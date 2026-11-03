@@ -66,7 +66,7 @@ function errorState(payload: unknown, status: number): ViewState {
     status: 'unavailable',
     message: status === 404
       ? 'The server-side proxy is not deployed on this host yet.'
-      : 'The read-only aggregate is temporarily unavailable. Local demo figures are never substituted.',
+      : 'The aggregate status feed is temporarily unavailable. Local demo figures are never substituted.',
   };
 }
 
@@ -113,7 +113,7 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
       if (!cancelled) {
         setState({
           status: 'unavailable',
-          message: 'The read-only aggregate could not be reached. No local demo figures are substituted.',
+          message: 'The aggregate status feed could not be reached. No local demo figures are substituted.',
         });
       }
     });
@@ -124,16 +124,16 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
   const envelope = state.status === 'ready' ? state.envelope : null;
   const aggregate = envelope?.data;
   const statusLabel = state.status === 'ready'
-    ? 'Connected · read only'
+    ? 'Aggregate feed connected'
     : state.status === 'loading' ? 'Checking' : 'Not connected';
   const statusTone = state.status === 'ready' ? 'ok' : state.status === 'loading' ? 'mute' : 'warn';
   const heroTitle = state.status === 'ready'
     ? 'Verified aggregate data is available'
-    : state.status === 'loading' ? 'Checking the read-only connection' : 'Live data is not available yet';
+    : state.status === 'loading' ? 'Checking the aggregate status feed' : 'Live data is not available yet';
   const heroPill = state.status === 'ready' ? 'Verified contract' : state.status === 'loading' ? 'Checking' : 'Unavailable';
 
   return <>
-    <PageHead module={module} crumb="Operations · aggregate read-only workspace">
+    <PageHead module={module} crumb="Operations · aggregate status panel">
       <Pill tone={statusTone}>{statusLabel}</Pill>
       <Button variant="outline" disabled={state.status === 'loading'} onClick={() => setRefreshKey(value => value + 1)}>
         <RefreshCw size={14} /> Refresh
@@ -150,7 +150,7 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
           <Pill tone={state.status === 'ready' ? 'ok' : 'warn'}>{heroPill}</Pill>
         </div>
         <p>{state.status === 'ready'
-          ? 'This public dashboard is displaying only the approved aggregate sections from Report Central. It has no student-level or write capability.'
+          ? 'This panel displays only approved aggregate sections. Open the full Report Central application for student reconciliation, imports, conflict resolution and audited record operations.'
           : state.status === 'loading'
             ? 'The dashboard is checking the server-side proxy. No browser token or user login is used.'
             : state.message}</p>
@@ -215,7 +215,7 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
       </Panel>
     </div>
 
-    <Panel title="Connection acceptance gates" meta={`Contract v${REPORT_CENTRAL_CONTRACT_VERSION} · public read-only · no write capability`}>
+    <Panel title="Public summary-feed activation gates" meta={`Contract v${REPORT_CENTRAL_CONTRACT_VERSION} · summary feed only`}>
       <ul className="check-list">
         <li><FileCheck2 size={14} aria-hidden="true" />Verify the canonical Tetahali school and both source mappings in Report Central</li>
         <li><GitCompareArrows size={14} aria-hidden="true" />Apply and verify school-scoped import audit migration 022</li>
@@ -227,6 +227,6 @@ export function ReportCentralView({ nav }: { nav: Nav }) {
       </p>
     </Panel>
 
-    <p className="foot-line">This screen is read-only. Snapshot creation, source fetches, imports, conflict resolution and portal writes remain in their owning systems. No VidyaDesk login is required.</p>
+    <p className="foot-line">This panel is summary-only. The full Report Central application provides operational imports, reconciliation, conflict resolution and audit history. Open it from Operational Workspaces to perform those actions.</p>
   </>;
 }
